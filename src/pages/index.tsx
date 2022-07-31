@@ -1,5 +1,6 @@
 import { getCookie, setCookie } from "cookies-next";
 import { GetServerSideProps } from "next";
+import { FC } from "react";
 import Layout from "../components/Layout";
 import { getReddit } from "../utils/reddit/redditApi";
 import {
@@ -51,9 +52,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-type Props = {};
+type Props = {
+  posts: string;
+};
 
-const Home = ({ posts }) => {
+const Home: FC<Props> = ({ posts }) => {
   return <Layout>{posts}</Layout>;
 };
 

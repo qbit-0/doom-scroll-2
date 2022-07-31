@@ -12,7 +12,7 @@ const USER_REQUEST_URL_COMPACT =
   "https://www.reddit.com/api/v1/authorize.compact";
 const USER_RESPONSE_TYPE = "code";
 const USER_TOKEN_DURATION = "permanent";
-const USER_SCOPE = "read";
+const USER_SCOPE = "read identity";
 const USER_GRANT_TYPE = "authorization_code";
 const USER_REFRESH_GRANT_TYPE = "refresh_token";
 
