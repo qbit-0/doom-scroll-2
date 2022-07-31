@@ -1,38 +1,42 @@
 import { Box } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { getAccessToken } from "../utils/api/reddit/redditOAuth";
+import axios from "axios";
+import { setCookie } from "cookies-next";
+import { GetServerSideProps } from "next";
+import { getUserAccessToken } from "../utils/reddit/redditOAuth";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const error = context.query["error"] as string;
+  const code = context.query["code"] as string;
+  const state = context.query["state"] as string;
+
+  const response = await getUserAccessToken(code);
+  const userAccessToken = response.data["access_token"];
+  const userRefreshToken = response.data["refresh_token"];
+  const expiresIn = response.data["expires_in"];
+
+  setCookie("user_access_token", userAccessToken, {
+    req: context.req,
+    res: context.res,
+    maxAge: expiresIn,
+    httpOnly: true,
+  });
+  setCookie("user_refresh_token", userRefreshToken, {
+    req: context.req,
+    res: context.res,
+    maxAge: expiresIn,
+    httpOnly: true,
+  });
+
+  return {
+    redirect: {
+      permanent: false,
+      destination: "/",
+    },
+  };
+};
 
 const AuthorizeCallbackPage = () => {
-  const router = useRouter();
-  const error = router.query.error as string;
-  const code = router.query.code as string;
-  const state = router.query.state as string;
-
-  useEffect(() => {
-    if (code === undefined) return;
-
-    const logAccessToken = async () => {
-      const response = await getAccessToken(code);
-      console.log(response.data);
-    };
-
-    logAccessToken();
-
-    return;
-  }, [code]);
-
-  if (error) {
-    return <Box>error: {error}</Box>;
-  }
-
-  return (
-    <Box>
-      state: {state}
-      <br />
-      code: {code}
-    </Box>
-  );
+  return <Box>Redirecting to Home</Box>;
 };
 
 export default AuthorizeCallbackPage;
