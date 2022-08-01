@@ -21,13 +21,14 @@ const APP_GRANT_TYPE = "client_credentials";
 
 export const getAuthRequestUrl = (isCompact: boolean) => {
   const url = new URL(isCompact ? USER_REQUEST_URL_COMPACT : USER_REQUEST_URL);
+  const state = v4();
   url.searchParams.append("client_id", REDDIT_APP_CLIENT_ID);
   url.searchParams.append("response_type", USER_RESPONSE_TYPE);
-  url.searchParams.append("state", v4());
+  url.searchParams.append("state", state);
   url.searchParams.append("redirect_uri", USER_REDIRECT_URI);
   url.searchParams.append("duration", USER_TOKEN_DURATION);
   url.searchParams.append("scope", USER_SCOPE);
-  return url;
+  return { url, state };
 };
 
 const getAccessToken = async (params: URLSearchParams) => {

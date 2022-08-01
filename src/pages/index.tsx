@@ -1,63 +1,37 @@
-import { getCookie, setCookie } from "cookies-next";
+import { Button } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 import Layout from "../components/Layout";
-import { getReddit } from "../utils/reddit/redditApi";
-import {
-  getAppAccessToken,
-  refreshUserAccessToken,
-} from "../utils/reddit/redditOAuth";
+import Post from "../components/Post";
+import { getReddit } from "../lib/reddit/redditApi";
+import getSessionAccessToken from "../lib/session/getSessionAccessToken";
+import { withSessionSsr } from "../lib/session/withSession";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const userAccessToken = getCookie("user_access_token", context) as string;
-  const userRefreshToken = getCookie("user_refresh_token", context) as string;
-  const appAccessToken = getCookie("app_access_token", context) as string;
-
-  let accessToken;
-  if (userAccessToken) {
-    accessToken = userAccessToken;
-  } else if (userRefreshToken) {
-    const userAccessTokenResponse = await refreshUserAccessToken(
-      userRefreshToken
-    );
-    const newUserAccessToken = userAccessTokenResponse.data["accessToken"];
-    const expiresIn = userAccessTokenResponse.data["expires_in"];
-    setCookie("user_access_token", newUserAccessToken, {
-      req: context.req,
-      res: context.res,
-      maxAge: expiresIn,
-      httpOnly: true,
-    });
-  } else if (appAccessToken) {
-    accessToken = appAccessToken;
-  } else {
-    const appAccessTokenResponse = await getAppAccessToken();
-    const newAppAccessToken = appAccessTokenResponse.data["access_token"];
-    const expiresIn = appAccessTokenResponse.data["expires_in"];
-    setCookie("app_access_token", newAppAccessToken, {
-      req: context.req,
-      res: context.res,
-      maxAge: expiresIn,
-      httpOnly: true,
-    });
-    accessToken = appAccessTokenResponse.data["access_token"];
+export const getServerSideProps: GetServerSideProps = withSessionSsr(
+  async (context) => {
+    let accessToken = await getSessionAccessToken(context);
+    const postsResponse = await getReddit("", accessToken);
+    return {
+      props: {
+        posts: postsResponse.data,
+      },
+    };
   }
-
-  const postsResponse = await getReddit("/r/all", accessToken);
-
-  return {
-    props: {
-      posts: JSON.stringify(postsResponse.data),
-    },
-  };
-};
+);
 
 type Props = {
-  posts: string;
+  posts: any;
 };
 
 const Home: FC<Props> = ({ posts }) => {
-  return <Layout>{posts}</Layout>;
+  return (
+    <Layout>
+      {posts.data.children.map((post: any, index: number) => (
+        <Post post={post} key={index} />
+      ))}
+      <Button>more</Button>
+    </Layout>
+  );
 };
 
 export default Home;
