@@ -15,12 +15,18 @@ export const sessionOptions: IronSessionOptions = {
 };
 
 export type SessionAppData = {
-  appAccessToken: string;
+  appAccessToken?: {
+    appAccessToken: string;
+    appAccessTokenExpirationTime: number;
+  };
 };
 
 export type SessionUserData = {
   username: string;
-  userAccessToken: string;
+  userAccessToken?: {
+    userAccessToken: string;
+    userAccessTokenExpirationTime: number;
+  };
   userRefreshToken: string;
 };
 

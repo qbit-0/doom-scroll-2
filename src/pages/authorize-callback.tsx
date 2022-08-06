@@ -1,15 +1,15 @@
 import { Box } from "@chakra-ui/react";
-import Cookies from "js-cookie";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
-import { getReddit } from "../lib/reddit/redditApi";
+import { mutate } from "swr";
+import { redditApi } from "../lib/reddit/redditApi";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { withSessionSsr } from "../lib/session/withSession";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
-    const { req, res } = context;
+    const { req } = context;
     // const error = context.query["error"] as string;
     const code = context.query["code"] as string;
     // const state = context.query["state"] as string;
@@ -17,13 +17,21 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     const accessTokenResponse = await getUserAccessToken(code);
     const userAccessToken = accessTokenResponse.data["access_token"];
     const userRefreshToken = accessTokenResponse.data["refresh_token"];
+    const expiresIn = accessTokenResponse.data["expires_in"];
 
-    const meResponse = await getReddit("/api/v1/me", userAccessToken);
+    const meResponse = await redditApi(req, {
+      method: "GET",
+      path: "/api/v1/me",
+      accessToken: userAccessToken,
+    });
     const me = meResponse.data;
 
     req.session.user = {
       username: me.name,
-      userAccessToken: userAccessToken,
+      userAccessToken: {
+        userAccessToken,
+        userAccessTokenExpirationTime: Date.now().valueOf() + expiresIn,
+      },
       userRefreshToken: userRefreshToken,
     };
     await req.session.save();
@@ -40,8 +48,10 @@ type Props = {
 
 const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
   const router = useRouter();
+
   useEffect(() => {
-    Cookies.set("username", me["name"]);
+    localStorage.setItem("me", JSON.stringify(me));
+    mutate("me");
     router.replace("/");
   }, [me, router]);
 

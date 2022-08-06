@@ -1,35 +1,54 @@
-import { Box, Button, Link, Text } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
-import Cookies from "js-cookie";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
+import { mutate } from "swr";
 import useIsCompact from "../lib/hooks/useIsCompact";
+import useMe from "../lib/hooks/useMe";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 
 type Props = {};
 
 const NavBar: FC<Props> = () => {
   const isCompact = useIsCompact();
-  const [username, setUsername] = useState<string | null>(null);
-  useEffect(() => {
-    setUsername(Cookies.get("username") as string);
-  }, [setUsername]);
-
   const router = useRouter();
+  const { me } = useMe();
+
+  const [search, setSearch] = useState<string>(router.query["q"] as string || "");
+
+  const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleSearchSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    router.push(`/search?q=${search}`);
+  };
+
   return (
     <Box bg="lightblue">
       <NextLink href={"/"}>
         <Link>Home</Link>
       </NextLink>
-      {username ? (
+      {me ? (
         <>
-          <Text>{username}</Text>
+          <Text>{me.name}</Text>
           <Button
             onClick={async () => {
               await axios.post("/api/logout");
-              Cookies.remove("username");
-              router.reload();
+              localStorage.removeItem("me");
+              mutate("me");
             }}
           >
             Log Out
@@ -45,6 +64,24 @@ const NavBar: FC<Props> = () => {
           Log In
         </Button>
       )}
+
+      <form onSubmit={handleSearchSubmit}>
+        <InputGroup>
+          <Input
+            variant="filled"
+            placeholder="Search Reddit"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <InputRightElement>
+            <IconButton
+              icon={<SearchIcon />}
+              aria-label={"search submit"}
+              type="submit"
+            />
+          </InputRightElement>
+        </InputGroup>
+      </form>
     </Box>
   );
 };
