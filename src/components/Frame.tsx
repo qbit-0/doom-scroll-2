@@ -6,7 +6,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Layout: FC<Props> = ({ children }) => {
+const Frame: FC<Props> = ({ children }) => {
   return (
     <Box>
       <NavBar />
@@ -15,4 +15,4 @@ const Layout: FC<Props> = ({ children }) => {
   );
 };
 
-export default Layout;
+export default Frame;

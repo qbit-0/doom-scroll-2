@@ -8,7 +8,7 @@ import {
 import { Box, Button, Select, Stack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import {
   ChangeEventHandler,
   FC,
@@ -16,7 +16,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import Layout from "../components/Layout";
+import Frame from "../components/Frame";
 import Post from "../components/Post";
 import useMe from "../lib/hooks/useMe";
 import { redditApi } from "../lib/reddit/redditApi";
@@ -65,10 +65,25 @@ type Props = {
 
 const Home: FC<Props> = ({ initialPosts = {} }) => {
   const router = useRouter();
-  const [posts, setPosts] = useState<null | any>(initialPosts);
-  const [sort, setSort] = useState<string>("best");
-  const [time, setTime] = useState<string>("day");
+  const [posts, setPosts] = useState<any>(initialPosts);
+  const [sort, setSort] = useState<string>(
+    (router.query["sort"] as string) || "best"
+  );
+  const [time, setTime] = useState<string>(
+    (router.query["t"] as string) || "day"
+  );
   const { me } = useMe();
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", (url) => {
+      const parsedUrl = new URL(url, "http://localhost:3000");
+      const match = parsedUrl.pathname.match(/\/(?<sort>\w+)/);
+      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlTime = parsedUrl.searchParams.get("t") || "day";
+      setSort(urlSort);
+      setTime(urlTime);
+    });
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -84,7 +99,7 @@ const Home: FC<Props> = ({ initialPosts = {} }) => {
 
   useEffect(() => {
     (() => {
-      router.push(getHomePath(sort, time).fullpath, undefined, {
+      router.replace(getHomePath(sort, time).fullpath, undefined, {
         shallow: true,
       });
     })();
@@ -103,7 +118,7 @@ const Home: FC<Props> = ({ initialPosts = {} }) => {
   };
 
   return (
-    <Layout>
+    <Frame>
       <Box>
         <Button leftIcon={<BellIcon />} onClick={getHandleSortClick("best")}>
           Best
@@ -141,7 +156,7 @@ const Home: FC<Props> = ({ initialPosts = {} }) => {
         ))}
       </Stack>
       <Button>more</Button>
-    </Layout>
+    </Frame>
   );
 };
 

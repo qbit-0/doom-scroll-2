@@ -5,7 +5,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Button, Select, Stack } from "@chakra-ui/react";
+import { Box, Button, Heading, Select, Stack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -16,7 +16,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import Layout from "../../../components/Layout";
+import Frame from "../../../components/Frame";
 import Post from "../../../components/Post";
 import useMe from "../../../lib/hooks/useMe";
 import { redditApi } from "../../../lib/reddit/redditApi";
@@ -68,7 +68,7 @@ type Props = {
 
 const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
   const router = useRouter();
-  const [posts, setPosts] = useState<null | any>(initialPosts);
+  const [posts, setPosts] = useState<any>(initialPosts);
 
   const subreddit = router.query["subreddit"] as string;
   const [sort, setSort] = useState<string>("best");
@@ -90,9 +90,13 @@ const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
 
   useEffect(() => {
     (() => {
-      router.push(getSubredditPath(subreddit, sort, time).fullpath, undefined, {
-        shallow: true,
-      });
+      router.replace(
+        getSubredditPath(subreddit, sort, time).fullpath,
+        undefined,
+        {
+          shallow: true,
+        }
+      );
     })();
   }, [subreddit, sort, time]);
 
@@ -109,7 +113,10 @@ const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
   };
 
   return (
-    <Layout>
+    <Frame>
+      <Box>
+        <Heading>{`r/${router.query["subreddit"]}`}</Heading>
+      </Box>
       <Box>
         <Button leftIcon={<CalendarIcon />} onClick={getHandleSortClick("hot")}>
           Hot
@@ -144,7 +151,7 @@ const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
         ))}
       </Stack>
       <Button>more</Button>
-    </Layout>
+    </Frame>
   );
 };
 

@@ -3,7 +3,7 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
-import Layout from "../components/Layout";
+import Frame from "../components/Frame";
 import Post from "../components/Post";
 import useMe from "../lib/hooks/useMe";
 import { redditApi } from "../lib/reddit/redditApi";
@@ -91,7 +91,7 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
   };
 
   return (
-    <Layout>
+    <Frame>
       <Box>
         <Select value={sort} onChange={handleSortChange}>
           <option value="relevance">Relevance</option>
@@ -116,7 +116,7 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
         ))}
       </Stack>
       <Button>more</Button>
-    </Layout>
+    </Frame>
   );
 };
 

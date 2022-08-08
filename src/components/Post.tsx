@@ -1,6 +1,7 @@
 import { Box, Heading, Link } from "@chakra-ui/react";
 import React, { FC } from "react";
 import NextLink from "next/link";
+import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
   post: Record<string, any>;
@@ -9,9 +10,9 @@ type Props = {
 const Post: FC<Props> = ({ post }) => {
   const postData = post["data"];
   return (
-    <Box border="1px">
+    <Box borderWidth={1} borderColor="red">
       <Box>
-        <NextLink href={`r/${postData["subreddit"]}`}>
+        <NextLink href={`/r/${postData["subreddit"]}`}>
           <Link size="sm">{postData["subreddit"]}</Link>
         </NextLink>
       </Box>
@@ -23,7 +24,9 @@ const Post: FC<Props> = ({ post }) => {
         </NextLink>
       </Box>
       <Box>{postData["ups"]}</Box>
-      <Box>{postData["selftext"]}</Box>
+      <Box>
+        <SanitizeHTML dirty={postData["selftext_html"]} />
+      </Box>
     </Box>
   );
 };

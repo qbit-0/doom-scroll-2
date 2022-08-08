@@ -1,5 +1,6 @@
 import axios from "axios";
 import { log } from "console";
+import { useScroll } from "framer-motion";
 import { IncomingMessage } from "http";
 import { NextApiRequest } from "next";
 import { SessionUserData } from "../session/withSession";
@@ -94,6 +95,7 @@ export const redditApi = async (
       url.searchParams.append(key, value);
     });
   }
+  url.searchParams.append("raw_json", "1");
 
   const redditResponse = await axios({
     method: redditApiParams.method,

@@ -25,7 +25,9 @@ const NavBar: FC<Props> = () => {
   const router = useRouter();
   const { me } = useMe();
 
-  const [search, setSearch] = useState<string>(router.query["q"] as string || "");
+  const [search, setSearch] = useState<string>(
+    (router.query["q"] as string) || ""
+  );
 
   const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setSearch(event.target.value);
@@ -39,7 +41,7 @@ const NavBar: FC<Props> = () => {
   return (
     <Box bg="lightblue">
       <NextLink href={"/"}>
-        <Link>Home</Link>
+        <Link>DoomScroll</Link>
       </NextLink>
       {me ? (
         <>
