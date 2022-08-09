@@ -1,9 +1,8 @@
-import { Stack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import Comment from "../../../../../components/Comment";
+import Comments from "../../../../../components/Comments";
 import Frame from "../../../../../components/Frame";
 import Post from "../../../../../components/Post";
 import { redditApi } from "../../../../../lib/reddit/redditApi";
@@ -45,7 +44,6 @@ const CommentsPage: FC<Props> = ({ initialPost, initialComments }) => {
     async () => {
       const subreddit = router.query["subreddit"];
       const postId = router.query["postId"];
-
       const path = `/r/${subreddit}/comments/${postId}`;
 
       const postsResponse = await axios.post("/api/reddit", {
@@ -61,11 +59,7 @@ const CommentsPage: FC<Props> = ({ initialPost, initialComments }) => {
   return (
     <Frame>
       <Post post={post} />
-      <Stack>
-        {comments.data.children.map((comment: any, index: number) => (
-          <Comment initialComment={comment} key={index} />
-        ))}
-      </Stack>
+      <Comments initialComments={comments} />
     </Frame>
   );
 };
