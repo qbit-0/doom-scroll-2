@@ -8,19 +8,17 @@ type Props = {
 };
 
 const Comment: FC<Props> = ({ comment }) => {
-  const commentData = comment.data;
-
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
-      <Heading size={"sm"}>{commentData["author"]}</Heading>
+      <Heading size={"sm"}>{comment["data"]["author"]}</Heading>
       <Box>
-        <SanitizeHTML dirty={commentData["body_html"]} />
+        <SanitizeHTML dirty={comment["data"]["body_html"]} />
       </Box>
-      <Box>{commentData["score"]}</Box>
-      <Box>{commentData["depth"]}</Box>
-      {commentData["replies"] && (
+      <Box>{comment["data"]["score"]}</Box>
+      <Box>{comment["data"]["depth"]}</Box>
+      {comment["data"]["replies"] && (
         <Box pl={2}>
-          <Comments initialComments={commentData["replies"]} />
+          <Comments initialComments={comment["data"]["replies"]} />
         </Box>
       )}
     </Box>
