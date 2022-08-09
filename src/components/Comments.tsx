@@ -19,14 +19,16 @@ const Comments: FC<Props> = ({ initialComments }) => {
   const genHandleClickMore = (more: any) => {
     return async () => {
       const moreResponse = await axios.post("/api/reddit", {
-        method: "GET",
+        method: "POST",
         path: "/api/morechildren",
         query: {
           api_type: "json",
-          children: more["data"]["children"].join(","),
           id: more["data"]["id"],
           link_id: linkId,
         },
+        data: new URLSearchParams({
+          children: more["data"]["children"].join(","),
+        }).toString(),
       });
 
       const newComments = {
