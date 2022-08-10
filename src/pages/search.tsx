@@ -8,7 +8,7 @@ import Post from "../components/Post";
 import useMe from "../lib/hooks/useMe";
 import { redditApi } from "../lib/reddit/redditApi";
 import { withSessionSsr } from "../lib/session/withSession";
-import buildUrlPath from "../lib/utils/buildUrlPath";
+import { buildUrlPath } from "../lib/utils/urlUtils";
 
 const getSearchPath = (searchQuery: string, sort: string, time: string) => {
   sort = sort || "relevance";

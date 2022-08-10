@@ -1,6 +1,16 @@
-import { Box, Heading, Link } from "@chakra-ui/react";
-import React, { FC } from "react";
+import {
+  Box,
+  Heading,
+  Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
+import { FC } from "react";
+import PostAndComments from "./PostAndComments";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -8,26 +18,40 @@ type Props = {
 };
 
 const Post: FC<Props> = ({ post }) => {
-  const postData = post["data"];
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <Box borderWidth={1} borderColor="red">
-      <Box>
-        <NextLink href={`/r/${postData["subreddit"]}`}>
-          <Link size="sm">{postData["subreddit"]}</Link>
-        </NextLink>
-      </Box>
-      <Box>
-        <NextLink href={`${postData["permalink"]}`}>
-          <Link size="sm">
-            <Heading>{postData["title"]}</Heading>
+    <>
+      <Box borderWidth={1} borderColor="red">
+        <Box>
+          <NextLink href={`/r/${post["data"]["subreddit"]}`}>
+            <Link size="sm">{post["data"]["subreddit"]}</Link>
+          </NextLink>
+        </Box>
+        <Box>
+          <Link size="sm" onClick={onOpen}>
+            <Heading>{post["data"]["title"]}</Heading>
           </Link>
-        </NextLink>
+        </Box>
+        <Box>{post["data"]["ups"]}</Box>
+        <Box>
+          <SanitizeHTML dirty={post["data"]["selftext_html"]} />
+        </Box>
       </Box>
-      <Box>{postData["ups"]}</Box>
-      <Box>
-        <SanitizeHTML dirty={postData["selftext_html"]} />
-      </Box>
-    </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody>
+            <PostAndComments
+              subreddit={post["data"]["subreddit"]}
+              postId={post["data"]["id"]}
+              initialPost={post}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

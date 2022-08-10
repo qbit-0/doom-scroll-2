@@ -1,11 +1,10 @@
 import {
-  BellIcon,
   CalendarIcon,
   StarIcon,
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Button, Heading, Select, Stack } from "@chakra-ui/react";
+import { Box, Button, Heading, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -17,27 +16,11 @@ import {
   useState,
 } from "react";
 import Frame from "../../../components/Frame";
-import Post from "../../../components/Post";
+import Posts from "../../../components/Posts";
 import useMe from "../../../lib/hooks/useMe";
 import { redditApi } from "../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../lib/session/withSession";
-import buildUrlPath from "../../../lib/utils/buildUrlPath";
-
-const getSubredditPath = (subreddit: string, sort: string, time: string) => {
-  subreddit = subreddit || "popular";
-  sort = sort || "hot";
-  time = time || "day";
-
-  let path = "/r/";
-  path += subreddit;
-  if (sort !== "hot") path += `/${sort}`;
-
-  const query: Record<string, string> = {};
-  if (sort === "top" && time) query["t"] = time;
-
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
-};
+import { getSubredditPath } from "../../../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
@@ -66,38 +49,36 @@ type Props = {
   initialPosts: any;
 };
 
-const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
+const SubredditPage: FC<Props> = ({ initialPosts }) => {
   const router = useRouter();
-  const [posts, setPosts] = useState<any>(initialPosts);
 
   const subreddit = router.query["subreddit"] as string;
-  const [sort, setSort] = useState<string>("best");
-  const [time, setTime] = useState<string>("day");
-
-  const { me } = useMe();
-
-  useEffect(() => {
-    (async () => {
-      const { path, query } = getSubredditPath(subreddit, sort, time);
-      const postsResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: path,
-        query: query,
-      });
-      setPosts(postsResponse.data);
-    })();
-  }, [me, subreddit, sort, time]);
+  const [sort, setSort] = useState<string>(
+    (router.query["sort"] as string) || "hot"
+  );
+  const [time, setTime] = useState<string>(
+    (router.query["t"] as string) || "day"
+  );
 
   useEffect(() => {
-    (() => {
-      router.replace(
-        getSubredditPath(subreddit, sort, time).fullpath,
-        undefined,
-        {
-          shallow: true,
-        }
-      );
-    })();
+    router.events.on("routeChangeComplete", (url) => {
+      const parsedUrl = new URL(url, "http://localhost:3000");
+      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlTime = parsedUrl.searchParams.get("t") || "day";
+      setSort(urlSort);
+      setTime(urlTime);
+    });
+  }, []);
+
+  useEffect(() => {
+    router.replace(
+      getSubredditPath(subreddit, sort, time).fullpath,
+      undefined,
+      {
+        shallow: true,
+      }
+    );
   }, [subreddit, sort, time]);
 
   const getHandleSortClick = (sortValue: string) => {
@@ -145,12 +126,12 @@ const SubredditPage: FC<Props> = ({ initialPosts = {} }) => {
         </Button>
       </Box>
 
-      <Stack>
-        {posts.data.children.map((post: any, index: number) => (
-          <Post post={post} key={index} />
-        ))}
-      </Stack>
-      <Button>more</Button>
+      <Posts
+        subreddit={subreddit}
+        sort={sort}
+        time={time}
+        initialPosts={initialPosts}
+      />
     </Frame>
   );
 };
