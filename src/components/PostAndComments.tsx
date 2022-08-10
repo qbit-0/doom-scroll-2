@@ -5,41 +5,41 @@ import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
-    subreddit: string;
-    postId: string;
-    initialPost?: any;
-    initialComments?: any;
+  subreddit: string;
+  postId: string;
+  initialPost?: any;
+  initialComments?: any;
 };
 
 const PostAndComments: FC<Props> = ({
-    subreddit,
-    postId,
-    initialPost,
-    initialComments,
+  subreddit,
+  postId,
+  initialPost,
+  initialComments,
 }) => {
-    const [post, setPost] = useState(initialPost);
-    const [comments, setComments] = useState(initialComments);
+  const [post, setPost] = useState(initialPost);
+  const [comments, setComments] = useState(initialComments);
 
-    useEffect(() => {
-        (async () => {
-            const path = `/r/${subreddit}/comments/${postId}`;
+  useEffect(() => {
+    (async () => {
+      const path = `/r/${subreddit}/comments/${postId}`;
 
-            const postsResponse = await axios.post("/api/reddit", {
-                method: "GET",
-                path: path,
-            });
+      const postsResponse = await axios.post("/api/reddit", {
+        method: "GET",
+        path: path,
+      });
 
-            setPost(postsResponse.data[0].data.children[0]);
-            setComments(postsResponse.data[1]);
-        })();
-    }, [subreddit, postId]);
+      setPost(postsResponse.data[0].data.children[0]);
+      setComments(postsResponse.data[1]);
+    })();
+  }, [subreddit, postId]);
 
-    return (
-        <>
-            {post && <Post post={post} />}
-            {comments && <Comments initialComments={comments} />}
-        </>
-    );
+  return (
+    <>
+      {post && <Post post={post} />}
+      {comments && <Comments initialComments={comments} />}
+    </>
+  );
 };
 
 export default PostAndComments;

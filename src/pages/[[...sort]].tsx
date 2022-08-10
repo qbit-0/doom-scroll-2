@@ -1,19 +1,19 @@
 import {
-    BellIcon,
-    CalendarIcon,
-    StarIcon,
-    TimeIcon,
-    TriangleUpIcon,
+  BellIcon,
+  CalendarIcon,
+  StarIcon,
+  TimeIcon,
+  TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import {
-    ChangeEventHandler,
-    FC,
-    MouseEventHandler,
-    useEffect,
-    useState,
+  ChangeEventHandler,
+  FC,
+  MouseEventHandler,
+  useEffect,
+  useState,
 } from "react";
 
 import Frame from "../components/Frame";
@@ -23,123 +23,107 @@ import { withSessionSsr } from "../lib/session/withSession";
 import { getHomePath } from "../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
-    async (context) => {
-        const { req } = context;
+  async (context) => {
+    const { req } = context;
 
-        const sort = context.query["sort"] as string;
-        const time = context.query["t"] as string;
-
-        const { path, query } = getHomePath(sort, time);
-
-        const postsResponse = await redditApi(req, {
-            method: "GET",
-            path: path,
-            query: query,
-        });
-        return {
-            props: {
-                initialPosts: postsResponse.data,
-            },
-        };
-    }
-);
-
-type Props = {
-    initialPosts: any;
-};
-
-const Home: FC<Props> = ({ initialPosts }) => {
-    const router = useRouter();
-    const [sort, setSort] = useState<string>(
-        (router.query["sort"] as string) || "best"
-    );
-    const [time, setTime] = useState<string>(
-        (router.query["t"] as string) || "day"
-    );
-
-    useEffect(() => {
-        router.events.on("routeChangeComplete", (url) => {
-            const parsedUrl = new URL(url, "http://localhost:3000");
-            const match = parsedUrl.pathname.match(
-                /^\/(r\/(\w+)\/)?(?<sort>\w+)$/
-            );
-            const urlSort = (match && match?.groups?.["sort"]) || "best";
-            const urlTime = parsedUrl.searchParams.get("t") || "day";
-            setSort(urlSort);
-            setTime(urlTime);
-        });
-    }, []);
-
-    useEffect(() => {
-        router.replace(getHomePath(sort, time).fullpath, undefined, {
-            shallow: true,
-        });
-    }, [sort, time]);
-
-    const getHandleSortClick = (sortValue: string) => {
-        const handleSortClick: MouseEventHandler<HTMLButtonElement> = (
-            event
-        ) => {
-            event.preventDefault();
-            setSort(sortValue);
-        };
-        return handleSortClick;
-    };
-
-    const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-        setTime(event.target.value);
-    };
+    const sort = context.query["sort"] as string;
+    const time = context.query["t"] as string;
 
     const { path, query } = getHomePath(sort, time);
 
-    return (
-        <Frame>
-            <Box>
-                <Button
-                    leftIcon={<BellIcon />}
-                    onClick={getHandleSortClick("best")}
-                >
-                    Best
-                </Button>
-                <Button
-                    leftIcon={<CalendarIcon />}
-                    onClick={getHandleSortClick("hot")}
-                >
-                    Hot
-                </Button>
-                <Button
-                    leftIcon={<TimeIcon />}
-                    onClick={getHandleSortClick("new")}
-                >
-                    New
-                </Button>
-                <Button
-                    leftIcon={<StarIcon />}
-                    onClick={getHandleSortClick("top")}
-                >
-                    Top
-                </Button>
-                {sort === "top" && (
-                    <Select value={time} onChange={handleTimeChange}>
-                        <option value="hour">Now</option>
-                        <option value="day">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                        <option value="all">All Time</option>
-                    </Select>
-                )}
-                <Button
-                    leftIcon={<TriangleUpIcon />}
-                    onClick={getHandleSortClick("rising")}
-                >
-                    Rising
-                </Button>
-            </Box>
+    const postsResponse = await redditApi(req, {
+      method: "GET",
+      path: path,
+      query: query,
+    });
+    return {
+      props: {
+        initialPosts: postsResponse.data,
+      },
+    };
+  }
+);
 
-            <Posts path={path} query={query} initialPosts={initialPosts} />
-        </Frame>
-    );
+type Props = {
+  initialPosts: any;
+};
+
+const Home: FC<Props> = ({ initialPosts }) => {
+  const router = useRouter();
+  const [sort, setSort] = useState<string>(
+    (router.query["sort"] as string) || "best"
+  );
+  const [time, setTime] = useState<string>(
+    (router.query["t"] as string) || "day"
+  );
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", (url) => {
+      const parsedUrl = new URL(url, "http://localhost:3000");
+      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlTime = parsedUrl.searchParams.get("t") || "day";
+      setSort(urlSort);
+      setTime(urlTime);
+    });
+  }, []);
+
+  useEffect(() => {
+    router.replace(getHomePath(sort, time).fullpath, undefined, {
+      shallow: true,
+    });
+  }, [sort, time]);
+
+  const getHandleSortClick = (sortValue: string) => {
+    const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      event.preventDefault();
+      setSort(sortValue);
+    };
+    return handleSortClick;
+  };
+
+  const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+    setTime(event.target.value);
+  };
+
+  const { path, query } = getHomePath(sort, time);
+
+  return (
+    <Frame>
+      <Box>
+        <Button leftIcon={<BellIcon />} onClick={getHandleSortClick("best")}>
+          Best
+        </Button>
+        <Button leftIcon={<CalendarIcon />} onClick={getHandleSortClick("hot")}>
+          Hot
+        </Button>
+        <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
+          New
+        </Button>
+        <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
+          Top
+        </Button>
+        {sort === "top" && (
+          <Select value={time} onChange={handleTimeChange}>
+            <option value="hour">Now</option>
+            <option value="day">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+            <option value="all">All Time</option>
+          </Select>
+        )}
+        <Button
+          leftIcon={<TriangleUpIcon />}
+          onClick={getHandleSortClick("rising")}
+        >
+          Rising
+        </Button>
+      </Box>
+
+      <Posts path={path} query={query} initialPosts={initialPosts} />
+    </Frame>
+  );
 };
 
 export default Home;
