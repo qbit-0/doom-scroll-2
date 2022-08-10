@@ -29,7 +29,6 @@ const PostAndComments: FC<Props> = ({
       });
       setPost(postsResponse.data[0].data.children[0]);
       setComments(postsResponse.data[1]);
-      history.pushState(null, post["data"]["title"], post["data"]["permalink"]);
     })();
   }, [path, query, post]);
 

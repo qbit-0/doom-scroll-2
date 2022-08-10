@@ -5,15 +5,12 @@ export const buildUrlPath = (path: string, query: Record<string, string>) => {
 };
 
 export const getSubredditPath = (
-  subreddit = "popular",
-  sort = "hot",
-  time = "day"
+  subreddit: string,
+  sort: string,
+  time: string
 ) => {
   let path = subreddit === "" ? "/" : `/r/${subreddit}`;
-  if (
-    (subreddit === "" && sort !== "best") ||
-    (subreddit !== "" && sort !== "top")
-  ) {
+  if ((!subreddit && sort !== "best") || (subreddit && sort !== "hot")) {
     path += `/${sort}`;
   }
 

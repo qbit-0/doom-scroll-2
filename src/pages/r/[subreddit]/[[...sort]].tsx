@@ -1,10 +1,22 @@
-import { Box, Heading } from "@chakra-ui/react";
+import {
+  CalendarIcon,
+  StarIcon,
+  TimeIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
+import { Box, Button, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import {
+  ChangeEventHandler,
+  FC,
+  MouseEventHandler,
+  useEffect,
+  useState,
+} from "react";
 
 import Frame from "../../../components/Frame";
-import PostsContainer from "../../../components/PostsContainer";
+import Posts from "../../../components/Posts";
 import { redditApi } from "../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../lib/session/withSession";
 import { getSubredditPath } from "../../../lib/utils/urlUtils";
@@ -14,8 +26,8 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     const { req } = context;
 
     const subreddit = context.query["subreddit"] as string;
-    const sort = context.query["sort"] as string;
-    const time = context.query["t"] as string;
+    const sort = (context.query["sort"] as string) || "hot";
+    const time = (context.query["t"] as string) || "day";
 
     const { path, query } = getSubredditPath(subreddit, sort, time);
 
@@ -37,8 +49,6 @@ type Props = {
 };
 
 const SubredditPage: FC<Props> = ({ initialPosts }) => {
-  const router = useRouter();
-
   // useEffect(() => {
   //   router.events.on("routeChangeComplete", (url) => {
   //     const parsedUrl = new URL(url, "http://localhost:3000");
@@ -50,21 +60,66 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
   //   });
   // }, []);
 
+  const router = useRouter();
+  const [sort, setSort] = useState<string>("hot");
+  const [time, setTime] = useState<string>("day");
   const subreddit = router.query["subreddit"] as string;
-  const sort = (router.query["sort"] as string) || "hot";
-  const time = (router.query["t"] as string) || "day";
+
+  useEffect(() => {
+    router.replace(
+      getSubredditPath(subreddit, sort, time).fullpath,
+      undefined,
+      {
+        shallow: true,
+      }
+    );
+  }, [sort, time]);
+
+  const getHandleSortClick = (sortValue: string) => {
+    const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      event.preventDefault();
+      setSort(sortValue);
+    };
+    return handleSortClick;
+  };
+
+  const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+    setTime(event.target.value);
+  };
+
+  const { path, query } = getSubredditPath(subreddit, sort, time);
 
   return (
     <Frame>
       <Box>
-        <Heading>{`r/${router.query["subreddit"]}`}</Heading>
+        <Button leftIcon={<CalendarIcon />} onClick={getHandleSortClick("hot")}>
+          Hot
+        </Button>
+        <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
+          New
+        </Button>
+        <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
+          Top
+        </Button>
+        {sort === "top" && (
+          <Select value={time} onChange={handleTimeChange}>
+            <option value="hour">Now</option>
+            <option value="day">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+            <option value="all">All Time</option>
+          </Select>
+        )}
+        <Button
+          leftIcon={<TriangleUpIcon />}
+          onClick={getHandleSortClick("rising")}
+        >
+          Rising
+        </Button>
       </Box>
-      <PostsContainer
-        subreddit={subreddit}
-        initialSort={sort}
-        initialTime={time}
-        initialPosts={initialPosts}
-      />
+
+      <Posts path={path} query={query} initialPosts={initialPosts} />
     </Frame>
   );
 };

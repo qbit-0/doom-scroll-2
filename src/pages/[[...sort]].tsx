@@ -1,9 +1,23 @@
+import {
+  BellIcon,
+  CalendarIcon,
+  StarIcon,
+  TimeIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
+import { Box, Button, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import {
+  ChangeEventHandler,
+  FC,
+  MouseEventHandler,
+  useEffect,
+  useState,
+} from "react";
 
 import Frame from "../components/Frame";
-import PostsContainer from "../components/PostsContainer";
+import Posts from "../components/Posts";
 import { redditApi } from "../lib/reddit/redditApi";
 import { withSessionSsr } from "../lib/session/withSession";
 import { getSubredditPath } from "../lib/utils/urlUtils";
@@ -35,7 +49,6 @@ type Props = {
 };
 
 const HomePage: FC<Props> = ({ initialPosts }) => {
-  const router = useRouter();
   // useEffect(() => {
   //   router.events.on("routeChangeComplete", (url) => {
   //     const parsedUrl = new URL(url, "http://localhost:3000");
@@ -47,17 +60,64 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   //   });
   // }, []);
 
-  const sort = (router.query["sort"] as string) || "best";
-  const time = (router.query["time"] as string) || "day";
+  const router = useRouter();
+  const [sort, setSort] = useState<string>("best");
+  const [time, setTime] = useState<string>("day");
+
+  useEffect(() => {
+    router.replace(getSubredditPath("", sort, time).fullpath, undefined, {
+      shallow: true,
+    });
+  }, [sort, time]);
+
+  const getHandleSortClick = (sortValue: string) => {
+    const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      event.preventDefault();
+      setSort(sortValue);
+    };
+    return handleSortClick;
+  };
+
+  const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+    setTime(event.target.value);
+  };
+
+  const { path, query } = getSubredditPath("", sort, time);
 
   return (
     <Frame>
-      <PostsContainer
-        subreddit=""
-        initialSort={sort}
-        initialTime={time}
-        initialPosts={initialPosts}
-      />
+      <Box>
+        <Button leftIcon={<BellIcon />} onClick={getHandleSortClick("best")}>
+          Best
+        </Button>
+        <Button leftIcon={<CalendarIcon />} onClick={getHandleSortClick("hot")}>
+          Hot
+        </Button>
+        <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
+          New
+        </Button>
+        <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
+          Top
+        </Button>
+        {sort === "top" && (
+          <Select value={time} onChange={handleTimeChange}>
+            <option value="hour">Now</option>
+            <option value="day">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+            <option value="all">All Time</option>
+          </Select>
+        )}
+        <Button
+          leftIcon={<TriangleUpIcon />}
+          onClick={getHandleSortClick("rising")}
+        >
+          Rising
+        </Button>
+      </Box>
+
+      <Posts path={path} query={query} initialPosts={initialPosts} />
     </Frame>
   );
 };
