@@ -1,9 +1,10 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+
 import Frame from "./Frame";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
 
 export default {
-  title: "Components/Frame",
-  component: Frame,
+    title: "Components/Frame",
+    component: Frame,
 } as ComponentMeta<typeof Frame>;
 
 const Template: ComponentStory<typeof Frame> = (args) => <Frame {...args} />;
