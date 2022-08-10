@@ -13,7 +13,7 @@ type Props = {
 };
 
 const Posts: FC<Props> = ({ subreddit, sort, time, initialPosts }) => {
-  const [posts, setPosts] = useState(initialPosts);
+  const [postListings, setPostListings] = useState([initialPosts]);
   const { me } = useMe();
 
   useEffect(() => {
@@ -24,18 +24,31 @@ const Posts: FC<Props> = ({ subreddit, sort, time, initialPosts }) => {
         path: path,
         query: query,
       });
-      setPosts(postsResponse.data);
+      setPostListings([...postListings, postsResponse.data]);
     })();
   }, [me, subreddit, sort, time]);
+
+  const handleClickMore = async () => {
+    const { path, query } = getSubredditPath(subreddit, sort, time);
+    query["after"] = postListings[postListings.length - 1]["data"]["after"];
+    const postsResponse = await axios.post("/api/reddit", {
+      method: "GET",
+      path: path,
+      query: query,
+    });
+    setPostListings([...postListings, postsResponse.data]);
+  };
 
   return (
     <>
       <Stack>
-        {posts.data.children.map((post: any, index: number) => (
-          <Post post={post} key={index} />
-        ))}
+        {postListings.map((posts: any, listingIndex: number) => {
+          return posts.data.children.map((post: any, index: number) => (
+            <Post post={post} key={listingIndex + index} />
+          ));
+        })}
       </Stack>
-      <Button>more</Button>
+      <Button onClick={handleClickMore}>more</Button>
     </>
   );
 };
