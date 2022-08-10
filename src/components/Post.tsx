@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 import PostAndComments from "./PostAndComments";
@@ -19,7 +20,18 @@ type Props = {
 };
 
 const Post: FC<Props> = ({ post }) => {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const openModal = () => {
+    history.pushState(null, post["data"]["title"], post["data"]["permalink"]);
+    onOpen();
+  };
+
+  const closeModal = () => {
+    history.back();
+    onClose();
+  };
 
   return (
     <>
@@ -30,7 +42,7 @@ const Post: FC<Props> = ({ post }) => {
           </NextLink>
         </Box>
         <Box>
-          <Link size="sm" onClick={onOpen}>
+          <Link size="sm" onClick={openModal}>
             <Heading>{post["data"]["title"]}</Heading>
           </Link>
         </Box>
@@ -40,8 +52,13 @@ const Post: FC<Props> = ({ post }) => {
         </Box>
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+      <Modal
+        isOpen={isOpen}
+        onClose={closeModal}
+        size="xl"
+        motionPreset="slideInBottom"
+      >
+        <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>
           <ModalBody>
             <PostAndComments

@@ -59,16 +59,16 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
     (router.query["t"] as string) || "day"
   );
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", (url) => {
-      const parsedUrl = new URL(url, "http://localhost:3000");
-      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-      const urlSort = (match && match?.groups?.["sort"]) || "best";
-      const urlTime = parsedUrl.searchParams.get("t") || "day";
-      setSort(urlSort);
-      setTime(urlTime);
-    });
-  }, []);
+  // useEffect(() => {
+  //   router.events.on("routeChangeComplete", (url) => {
+  //     const parsedUrl = new URL(url, "http://localhost:3000");
+  //     const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+  //     const urlSort = (match && match?.groups?.["sort"]) || "best";
+  //     const urlTime = parsedUrl.searchParams.get("t") || "day";
+  //     setSort(urlSort);
+  //     setTime(urlTime);
+  //   });
+  // }, []);
 
   useEffect(() => {
     router.replace(
