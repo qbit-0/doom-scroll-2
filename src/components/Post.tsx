@@ -9,7 +9,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import { FC } from "react";
 
 import PostAndComments from "./PostAndComments";
@@ -20,7 +19,6 @@ type Props = {
 };
 
 const Post: FC<Props> = ({ post }) => {
-  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const openModal = () => {
@@ -64,6 +62,7 @@ const Post: FC<Props> = ({ post }) => {
             <PostAndComments
               subreddit={post["data"]["subreddit"]}
               postId={post["data"]["id"]}
+              postName={post["data"]["name"]}
               initialPost={post}
             />
           </ModalBody>

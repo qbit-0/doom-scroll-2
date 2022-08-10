@@ -7,6 +7,7 @@ import Post from "./Post";
 type Props = {
   subreddit: string;
   postId: string;
+  postName: string;
   initialPost?: any;
   initialComments?: any;
 };
@@ -14,6 +15,7 @@ type Props = {
 const PostAndComments: FC<Props> = ({
   subreddit,
   postId,
+  postName,
   initialPost,
   initialComments,
 }) => {
@@ -37,7 +39,7 @@ const PostAndComments: FC<Props> = ({
   return (
     <>
       {post && <Post post={post} />}
-      {comments && <Comments initialComments={comments} />}
+      {comments && <Comments postName={postName} initialComments={comments} />}
     </>
   );
 };

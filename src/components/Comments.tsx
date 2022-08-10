@@ -1,6 +1,5 @@
 import { Stack } from "@chakra-ui/react";
 import axios from "axios";
-import { useRouter } from "next/router";
 import { FC, useState } from "react";
 
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
@@ -8,14 +7,12 @@ import Comment from "./Comment";
 import More from "./More";
 
 type Props = {
+  postName: string;
   initialComments: any;
 };
 
-const Comments: FC<Props> = ({ initialComments }) => {
-  const router = useRouter();
+const Comments: FC<Props> = ({ postName, initialComments }) => {
   const [comments, setComments] = useState(initialComments);
-
-  const linkId = "t3_" + router.query["postId"];
 
   const genHandleClickMore = (more: any) => {
     return async () => {
@@ -25,7 +22,7 @@ const Comments: FC<Props> = ({ initialComments }) => {
         query: {
           api_type: "json",
           id: more["data"]["id"],
-          link_id: linkId,
+          link_id: postName,
         },
         data: new URLSearchParams({
           children: more["data"]["children"].join(","),
@@ -61,7 +58,7 @@ const Comments: FC<Props> = ({ initialComments }) => {
             />
           );
         }
-        return <Comment comment={comment} key={index} />;
+        return <Comment postName={postName} comment={comment} key={index} />;
       })}
     </Stack>
   );

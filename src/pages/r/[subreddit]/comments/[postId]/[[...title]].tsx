@@ -60,7 +60,7 @@ const CommentsPage: FC<Props> = ({ initialPost, initialComments }) => {
   return (
     <Frame>
       <Post post={post} />
-      <Comments initialComments={comments} />
+      <Comments postName={post["data"]["name"]} initialComments={comments} />
     </Frame>
   );
 };

@@ -5,10 +5,11 @@ import Comments from "./Comments";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
+  postName: string;
   comment: any;
 };
 
-const Comment: FC<Props> = ({ comment }) => {
+const Comment: FC<Props> = ({ postName, comment }) => {
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
       <Heading size={"sm"}>{comment["data"]["author"]}</Heading>
@@ -19,7 +20,10 @@ const Comment: FC<Props> = ({ comment }) => {
       <Box>{comment["data"]["depth"]}</Box>
       {comment["data"]["replies"] && (
         <Box pl={2}>
-          <Comments initialComments={comment["data"]["replies"]} />
+          <Comments
+            postName={postName}
+            initialComments={comment["data"]["replies"]}
+          />
         </Box>
       )}
     </Box>
