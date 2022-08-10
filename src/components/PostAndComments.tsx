@@ -5,17 +5,15 @@ import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
-  subreddit: string;
-  postId: string;
-  postName: string;
+  path: string;
+  query: any;
   initialPost?: any;
   initialComments?: any;
 };
 
 const PostAndComments: FC<Props> = ({
-  subreddit,
-  postId,
-  postName,
+  path,
+  query,
   initialPost,
   initialComments,
 }) => {
@@ -24,22 +22,23 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      const path = `/r/${subreddit}/comments/${postId}`;
-
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
         path: path,
+        query: query,
       });
-
       setPost(postsResponse.data[0].data.children[0]);
       setComments(postsResponse.data[1]);
+      history.pushState(null, post["data"]["title"], post["data"]["permalink"]);
     })();
-  }, [subreddit, postId]);
+  }, [path, query, post]);
 
   return (
     <>
       {post && <Post post={post} />}
-      {comments && <Comments postName={postName} initialComments={comments} />}
+      {comments && (
+        <Comments postName={post["data"]["name"]} initialComments={comments} />
+      )}
     </>
   );
 };

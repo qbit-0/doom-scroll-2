@@ -44,16 +44,14 @@ const Posts: FC<Props> = ({ path, query, initialPosts }) => {
   };
 
   return (
-    <>
-      <Stack>
-        {postListings.map((posts: any, listingIndex: number) => {
-          return posts.data.children.map((post: any, index: number) => (
-            <Post post={post} key={listingIndex + index} />
-          ));
-        })}
-      </Stack>
+    <Stack>
+      {postListings.map((posts: any, listingIndex: number) => {
+        return posts.data.children.map((post: any, index: number) => (
+          <Post post={post} key={listingIndex + index} />
+        ));
+      })}
       {after && <Button onClick={handleClickMore}>more</Button>}
-    </>
+    </Stack>
   );
 };
 

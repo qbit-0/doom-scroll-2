@@ -11,7 +11,8 @@ import {
 import NextLink from "next/link";
 import { FC } from "react";
 
-import PostAndComments from "./PostAndComments";
+import Frame from "./Frame";
+import PostAndCommentsContainer from "./PostAndCommentsContainer";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -20,16 +21,6 @@ type Props = {
 
 const Post: FC<Props> = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const openModal = () => {
-    history.pushState(null, post["data"]["title"], post["data"]["permalink"]);
-    onOpen();
-  };
-
-  const closeModal = () => {
-    history.back();
-    onClose();
-  };
 
   return (
     <>
@@ -40,7 +31,7 @@ const Post: FC<Props> = ({ post }) => {
           </NextLink>
         </Box>
         <Box>
-          <Link size="sm" onClick={openModal}>
+          <Link size="sm" onClick={onOpen}>
             <Heading>{post["data"]["title"]}</Heading>
           </Link>
         </Box>
@@ -52,19 +43,23 @@ const Post: FC<Props> = ({ post }) => {
 
       <Modal
         isOpen={isOpen}
-        onClose={closeModal}
+        onClose={() => {
+          history.back();
+          onClose();
+        }}
         size="xl"
         motionPreset="slideInBottom"
       >
         <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>
           <ModalBody>
-            <PostAndComments
-              subreddit={post["data"]["subreddit"]}
-              postId={post["data"]["id"]}
-              postName={post["data"]["name"]}
-              initialPost={post}
-            />
+            <Frame>
+              <PostAndCommentsContainer
+                subreddit={post["data"]["subreddit"]}
+                postId={post["data"]["id"]}
+                initialPost={post}
+              />
+            </Frame>
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -4,32 +4,18 @@ export const buildUrlPath = (path: string, query: Record<string, string>) => {
     : path;
 };
 
-export const getHomePath = (sort: string, time: string) => {
-  sort = sort || "best";
-  time = time || "day";
-
-  let path = "/";
-  if (sort !== "best") path += sort;
-
-  const query: Record<string, string> = {};
-  if (sort === "top" && time) query["t"] = time;
-
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
-};
-
 export const getSubredditPath = (
-  subreddit: string,
-  sort: string,
-  time: string
+  subreddit = "popular",
+  sort = "hot",
+  time = "day"
 ) => {
-  subreddit = subreddit || "popular";
-  sort = sort || "hot";
-  time = time || "day";
-
-  let path = "/r/";
-  path += subreddit;
-  if (sort !== "hot") path += `/${sort}`;
+  let path = subreddit === "" ? "/" : `/r/${subreddit}`;
+  if (
+    (subreddit === "" && sort !== "best") ||
+    (subreddit !== "" && sort !== "top")
+  ) {
+    path += `/${sort}`;
+  }
 
   const query: Record<string, string> = {};
   if (sort === "top" && time) query["t"] = time;
@@ -52,6 +38,20 @@ export const getSearchPath = (
   query["q"] = searchQuery;
   if (sort !== "relevance") query["sort"] = sort;
   if (time !== "all") query["t"] = time;
+
+  const fullpath = buildUrlPath(path, query);
+  return { path, query, fullpath };
+};
+
+export const getCommentsPath = (
+  subreddit: string,
+  postId: string,
+  sort = "best"
+) => {
+  const path = `/r/${subreddit}/comments/${postId}`;
+
+  const query: Record<string, string> = {};
+  if (sort !== "best") query["sort"] = sort;
 
   const fullpath = buildUrlPath(path, query);
   return { path, query, fullpath };

@@ -1,11 +1,8 @@
-import axios from "axios";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
-import Comments from "../../../../../components/Comments";
 import Frame from "../../../../../components/Frame";
-import Post from "../../../../../components/Post";
+import PostAndCommentsContainer from "../../../../../components/PostAndCommentsContainer";
 import { redditApi } from "../../../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../../../lib/session/withSession";
 
@@ -37,30 +34,14 @@ type Props = {
 };
 
 const CommentsPage: FC<Props> = ({ initialPost, initialComments }) => {
-  const router = useRouter();
-  const [post, setPost] = useState<any>(initialPost);
-  const [comments, setComments] = useState<any>(initialComments);
-
-  useEffect(() => {
-    async () => {
-      const subreddit = router.query["subreddit"];
-      const postId = router.query["postId"];
-      const path = `/r/${subreddit}/comments/${postId}`;
-
-      const postsResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: path,
-      });
-
-      setPost(postsResponse.data[0].data.children[0]);
-      setComments(postsResponse.data[1]);
-    };
-  }, [router.query]);
-
   return (
     <Frame>
-      <Post post={post} />
-      <Comments postName={post["data"]["name"]} initialComments={comments} />
+      <PostAndCommentsContainer
+        subreddit={initialPost["data"]["subreddit"]}
+        postId={initialPost["data"]["postId"]}
+        initialPost={initialPost}
+        initialComments={initialComments}
+      />
     </Frame>
   );
 };
