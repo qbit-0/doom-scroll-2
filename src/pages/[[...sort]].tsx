@@ -85,6 +85,8 @@ const Home: FC<Props> = ({ initialPosts }) => {
     setTime(event.target.value);
   };
 
+  const { path, query } = getHomePath(sort, time);
+
   return (
     <Frame>
       <Box>
@@ -118,7 +120,7 @@ const Home: FC<Props> = ({ initialPosts }) => {
         </Button>
       </Box>
 
-      <Posts subreddit="" sort={sort} time={time} initialPosts={initialPosts} />
+      <Posts path={path} query={query} initialPosts={initialPosts} />
     </Frame>
   );
 };

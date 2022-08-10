@@ -37,3 +37,22 @@ export const getSubredditPath = (
   const fullpath = buildUrlPath(path, query);
   return { path, query, fullpath };
 };
+
+export const getSearchPath = (
+  searchQuery: string,
+  sort: string,
+  time: string
+) => {
+  sort = sort || "relevance";
+  time = time || "all";
+
+  let path = "/search";
+
+  const query: Record<string, string> = {};
+  query["q"] = searchQuery;
+  if (sort !== "relevance") query["sort"] = sort;
+  if (time !== "all") query["t"] = time;
+
+  const fullpath = buildUrlPath(path, query);
+  return { path, query, fullpath };
+};

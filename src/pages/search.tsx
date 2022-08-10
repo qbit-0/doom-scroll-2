@@ -5,25 +5,11 @@ import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 import Frame from "../components/Frame";
 import Post from "../components/Post";
+import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
 import { redditApi } from "../lib/reddit/redditApi";
 import { withSessionSsr } from "../lib/session/withSession";
-import { buildUrlPath } from "../lib/utils/urlUtils";
-
-const getSearchPath = (searchQuery: string, sort: string, time: string) => {
-  sort = sort || "relevance";
-  time = time || "all";
-
-  let path = "/search";
-
-  const query: Record<string, string> = {};
-  query["q"] = searchQuery;
-  if (sort !== "relevance") query["sort"] = sort;
-  if (time !== "all") query["t"] = time;
-
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
-};
+import { getSearchPath } from "../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
@@ -90,6 +76,8 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
     setTime(event.target.value);
   };
 
+  const { path, query } = getSearchPath(searchQuery, sort, time);
+
   return (
     <Frame>
       <Box>
@@ -115,7 +103,8 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
           <Post post={post} key={index} />
         ))}
       </Stack>
-      <Button>more</Button>
+
+      <Posts path={path} query={query} initialPosts={initialPosts} />
     </Frame>
   );
 };

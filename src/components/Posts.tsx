@@ -2,41 +2,44 @@ import { Button, Stack } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import useMe from "../lib/hooks/useMe";
-import { getSubredditPath } from "../lib/utils/urlUtils";
 import Post from "./Post";
 
 type Props = {
-  subreddit: string;
-  sort: string;
-  time: string;
+  path: string;
+  query: Record<string, string>;
   initialPosts?: any;
 };
 
-const Posts: FC<Props> = ({ subreddit, sort, time, initialPosts }) => {
+const Posts: FC<Props> = ({ path, query, initialPosts }) => {
   const [postListings, setPostListings] = useState([initialPosts]);
+  const [after, setAfter] = useState<string | null>(
+    initialPosts["data"]["after"]
+  );
   const { me } = useMe();
 
   useEffect(() => {
     (async () => {
-      const { path, query } = getSubredditPath(subreddit, sort, time);
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
         path: path,
         query: query,
       });
-      setPostListings([...postListings, postsResponse.data]);
+      setPostListings([postsResponse.data]);
+      setAfter(postsResponse.data["data"]["after"]);
     })();
-  }, [me, subreddit, sort, time]);
+  }, [me, path, query]);
 
   const handleClickMore = async () => {
-    const { path, query } = getSubredditPath(subreddit, sort, time);
-    query["after"] = postListings[postListings.length - 1]["data"]["after"];
     const postsResponse = await axios.post("/api/reddit", {
       method: "GET",
       path: path,
-      query: query,
+      query: {
+        ...query,
+        after: after,
+      },
     });
     setPostListings([...postListings, postsResponse.data]);
+    setAfter(postsResponse.data["data"]["after"]);
   };
 
   return (
@@ -48,7 +51,7 @@ const Posts: FC<Props> = ({ subreddit, sort, time, initialPosts }) => {
           ));
         })}
       </Stack>
-      <Button onClick={handleClickMore}>more</Button>
+      {after && <Button onClick={handleClickMore}>more</Button>}
     </>
   );
 };

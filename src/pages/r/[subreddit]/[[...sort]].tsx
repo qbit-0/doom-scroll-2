@@ -5,7 +5,6 @@ import {
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Heading, Select } from "@chakra-ui/react";
-import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import {
@@ -17,7 +16,6 @@ import {
 } from "react";
 import Frame from "../../../components/Frame";
 import Posts from "../../../components/Posts";
-import useMe from "../../../lib/hooks/useMe";
 import { redditApi } from "../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../lib/session/withSession";
 import { getSubredditPath } from "../../../lib/utils/urlUtils";
@@ -93,6 +91,8 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
     setTime(event.target.value);
   };
 
+  const { path, query } = getSubredditPath(subreddit, sort, time);
+
   return (
     <Frame>
       <Box>
@@ -126,12 +126,7 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
         </Button>
       </Box>
 
-      <Posts
-        subreddit={subreddit}
-        sort={sort}
-        time={time}
-        initialPosts={initialPosts}
-      />
+      <Posts path={path} query={query} initialPosts={initialPosts} />
     </Frame>
   );
 };
