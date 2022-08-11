@@ -1,8 +1,18 @@
-import { Box, Heading, Link, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FC } from "react";
 
-import PostAndCommentsModal from "./PostAndCommentsModal";
+import Frame from "./Frame";
+import PostAndComments from "./PostAndComments";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -31,13 +41,25 @@ const Post: FC<Props> = ({ post }) => {
         </Box>
       </Box>
 
-      <PostAndCommentsModal
+      <Modal
         isOpen={isOpen}
         onClose={onClose}
-        subreddit={post["data"]["subreddit"]}
-        postId={post["data"]["id"]}
-        initialPost={post}
-      />
+        size="xl"
+        motionPreset="slideInBottom"
+      >
+        <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
+        <ModalContent>
+          <ModalBody>
+            <Frame>
+              <PostAndComments
+                subreddit={post["data"]["subreddit"]}
+                article={post["data"]["id"]}
+                initialPost={post}
+              />
+            </Frame>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

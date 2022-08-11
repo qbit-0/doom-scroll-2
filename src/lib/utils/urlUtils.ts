@@ -9,7 +9,7 @@ export const getSubredditPath = (
   sort: string,
   time: string
 ) => {
-  let path = subreddit === "" ? "/" : `/r/${subreddit}`;
+  let path = subreddit === "" ? "" : `/r/${subreddit}`;
   if ((!subreddit && sort !== "best") || (subreddit && sort !== "hot")) {
     path += `/${sort}`;
   }
@@ -41,11 +41,13 @@ export const getSearchPath = (
 };
 
 export const getCommentsPath = (
-  subreddit: string,
-  postId: string,
+  subreddit: string | undefined | null,
+  article: string,
   sort = "best"
 ) => {
-  const path = `/r/${subreddit}/comments/${postId}`;
+  let path = "";
+  if (subreddit) path += `/r/${subreddit}`;
+  path += `/comments/${article}`;
 
   const query: Record<string, string> = {};
   if (sort !== "best") query["sort"] = sort;

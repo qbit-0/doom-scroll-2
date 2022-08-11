@@ -61,13 +61,15 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   // }, []);
 
   const router = useRouter();
-  const [sort, setSort] = useState<string>("best");
-  const [time, setTime] = useState<string>("day");
+  const [sort, setSort] = useState<string>(
+    (router.query["sort"] as string) || "best"
+  );
+  const [time, setTime] = useState<string>(
+    (router.query["t"] as string) || "day"
+  );
 
   useEffect(() => {
-    router.replace(getSubredditPath("", sort, time).fullpath, undefined, {
-      shallow: true,
-    });
+    history.replaceState("", "", getSubredditPath("", sort, time).fullpath);
   }, [sort, time]);
 
   const getHandleSortClick = (sortValue: string) => {

@@ -38,6 +38,8 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     });
     return {
       props: {
+        initialSort: sort,
+        initialTime: time,
         initialPosts: postsResponse.data,
       },
     };
@@ -61,17 +63,19 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
   // }, []);
 
   const router = useRouter();
-  const [sort, setSort] = useState<string>("hot");
-  const [time, setTime] = useState<string>("day");
+  const [sort, setSort] = useState<string>(
+    (router.query["sort"] as string) || "hot"
+  );
+  const [time, setTime] = useState<string>(
+    (router.query["t"] as string) || "day"
+  );
   const subreddit = router.query["subreddit"] as string;
 
   useEffect(() => {
-    router.replace(
-      getSubredditPath(subreddit, sort, time).fullpath,
-      undefined,
-      {
-        shallow: true,
-      }
+    history.replaceState(
+      "",
+      "",
+      getSubredditPath(subreddit, sort, time).fullpath
     );
   }, [sort, time]);
 
