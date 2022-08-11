@@ -1,4 +1,4 @@
-export const buildUrlPath = (path: string, query: Record<string, string>) => {
+export const getPathname = (path: string, query: Record<string, string>) => {
   return Object.entries(query).length
     ? path + `?${new URLSearchParams(query).toString()}`
     : path;
@@ -13,12 +13,13 @@ export const getSubredditPath = (
   if ((!subreddit && sort !== "best") || (subreddit && sort !== "hot")) {
     path += `/${sort}`;
   }
+  if (path === "") path = "/";
 
   const query: Record<string, string> = {};
   if (sort === "top" && time) query["t"] = time;
 
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
+  const pathname = getPathname(path, query);
+  return { path, query, pathname };
 };
 
 export const getSearchPath = (
@@ -36,8 +37,8 @@ export const getSearchPath = (
   if (sort !== "relevance") query["sort"] = sort;
   if (time !== "all") query["t"] = time;
 
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
+  const pathname = getPathname(path, query);
+  return { path, query, pathname };
 };
 
 export const getCommentsPath = (
@@ -52,6 +53,6 @@ export const getCommentsPath = (
   const query: Record<string, string> = {};
   if (sort !== "best") query["sort"] = sort;
 
-  const fullpath = buildUrlPath(path, query);
-  return { path, query, fullpath };
+  const pathname = getPathname(path, query);
+  return { path, query, pathname };
 };

@@ -51,16 +51,16 @@ type Props = {
 };
 
 const SubredditPage: FC<Props> = ({ initialPosts }) => {
-  // useEffect(() => {
-  //   router.events.on("routeChangeComplete", (url) => {
-  //     const parsedUrl = new URL(url, "http://localhost:3000");
-  //     const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-  //     const urlSort = (match && match?.groups?.["sort"]) || "best";
-  //     const urlTime = parsedUrl.searchParams.get("t") || "day";
-  //     setSort(urlSort);
-  //     setTime(urlTime);
-  //   });
-  // }, []);
+  useEffect(() => {
+    router.events.on("routeChangeComplete", (url) => {
+      const parsedUrl = new URL(url, "http://localhost:3000");
+      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlTime = parsedUrl.searchParams.get("t") || "day";
+      setSort(urlSort);
+      setTime(urlTime);
+    });
+  }, []);
 
   const router = useRouter();
   const [sort, setSort] = useState<string>(
@@ -75,7 +75,7 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
     history.replaceState(
       "",
       "",
-      getSubredditPath(subreddit, sort, time).fullpath
+      getSubredditPath(subreddit, sort, time).pathname
     );
   }, [sort, time]);
 

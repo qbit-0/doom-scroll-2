@@ -1,5 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 import Comments from "./Comments";
 import SanitizeHTML from "./SanitizeHTML";

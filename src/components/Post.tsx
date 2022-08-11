@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 import Frame from "./Frame";
@@ -20,7 +21,10 @@ type Props = {
 };
 
 const Post: FC<Props> = ({ post }) => {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const savedPath = router.asPath;
 
   return (
     <>
@@ -43,7 +47,10 @@ const Post: FC<Props> = ({ post }) => {
 
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          history.replaceState(null, "", savedPath);
+          onClose();
+        }}
         size="xl"
         motionPreset="slideInBottom"
       >

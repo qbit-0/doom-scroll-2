@@ -2,7 +2,7 @@ import { Select } from "@chakra-ui/react";
 import axios from "axios";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
-import { buildUrlPath, getCommentsPath } from "../lib/utils/urlUtils";
+import { getCommentsPath, getPathname } from "../lib/utils/urlUtils";
 import Comments from "./Comments";
 import Post from "./Post";
 
@@ -25,12 +25,12 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      const { path, query, fullpath } = getCommentsPath(
+      const { path, query, pathname } = getCommentsPath(
         subreddit,
         article,
         sort
       );
-      history.pushState(null, "", fullpath);
+      history.replaceState(null, "", pathname);
 
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
@@ -41,14 +41,16 @@ const PostAndComments: FC<Props> = ({
       setPost(postsResponse.data[0]["data"]["children"][0]);
       setComments(postsResponse.data[1]);
 
-      history.replaceState(
-        null,
-        "",
-        buildUrlPath(
-          postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
-          query
-        )
-      );
+      if (location.pathname === pathname) {
+        history.replaceState(
+          null,
+          "",
+          getPathname(
+            postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
+            query
+          )
+        );
+      }
     })();
   }, [subreddit, article, sort]);
 

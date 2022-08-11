@@ -49,16 +49,16 @@ type Props = {
 };
 
 const HomePage: FC<Props> = ({ initialPosts }) => {
-  // useEffect(() => {
-  //   router.events.on("routeChangeComplete", (url) => {
-  //     const parsedUrl = new URL(url, "http://localhost:3000");
-  //     const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-  //     const urlSort = (match && match?.groups?.["sort"]) || "best";
-  //     const urlTime = parsedUrl.searchParams.get("t") || "day";
-  //     setSort(urlSort);
-  //     setTime(urlTime);
-  //   });
-  // }, []);
+  useEffect(() => {
+    router.events.on("routeChangeComplete", (url) => {
+      const parsedUrl = new URL(url, "http://localhost:3000");
+      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlTime = parsedUrl.searchParams.get("t") || "day";
+      setSort(urlSort);
+      setTime(urlTime);
+    });
+  }, []);
 
   const router = useRouter();
   const [sort, setSort] = useState<string>(
@@ -69,7 +69,7 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   );
 
   useEffect(() => {
-    history.replaceState("", "", getSubredditPath("", sort, time).fullpath);
+    history.replaceState(null, "", getSubredditPath("", sort, time).pathname);
   }, [sort, time]);
 
   const getHandleSortClick = (sortValue: string) => {

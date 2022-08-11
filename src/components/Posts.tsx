@@ -3,6 +3,7 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 import useMe from "../lib/hooks/useMe";
+import { getPathname } from "../lib/utils/urlUtils";
 import Post from "./Post";
 
 type Props = {

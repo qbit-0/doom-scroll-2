@@ -48,7 +48,7 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
 
   useEffect(() => {
     (() => {
-      router.push(getSearchPath(searchQuery, sort, time).fullpath, undefined, {
+      router.push(getSearchPath(searchQuery, sort, time).pathname, undefined, {
         shallow: true,
       });
     })();
