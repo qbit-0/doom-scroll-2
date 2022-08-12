@@ -1,7 +1,10 @@
 import { Box, Heading } from "@chakra-ui/react";
-import { FC } from "react";
+import axios from "axios";
+import { FC, useEffect, useState } from "react";
 
+import { getElapsedString } from "../lib/utils/getElapsedString";
 import Comments from "./Comments";
+import CustomImage from "./CustomImage";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -10,9 +13,49 @@ type Props = {
 };
 
 const Comment: FC<Props> = ({ postName, comment }) => {
+  const [author, setAuthor] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      if (comment["data"]["author"] !== "[deleted]") {
+        const author = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/user/${comment["data"]["author"]}/about`,
+        });
+        setAuthor(author.data);
+      }
+    })();
+  }, [comment]);
+
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
-      <Heading size={"sm"}>{comment["data"]["author"]}</Heading>
+      {author !== null ? (
+        <CustomImage
+          src={author?.["data"]["icon_img"]}
+          placeholder="blur"
+          alt="author"
+          layout="fixed"
+          width={32}
+          height={32}
+        />
+      ) : (
+        <CustomImage
+          src={
+            "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_1.png"
+          }
+          placeholder="blur"
+          alt="author"
+          layout="fixed"
+          width={32}
+          height={32}
+        />
+      )}
+      <Heading size="xs">
+        {comment["data"]["author"]}
+        {" - " + getElapsedString(comment["data"]["created_utc"])}
+        {comment["data"]["edited"] &&
+          " - " + `edited ${getElapsedString(comment["data"]["edited"])}`}
+      </Heading>
       <Box>
         <SanitizeHTML dirty={comment["data"]["body_html"]} />
       </Box>

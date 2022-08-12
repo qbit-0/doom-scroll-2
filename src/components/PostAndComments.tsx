@@ -11,6 +11,7 @@ type Props = {
   article: string;
   initialPost?: any;
   initialComments?: any;
+  openModal?: boolean;
 };
 
 const PostAndComments: FC<Props> = ({
@@ -18,6 +19,7 @@ const PostAndComments: FC<Props> = ({
   article,
   initialPost,
   initialComments,
+  openModal = true,
 }) => {
   const [sort, setSort] = useState("best");
   const [post, setPost] = useState(initialPost);
@@ -30,7 +32,7 @@ const PostAndComments: FC<Props> = ({
         article,
         sort
       );
-      history.replaceState(null, "", pathname);
+      history.pushState(null, "", pathname);
 
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
@@ -68,7 +70,7 @@ const PostAndComments: FC<Props> = ({
         <option value="old">Old</option>
         <option value="qa">Q&A</option>
       </Select>
-      {post && <Post post={post} />}
+      {post && <Post post={post} openModal={openModal} />}
       {comments && (
         <Comments postName={post["data"]["name"]} initialComments={comments} />
       )}
