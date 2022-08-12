@@ -1,6 +1,7 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { FC } from "react";
 
+import Gallery from "./Gallery";
 import ImagePreview from "./ImagePreview";
 import SanitizeHTML from "./SanitizeHTML";
 
@@ -50,61 +51,61 @@ const PostBody: FC<Props> = ({ post }) => {
     );
   }
 
-  // if (post["data"]?.["gallery_data"]?.["items"]) {
-  //   return (
-  //     <div className="flex justify-center bg-neutral-700">
-  //       <Gallery
-  //         srcs={Object.values(post["data"]["gallery_data"]["items"])
-  //           .filter(
-  //             ({ media_id }: any) =>
-  //               post["data"]["media_metadata"][media_id]["status"] === "valid"
-  //           )
-  //           .map(
-  //             ({ media_id }: any) =>
-  //               post["data"]["media_metadata"][media_id]["s"]["u"]
-  //           )}
-  //       />
-  //     </div>
-  //   );
-  // }
-
-  if (post["data"]["post_hint"] === "image") {
+  if (post["data"]?.["gallery_data"]?.["items"]) {
     return (
-      <div>
+      <Box>
+        <Gallery
+          srcs={Object.values(post["data"]["gallery_data"]["items"])
+            .filter(
+              ({ media_id }: any) =>
+                post["data"]["media_metadata"][media_id]["status"] === "valid"
+            )
+            .map(
+              ({ media_id }: any) =>
+                post["data"]["media_metadata"][media_id]["s"]["u"]
+            )}
+        />
+      </Box>
+    );
+  }
+
+  if (post["data"]?.["post_hint"] === "image") {
+    return (
+      <Box>
         <ImagePreview
           src={post["data"]["url_overridden_by_dest"]}
           href={post["data"]["url_overridden_by_dest"]}
         />
-      </div>
+      </Box>
     );
   }
 
-  // if (post["data"]?.["preview"]?.["images"]?.["0"]?.["source"]?.["url"]) {
-  //   return (
-  //     <div className="flex justify-center bg-neutral-700">
-  //       <ImagePreview
-  //         src={post["data"]["preview"]["images"]["0"]["source"]["url"]}
-  //         href={post["data"]["url_overridden_by_dest"]}
-  //       />
-  //     </div>
-  //   );
-  // }
+  if (post["data"]?.["preview"]?.["images"]?.["0"]?.["source"]?.["url"]) {
+    return (
+      <Box>
+        <ImagePreview
+          src={post["data"]["preview"]["images"]["0"]["source"]["url"]}
+          href={post["data"]["url_overridden_by_dest"]}
+        />
+      </Box>
+    );
+  }
 
-  // if (
-  //   post["data"]?.["thumbnail"] !== "default" &&
-  //   post["data"]?.["thumbnail"] !== "self" &&
-  //   post["data"]?.["thumbnail"] !== "nsfw" &&
-  //   post["data"]?.["thumbnail"] !== ""
-  // ) {
-  //   return (
-  //     <div className="flex justify-center bg-neutral-700">
-  //       <ImagePreview
-  //         src={post["data"]["thumbnail"]}
-  //         href={post["data"]["url_overridden_by_dest"]}
-  //       />
-  //     </div>
-  //   );
-  // }
+  if (
+    post["data"]?.["thumbnail"] !== "default" &&
+    post["data"]?.["thumbnail"] !== "self" &&
+    post["data"]?.["thumbnail"] !== "nsfw" &&
+    post["data"]?.["thumbnail"] !== ""
+  ) {
+    return (
+      <Box>
+        <ImagePreview
+          src={post["data"]["thumbnail"]}
+          href={post["data"]["url_overridden_by_dest"]}
+        />
+      </Box>
+    );
+  }
 
   return null;
 };
