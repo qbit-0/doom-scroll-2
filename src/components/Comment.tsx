@@ -1,4 +1,4 @@
-import { Box, Heading, Image } from "@chakra-ui/react";
+import { Avatar, Box, Heading, Image } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
@@ -28,11 +28,9 @@ const Comment: FC<Props> = ({ postName, comment }) => {
 
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
-      <Image
+      <Avatar
+        name={comment["data"]["author"]}
         src={author?.["data"]["icon_img"]}
-        alt="author"
-        width={16}
-        height={16}
       />
       <Heading size="xs">
         {comment["data"]["author"]}

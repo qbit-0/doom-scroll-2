@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Heading,
   Image,
@@ -17,6 +18,8 @@ import { FC, useEffect, useState } from "react";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Frame from "./Frame";
 import PostAndComments from "./PostAndComments";
+import PostBody from "./PostBody";
+import PostsAndCommentsModal from "./PostsAndCommentsModal";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -51,11 +54,9 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
           </NextLink>
         </Box>
         <Box>
-          <Image
+          <Avatar
+            name={post["data"]["author"]}
             src={author?.["data"]["icon_img"]}
-            alt="author"
-            width={16}
-            height={16}
           />
           <Heading size="xs">
             u/{post["data"]["author"]}
@@ -76,34 +77,16 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
           )}
         </Box>
         <Box>{post["data"]["ups"]}</Box>
-        <Box>
-          <SanitizeHTML dirty={post["data"]["selftext_html"]} />
-        </Box>
+        <PostBody post={post} />
       </Box>
-
-      <Modal
+      <PostsAndCommentsModal
+        post={post}
         isOpen={isOpen}
         onClose={() => {
           history.replaceState(null, "", savedPath);
           onClose();
         }}
-        size="xl"
-        motionPreset="slideInBottom"
-      >
-        <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-        <ModalContent>
-          <ModalBody>
-            <Frame>
-              <PostAndComments
-                subreddit={post["data"]["subreddit"]}
-                article={post["data"]["id"]}
-                initialPost={post}
-                openModal={false}
-              />
-            </Frame>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      />
     </>
   );
 };
