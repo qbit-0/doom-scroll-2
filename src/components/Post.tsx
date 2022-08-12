@@ -1,26 +1,12 @@
-import {
-  Avatar,
-  Box,
-  Heading,
-  Image,
-  Link,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Avatar, Box, Heading, Link, useDisclosure } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import Frame from "./Frame";
-import PostAndComments from "./PostAndComments";
 import PostBody from "./PostBody";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
-import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
   post: Record<string, any>;
