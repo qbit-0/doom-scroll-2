@@ -1,10 +1,9 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Image } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Comments from "./Comments";
-import CustomImage from "./CustomImage";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -18,38 +17,23 @@ const Comment: FC<Props> = ({ postName, comment }) => {
   useEffect(() => {
     (async () => {
       if (comment["data"]["author"] !== "[deleted]") {
-        const author = await axios.post("/api/reddit", {
+        const authorResponse = await axios.post("/api/reddit", {
           method: "GET",
           path: `/user/${comment["data"]["author"]}/about`,
         });
-        setAuthor(author.data);
+        setAuthor(authorResponse.data);
       }
     })();
   }, [comment]);
 
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
-      {author !== null ? (
-        <CustomImage
-          src={author?.["data"]["icon_img"]}
-          placeholder="blur"
-          alt="author"
-          layout="fixed"
-          width={32}
-          height={32}
-        />
-      ) : (
-        <CustomImage
-          src={
-            "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_1.png"
-          }
-          placeholder="blur"
-          alt="author"
-          layout="fixed"
-          width={32}
-          height={32}
-        />
-      )}
+      <Image
+        src={author?.["data"]["icon_img"]}
+        alt="author"
+        width={16}
+        height={16}
+      />
       <Heading size="xs">
         {comment["data"]["author"]}
         {" - " + getElapsedString(comment["data"]["created_utc"])}

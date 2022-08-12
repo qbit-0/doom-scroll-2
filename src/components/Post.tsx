@@ -1,6 +1,7 @@
 import {
   Box,
   Heading,
+  Image,
   Link,
   Modal,
   ModalBody,
@@ -14,7 +15,6 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import CustomImage from "./CustomImage";
 import Frame from "./Frame";
 import PostAndComments from "./PostAndComments";
 import SanitizeHTML from "./SanitizeHTML";
@@ -32,11 +32,13 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
 
   useEffect(() => {
     (async () => {
-      const author = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/user/${post["data"]["author"]}/about`,
-      });
-      setAuthor(author.data);
+      if (post["data"]["author"] !== "[deleted]") {
+        const authorResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/user/${post["data"]["author"]}/about`,
+        });
+        setAuthor(authorResponse.data);
+      }
     })();
   }, [post]);
 
@@ -49,15 +51,11 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
           </NextLink>
         </Box>
         <Box>
-          <CustomImage
-            src={
-              author?.["data"]["icon_img"] ||
-              "https://www.redditstatic.com/avatars/defaults/v2/avatar_default_1.png"
-            }
+          <Image
+            src={author?.["data"]["icon_img"]}
             alt="author"
-            layout="fixed"
-            width={32}
-            height={32}
+            width={16}
+            height={16}
           />
           <Heading size="xs">
             u/{post["data"]["author"]}

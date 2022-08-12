@@ -1,5 +1,6 @@
 import { Button, Stack } from "@chakra-ui/react";
 import axios from "axios";
+import { log } from "console";
 import { FC, useEffect, useState } from "react";
 
 import useMe from "../lib/hooks/useMe";
