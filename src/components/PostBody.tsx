@@ -1,6 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
+import ImagePreview from "./ImagePreview";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -67,16 +68,16 @@ const PostBody: FC<Props> = ({ post }) => {
   //   );
   // }
 
-  // if (post["data"]["post_hint"] === "image") {
-  //   return (
-  //     <div className="flex justify-center bg-neutral-700">
-  //       <ImagePreview
-  //         src={post["data"]["url_overridden_by_dest"]}
-  //         href={post["data"]["url_overridden_by_dest"]}
-  //       />
-  //     </div>
-  //   );
-  // }
+  if (post["data"]["post_hint"] === "image") {
+    return (
+      <div>
+        <ImagePreview
+          src={post["data"]["url_overridden_by_dest"]}
+          href={post["data"]["url_overridden_by_dest"]}
+        />
+      </div>
+    );
+  }
 
   // if (post["data"]?.["preview"]?.["images"]?.["0"]?.["source"]?.["url"]) {
   //   return (
