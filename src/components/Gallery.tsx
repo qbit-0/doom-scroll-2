@@ -9,10 +9,10 @@ type Props = {
 
 const Gallery: FC<Props> = ({ srcs }) => {
   return (
-    <Box>
+    <Box w="full" overflowX="auto" overflowY="clip" whiteSpace="nowrap">
       {srcs.map((src, index) => {
         return (
-          <Box key={index}>
+          <Box display="inline-flex" h="96" maxW="95%" key={index}>
             <ImagePreview src={src} href={src} />
           </Box>
         );

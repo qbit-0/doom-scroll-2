@@ -12,7 +12,7 @@ type Props = {
 const PostBody: FC<Props> = ({ post }) => {
   if (post["data"]?.["selftext_html"]) {
     return (
-      <Box>
+      <Box display="flex" maxH="96" overflow="auto" textOverflow="ellipsis">
         <SanitizeHTML dirty={post["data"]["selftext_html"]} />
       </Box>
     );
@@ -20,7 +20,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["media"]?.["oembed"]?.["html"]) {
     return (
-      <Box>
+      <Box display="flex" maxH="96" overflow="auto">
         <SanitizeHTML dirty={post["data"]["media"]["oembed"]["html"]} />
       </Box>
     );
@@ -28,7 +28,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["media"]?.["reddit_video"]?.["dash_url"]) {
     return (
-      <Box>
+      <Box display="flex" justifyContent="center" maxH="96">
         <video
           playsInline
           width={post["data"]["media"]["reddit_video"]["width"]}
@@ -53,7 +53,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["gallery_data"]?.["items"]) {
     return (
-      <Box>
+      <Box display="flex" justifyContent="center">
         <Gallery
           srcs={Object.values(post["data"]["gallery_data"]["items"])
             .filter(
@@ -71,7 +71,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["post_hint"] === "image") {
     return (
-      <Box>
+      <Box display="flex" justifyContent="center" maxH="96">
         <ImagePreview
           src={post["data"]["url_overridden_by_dest"]}
           href={post["data"]["url_overridden_by_dest"]}
@@ -82,7 +82,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["preview"]?.["images"]?.["0"]?.["source"]?.["url"]) {
     return (
-      <Box>
+      <Box display="flex" justifyContent="center" maxH="96">
         <ImagePreview
           src={post["data"]["preview"]["images"]["0"]["source"]["url"]}
           href={post["data"]["url_overridden_by_dest"]}
@@ -98,7 +98,7 @@ const PostBody: FC<Props> = ({ post }) => {
     post["data"]?.["thumbnail"] !== ""
   ) {
     return (
-      <Box>
+      <Box display="flex" justifyContent="center">
         <ImagePreview
           src={post["data"]["thumbnail"]}
           href={post["data"]["url_overridden_by_dest"]}

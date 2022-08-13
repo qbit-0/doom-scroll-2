@@ -95,35 +95,40 @@ const SubredditPage: FC<Props> = ({ initialPosts }) => {
 
   return (
     <Frame>
-      <Box>
-        <Button leftIcon={<CalendarIcon />} onClick={getHandleSortClick("hot")}>
-          Hot
-        </Button>
-        <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
-          New
-        </Button>
-        <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
-          Top
-        </Button>
-        {sort === "top" && (
-          <Select value={time} onChange={handleTimeChange}>
-            <option value="hour">Now</option>
-            <option value="day">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="year">This Year</option>
-            <option value="all">All Time</option>
-          </Select>
-        )}
-        <Button
-          leftIcon={<TriangleUpIcon />}
-          onClick={getHandleSortClick("rising")}
-        >
-          Rising
-        </Button>
-      </Box>
+      <Box maxWidth="2xl" mx="auto">
+        <Box>
+          <Button
+            leftIcon={<CalendarIcon />}
+            onClick={getHandleSortClick("hot")}
+          >
+            Hot
+          </Button>
+          <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
+            New
+          </Button>
+          <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
+            Top
+          </Button>
+          {sort === "top" && (
+            <Select value={time} onChange={handleTimeChange}>
+              <option value="hour">Now</option>
+              <option value="day">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+              <option value="all">All Time</option>
+            </Select>
+          )}
+          <Button
+            leftIcon={<TriangleUpIcon />}
+            onClick={getHandleSortClick("rising")}
+          >
+            Rising
+          </Button>
+        </Box>
 
-      <Posts path={path} query={query} initialPosts={initialPosts} />
+        <Posts path={path} query={query} initialPosts={initialPosts} />
+      </Box>
     </Frame>
   );
 };

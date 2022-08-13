@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC } from "react";
@@ -43,11 +44,13 @@ const CommentsNoSubredditPage: FC<Props> = ({
 
   return (
     <Frame>
-      <PostAndComments
-        article={article}
-        initialPost={initialPost}
-        initialComments={initialComments}
-      />
+      <Box maxWidth="2xl" mx="auto">
+        <PostAndComments
+          article={article}
+          initialPost={initialPost}
+          initialComments={initialComments}
+        />
+      </Box>
     </Frame>
   );
 };

@@ -15,7 +15,7 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="6xl"
       motionPreset="slideInBottom"
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />

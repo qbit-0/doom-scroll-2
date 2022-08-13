@@ -6,12 +6,10 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-
-import Frame from "./Frame";
-import PostAndComments from "./PostAndComments";
 
 type Props = {
   src: string;
@@ -23,34 +21,26 @@ const ImagePreview: React.FC<Props> = ({ src, href }) => {
 
   return (
     <>
-      <figure>
-        <Link onClick={onOpen}>
-          <Image
-            className="max-h-[40rem] drop-shadow-lg"
-            alt="post body"
-            src={src}
-          />
-          <Box>
-            <p>{href}</p>
-          </Box>
-        </Link>
-      </figure>
+      <Link onClick={onOpen} display="flex" justifyContent="center">
+        <Image src={src} alt="post image" objectFit="contain" dropShadow="lg" />
+      </Link>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        size="xl"
+        size="2xl"
         motionPreset="slideInBottom"
+        isCentered={true}
       >
         <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>
           <ModalBody>
-            <Image
-              className="max-h-[40rem] drop-shadow-lg"
-              alt="post body"
-              src={src}
-            />
-            <Box>
-              <p>{href}</p>
+            <Box display="flex" justifyContent="center" maxW="75vw" maxH="75vh">
+              <Image
+                src={src}
+                alt="post image"
+                objectFit="contain"
+                dropShadow="lg"
+              />
             </Box>
           </ModalBody>
         </ModalContent>
