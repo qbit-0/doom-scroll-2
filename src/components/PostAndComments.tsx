@@ -1,8 +1,9 @@
-import { Select } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { ChangeEventHandler, FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { getCommentsPath, getPathname } from "../lib/utils/urlUtils";
+import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
 
@@ -21,17 +22,12 @@ const PostAndComments: FC<Props> = ({
   initialComments,
   openModal = true,
 }) => {
-  const [sort, setSort] = useState("best");
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
 
   useEffect(() => {
     (async () => {
-      const { path, query, pathname } = getCommentsPath(
-        subreddit,
-        article,
-        sort
-      );
+      const { path, query, pathname } = getCommentsPath(subreddit, article);
       history.pushState(null, "", pathname);
 
       const postsResponse = await axios.post("/api/reddit", {
@@ -54,27 +50,20 @@ const PostAndComments: FC<Props> = ({
         );
       }
     })();
-  }, [subreddit, article, sort]);
-
-  const handleSortChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-    setSort(event.target.value);
-  };
+  }, [subreddit, article]);
 
   return (
-    <>
-      <Select value={sort} onChange={handleSortChange}>
-        <option value="best">Best</option>
-        <option value="top">Top</option>
-        <option value="new">New</option>
-        <option value="controversial">Controversial</option>
-        <option value="old">Old</option>
-        <option value="qa">Q&A</option>
-      </Select>
+    <VStack>
       {post && <Post post={post} openModal={openModal} />}
       {comments && (
-        <Comments postName={post["data"]["name"]} initialComments={comments} />
+        <Card>
+          <Comments
+            postName={post["data"]["name"]}
+            initialComments={comments}
+          />
+        </Card>
       )}
-    </>
+    </VStack>
   );
 };
 

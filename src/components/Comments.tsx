@@ -1,8 +1,9 @@
-import { Stack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useState } from "react";
 
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
+import Card from "./Card";
 import Comment from "./Comment";
 import More from "./More";
 
@@ -47,7 +48,7 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
   };
 
   return (
-    <Stack>
+    <VStack>
       {comments["data"]["children"].map((comment: any, index: number) => {
         if (comment["kind"] === "more") {
           return (
@@ -60,7 +61,7 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
         }
         return <Comment postName={postName} comment={comment} key={index} />;
       })}
-    </Stack>
+    </VStack>
   );
 };
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import Card from "./Card";
 import PostBody from "./PostBody";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
 
@@ -33,12 +34,10 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
 
   return (
     <>
-      <Box borderWidth={1} borderColor="red">
-        <Box>
-          <NextLink href={`/r/${post["data"]["subreddit"]}`}>
-            <Link size="sm">{post["data"]["subreddit_name_prefixed"]}</Link>
-          </NextLink>
-        </Box>
+      <Card>
+        <NextLink href={`/r/${post["data"]["subreddit"]}`}>
+          <Link size="sm">{post["data"]["subreddit_name_prefixed"]}</Link>
+        </NextLink>
         <Box>
           <Avatar
             name={post["data"]["author"]}
@@ -49,22 +48,20 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
             {" - " + getElapsedString(post["data"]["created_utc"])}
           </Heading>
         </Box>
-        <Box>
-          {openModal ? (
-            <Link size="sm" onClick={onOpen}>
+        {openModal ? (
+          <Link size="sm" onClick={onOpen}>
+            <Heading>{post["data"]["title"]}</Heading>
+          </Link>
+        ) : (
+          <NextLink href={post["data"]["permalink"]}>
+            <Link size="sm">
               <Heading>{post["data"]["title"]}</Heading>
             </Link>
-          ) : (
-            <NextLink href={post["data"]["permalink"]}>
-              <Link size="sm">
-                <Heading>{post["data"]["title"]}</Heading>
-              </Link>
-            </NextLink>
-          )}
-        </Box>
-        <Box>{post["data"]["ups"]}</Box>
+          </NextLink>
+        )}
+        {post["data"]["ups"]}
         <PostBody post={post} />
-      </Box>
+      </Card>
       <PostsAndCommentsModal
         post={post}
         isOpen={isOpen}

@@ -5,7 +5,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Button, Select } from "@chakra-ui/react";
+import { Box, Button, Flex, Select, VStack } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import {
@@ -16,7 +16,9 @@ import {
   useState,
 } from "react";
 
+import Card from "../components/Card";
 import Frame from "../components/Frame";
+import HomeAbout from "../components/HomeAbout";
 import Posts from "../components/Posts";
 import { redditApi } from "../lib/reddit/redditApi";
 import { withSessionSsr } from "../lib/session/withSession";
@@ -88,43 +90,60 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
 
   return (
     <Frame>
-      <Box maxWidth="2xl" mx="auto">
-        <Box>
-          <Button leftIcon={<BellIcon />} onClick={getHandleSortClick("best")}>
-            Best
-          </Button>
-          <Button
-            leftIcon={<CalendarIcon />}
-            onClick={getHandleSortClick("hot")}
-          >
-            Hot
-          </Button>
-          <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
-            New
-          </Button>
-          <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
-            Top
-          </Button>
-          {sort === "top" && (
-            <Select value={time} onChange={handleTimeChange}>
-              <option value="hour">Now</option>
-              <option value="day">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="year">This Year</option>
-              <option value="all">All Time</option>
-            </Select>
-          )}
-          <Button
-            leftIcon={<TriangleUpIcon />}
-            onClick={getHandleSortClick("rising")}
-          >
-            Rising
-          </Button>
+      <Flex py="4" justify="center" columnGap={4}>
+        <Box maxWidth="xl">
+          <VStack>
+            <Card>
+              <Button
+                leftIcon={<BellIcon />}
+                onClick={getHandleSortClick("best")}
+              >
+                Best
+              </Button>
+              <Button
+                leftIcon={<CalendarIcon />}
+                onClick={getHandleSortClick("hot")}
+              >
+                Hot
+              </Button>
+              <Button
+                leftIcon={<TimeIcon />}
+                onClick={getHandleSortClick("new")}
+              >
+                New
+              </Button>
+              <Button
+                leftIcon={<StarIcon />}
+                onClick={getHandleSortClick("top")}
+              >
+                Top
+              </Button>
+              {sort === "top" && (
+                <Select value={time} onChange={handleTimeChange}>
+                  <option value="hour">Now</option>
+                  <option value="day">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                  <option value="all">All Time</option>
+                </Select>
+              )}
+              <Button
+                leftIcon={<TriangleUpIcon />}
+                onClick={getHandleSortClick("rising")}
+              >
+                Rising
+              </Button>
+            </Card>
+            <Posts path={path} query={query} initialPosts={initialPosts} />
+          </VStack>
         </Box>
-
-        <Posts path={path} query={query} initialPosts={initialPosts} />
-      </Box>
+        <Box maxW="sm">
+          <VStack>
+            <HomeAbout />
+          </VStack>
+        </Box>
+      </Flex>
     </Frame>
   );
 };

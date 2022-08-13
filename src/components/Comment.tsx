@@ -1,4 +1,4 @@
-import { Avatar, Box, Heading, Image } from "@chakra-ui/react";
+import { Avatar, Box, Heading } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
@@ -27,7 +27,7 @@ const Comment: FC<Props> = ({ postName, comment }) => {
   }, [comment]);
 
   return (
-    <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue">
+    <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
       <Avatar
         name={comment["data"]["author"]}
         src={author?.["data"]["icon_img"]}
@@ -42,7 +42,6 @@ const Comment: FC<Props> = ({ postName, comment }) => {
         <SanitizeHTML dirty={comment["data"]["body_html"]} />
       </Box>
       <Box>{comment["data"]["score"]}</Box>
-      <Box>{comment["data"]["depth"]}</Box>
       {comment["data"]["replies"] && (
         <Box pl={2}>
           <Comments

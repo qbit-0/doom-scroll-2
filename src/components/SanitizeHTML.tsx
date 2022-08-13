@@ -1,17 +1,17 @@
-import React from "react";
+import { Box } from "@chakra-ui/react";
+import { FC } from "react";
 import sanitizeHtml from "sanitize-html";
 
 type Props = {
   dirty: string;
 };
 
-const SanitizeHTML: React.FC<Props> = ({ dirty }) => {
+const SanitizeHTML: FC<Props> = ({ dirty }) => {
   return (
-    <div
+    <Box
       dangerouslySetInnerHTML={{
         __html: sanitizeHtml(dirty),
       }}
-      className="unreset text-neutral-50"
     />
   );
 };

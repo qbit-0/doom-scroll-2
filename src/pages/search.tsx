@@ -1,9 +1,10 @@
-import { Box, Select } from "@chakra-ui/react";
+import { Box, Select, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
+import Card from "../components/Card";
 import Frame from "../components/Frame";
 import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
@@ -66,25 +67,27 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
 
   return (
     <Frame>
-      <Box maxWidth="2xl" mx="auto">
-        <Box>
-          <Select value={sort} onChange={handleSortChange}>
-            <option value="relevance">Relevance</option>
-            <option value="hot">Hot</option>
-            <option value="top">Top</option>k<option value="new">New</option>
-            <option value="comments">Comments</option>
-          </Select>
-          <Select value={time} onChange={handleTimeChange}>
-            <option value="all">All Time</option>
-            <option value="year">Past Year</option>
-            <option value="month">Past Month</option>
-            <option value="week">Past Week</option>
-            <option value="day">Past 24 Hours</option>
-            <option value="hour">Past Hour</option>
-          </Select>
-        </Box>
+      <Box maxWidth="xl" mx="auto">
+        <VStack>
+          <Card>
+            <Select value={sort} onChange={handleSortChange}>
+              <option value="relevance">Relevance</option>
+              <option value="hot">Hot</option>
+              <option value="top">Top</option>k<option value="new">New</option>
+              <option value="comments">Comments</option>
+            </Select>
+            <Select value={time} onChange={handleTimeChange}>
+              <option value="all">All Time</option>
+              <option value="year">Past Year</option>
+              <option value="month">Past Month</option>
+              <option value="week">Past Week</option>
+              <option value="day">Past 24 Hours</option>
+              <option value="hour">Past Hour</option>
+            </Select>
+          </Card>
 
-        <Posts path={path} query={query} initialPosts={initialPosts} />
+          <Posts path={path} query={query} initialPosts={initialPosts} />
+        </VStack>
       </Box>
     </Frame>
   );

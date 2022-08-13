@@ -9,7 +9,7 @@ type Props = {
 const More: FC<Props> = ({ more, handleClickMore }) => {
   const count = more["data"]["count"];
   return (
-    <Box>
+    <Box w="full">
       {count > 0 ? (
         <Button onClick={handleClickMore}>{`${count} more ${
           count > 1 ? "replies" : "reply"

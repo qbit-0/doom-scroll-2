@@ -2,11 +2,13 @@ import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Flex,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Link,
+  Spacer,
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -41,32 +43,35 @@ const NavBar: FC<Props> = () => {
 
   return (
     <Box bg="lightblue">
-      <NextLink href={"/"}>
-        <Link>DoomScroll</Link>
-      </NextLink>
-      {me ? (
-        <>
-          <Text>{me.name}</Text>
+      <Flex>
+        <NextLink href={"/"}>
+          <Link>DoomScroll</Link>
+        </NextLink>
+        <Spacer />
+        {me ? (
+          <>
+            <Text>{me.name}</Text>
+            <Button
+              onClick={async () => {
+                await axios.post("/api/logout");
+                localStorage.removeItem("me");
+                mutate("me");
+              }}
+            >
+              Log Out
+            </Button>
+          </>
+        ) : (
           <Button
-            onClick={async () => {
-              await axios.post("/api/logout");
-              localStorage.removeItem("me");
-              mutate("me");
+            onClick={() => {
+              const { url } = getAuthRequestUrl(isCompact);
+              router.push(url);
             }}
           >
-            Log Out
+            Log In
           </Button>
-        </>
-      ) : (
-        <Button
-          onClick={() => {
-            const { url } = getAuthRequestUrl(isCompact);
-            router.push(url);
-          }}
-        >
-          Log In
-        </Button>
-      )}
+        )}
+      </Flex>
 
       <form onSubmit={handleSearchSubmit}>
         <InputGroup>
