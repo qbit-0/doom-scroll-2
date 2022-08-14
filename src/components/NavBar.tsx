@@ -10,6 +10,7 @@ import {
   Link,
   Spacer,
   Text,
+  chakra,
 } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
@@ -47,7 +48,26 @@ const NavBar: FC<Props> = () => {
         <NextLink href={"/"}>
           <Link>DoomScroll</Link>
         </NextLink>
-        <Spacer />
+        <Button display="inline">Home</Button>
+        <chakra.form flex="auto" onSubmit={handleSearchSubmit}>
+          <InputGroup>
+            <Input
+              variant="filled"
+              placeholder="Search Reddit"
+              value={search}
+              onChange={handleSearchChange}
+            />
+            <InputRightElement>
+              <IconButton
+                icon={<SearchIcon />}
+                aria-label={"search submit"}
+                type="submit"
+              />
+            </InputRightElement>
+          </InputGroup>
+        </chakra.form>
+        <Button>Popular</Button>
+        <Button>All</Button>
         {me ? (
           <>
             <Text>{me.name}</Text>
@@ -72,24 +92,6 @@ const NavBar: FC<Props> = () => {
           </Button>
         )}
       </Flex>
-
-      <form onSubmit={handleSearchSubmit}>
-        <InputGroup>
-          <Input
-            variant="filled"
-            placeholder="Search Reddit"
-            value={search}
-            onChange={handleSearchChange}
-          />
-          <InputRightElement>
-            <IconButton
-              icon={<SearchIcon />}
-              aria-label={"search submit"}
-              type="submit"
-            />
-          </InputRightElement>
-        </InputGroup>
-      </form>
     </Box>
   );
 };
