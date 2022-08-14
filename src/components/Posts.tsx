@@ -3,6 +3,7 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 import useMe from "../lib/hooks/useMe";
+import Card from "./Card";
 import Post from "./Post";
 
 type Props = {
@@ -47,7 +48,9 @@ const Posts: FC<Props> = ({ path, query, initialPosts }) => {
     <VStack>
       {postListings.map((posts: any, listingIndex: number) => {
         return posts.data.children.map((post: any, index: number) => (
-          <Post post={post} key={listingIndex + index} />
+          <Card key={listingIndex + index}>
+            <Post post={post} />
+          </Card>
         ));
       })}
       {after && <Button onClick={handleClickMore}>more</Button>}

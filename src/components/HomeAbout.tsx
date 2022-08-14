@@ -2,7 +2,6 @@ import { Heading, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import Card from "./Card";
-import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {};
 

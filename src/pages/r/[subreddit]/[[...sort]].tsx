@@ -18,10 +18,11 @@ import {
 
 import Card from "../../../components/Card";
 import Frame from "../../../components/Frame";
-import Posts from "../../../components/Posts";
+import Post from "../../../components/Post";
 import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditRules from "../../../components/SubredditRules";
+import useMe from "../../../lib/hooks/useMe";
 import { redditApi } from "../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../lib/session/withSession";
 import { getSubredditPath } from "../../../lib/utils/urlUtils";
@@ -80,6 +81,8 @@ const SubredditPage: FC<Props> = ({
   initialRules,
 }) => {
   const router = useRouter();
+  const [about, setAbout] = useState<any | null>(initialAbout || null);
+  const [rules, setRules] = useState<any | null>(initialRules || null);
   const [sort, setSort] = useState<string>(
     initialSort || (router.query["sort"] as string) || "hot"
   );
@@ -87,8 +90,19 @@ const SubredditPage: FC<Props> = ({
     intialTime || (router.query["t"] as string) || "day"
   );
   const subreddit = router.query["subreddit"] as string;
-  const [about, setAbout] = useState<any | null>(initialAbout || null);
-  const [rules, setRules] = useState<any | null>(initialRules || null);
+  const [postListings, setPostListings] = useState([initialPosts]);
+  const [after, setAfter] = useState<string | null>(
+    initialPosts["data"]["after"]
+  );
+  const { me } = useMe();
+
+  useEffect(() => {
+    history.replaceState(
+      "",
+      "",
+      getSubredditPath(subreddit, sort, time).pathname
+    );
+  }, [sort, time]);
 
   useEffect(() => {
     router.events.on("routeChangeComplete", (url) => {
@@ -100,14 +114,6 @@ const SubredditPage: FC<Props> = ({
       setTime(urlTime);
     });
   }, []);
-
-  useEffect(() => {
-    history.replaceState(
-      "",
-      "",
-      getSubredditPath(subreddit, sort, time).pathname
-    );
-  }, [sort, time]);
 
   useEffect(() => {
     (async () => {
@@ -129,6 +135,19 @@ const SubredditPage: FC<Props> = ({
     })();
   }, [subreddit]);
 
+  useEffect(() => {
+    (async () => {
+      const { path, query } = getSubredditPath(subreddit, sort, time);
+      const postsResponse = await axios.post("/api/reddit", {
+        method: "GET",
+        path: path,
+        query: query,
+      });
+      setPostListings([postsResponse.data]);
+      setAfter(postsResponse.data["data"]["after"]);
+    })();
+  }, [me, subreddit, sort, time]);
+
   const getHandleSortClick = (sortValue: string) => {
     const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
       event.preventDefault();
@@ -141,7 +160,19 @@ const SubredditPage: FC<Props> = ({
     setTime(event.target.value);
   };
 
-  const { path, query } = getSubredditPath(subreddit, sort, time);
+  const handleClickMore = async () => {
+    const { path, query } = getSubredditPath(subreddit, sort, time);
+    const postsResponse = await axios.post("/api/reddit", {
+      method: "GET",
+      path: path,
+      query: {
+        ...query,
+        after: after,
+      },
+    });
+    setPostListings([...postListings, postsResponse.data]);
+    setAfter(postsResponse.data["data"]["after"]);
+  };
 
   return (
     <Frame>
@@ -185,7 +216,16 @@ const SubredditPage: FC<Props> = ({
                 Rising
               </Button>
             </Card>
-            <Posts path={path} query={query} initialPosts={initialPosts} />
+            <VStack>
+              {postListings.map((posts: any, listingIndex: number) => {
+                return posts.data.children.map((post: any, index: number) => (
+                  <Card key={listingIndex + index}>
+                    <Post post={post} />
+                  </Card>
+                ));
+              })}
+              {after && <Button onClick={handleClickMore}>more</Button>}
+            </VStack>
           </VStack>
         </Box>
         <Box maxW="sm">

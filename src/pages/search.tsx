@@ -1,4 +1,4 @@
-import { Box, Select, VStack } from "@chakra-ui/react";
+import { Box, Button, Select, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 import Card from "../components/Card";
 import Frame from "../components/Frame";
+import Post from "../components/Post";
 import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
 import { redditApi } from "../lib/reddit/redditApi";
@@ -47,6 +48,11 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
   const [time, setTime] = useState<string>("all");
   const { me } = useMe();
 
+  const [postListings, setPostListings] = useState([initialPosts]);
+  const [after, setAfter] = useState<string | null>(
+    initialPosts["data"]["after"]
+  );
+
   useEffect(() => {
     (() => {
       router.push(getSearchPath(searchQuery, sort, time).pathname, undefined, {
@@ -54,6 +60,19 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
       });
     })();
   }, [searchQuery, sort, time]);
+
+  useEffect(() => {
+    (async () => {
+      const { path, query } = getSearchPath(searchQuery, sort, time);
+      const postsResponse = await axios.post("/api/reddit", {
+        method: "GET",
+        path: path,
+        query: query,
+      });
+      setPostListings([postsResponse.data]);
+      setAfter(postsResponse.data["data"]["after"]);
+    })();
+  }, [me, searchQuery, sort, time]);
 
   const handleSortChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
     setSort(event.target.value);
@@ -63,7 +82,19 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
     setTime(event.target.value);
   };
 
-  const { path, query } = getSearchPath(searchQuery, sort, time);
+  const handleClickMore = async () => {
+    const { path, query } = getSearchPath(searchQuery, sort, time);
+    const postsResponse = await axios.post("/api/reddit", {
+      method: "GET",
+      path: path,
+      query: {
+        ...query,
+        after: after,
+      },
+    });
+    setPostListings([...postListings, postsResponse.data]);
+    setAfter(postsResponse.data["data"]["after"]);
+  };
 
   return (
     <Frame>
@@ -85,8 +116,16 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
               <option value="hour">Past Hour</option>
             </Select>
           </Card>
-
-          <Posts path={path} query={query} initialPosts={initialPosts} />
+          <VStack>
+            {postListings.map((posts: any, listingIndex: number) => {
+              return posts.data.children.map((post: any, index: number) => (
+                <Card key={listingIndex + index}>
+                  <Post post={post} />
+                </Card>
+              ));
+            })}
+            {after && <Button onClick={handleClickMore}>more</Button>}
+          </VStack>
         </VStack>
       </Box>
     </Frame>

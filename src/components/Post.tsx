@@ -34,34 +34,32 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
 
   return (
     <>
-      <Card>
-        <NextLink href={`/r/${post["data"]["subreddit"]}`}>
-          <Link size="sm">{post["data"]["subreddit_name_prefixed"]}</Link>
-        </NextLink>
-        <Box>
-          <Avatar
-            name={post["data"]["author"]}
-            src={author?.["data"]["icon_img"]}
-          />
-          <Heading size="xs">
-            u/{post["data"]["author"]}
-            {" - " + getElapsedString(post["data"]["created_utc"])}
-          </Heading>
-        </Box>
-        {openModal ? (
-          <Link size="sm" onClick={onOpen}>
+      <NextLink href={`/r/${post["data"]["subreddit"]}`}>
+        <Link size="sm">{post["data"]["subreddit_name_prefixed"]}</Link>
+      </NextLink>
+      <Box>
+        <Avatar
+          name={post["data"]["author"]}
+          src={author?.["data"]["icon_img"]}
+        />
+        <Heading size="xs">
+          u/{post["data"]["author"]}
+          {" - " + getElapsedString(post["data"]["created_utc"])}
+        </Heading>
+      </Box>
+      {openModal ? (
+        <Link size="sm" onClick={onOpen}>
+          <Heading>{post["data"]["title"]}</Heading>
+        </Link>
+      ) : (
+        <NextLink href={post["data"]["permalink"]}>
+          <Link size="sm">
             <Heading>{post["data"]["title"]}</Heading>
           </Link>
-        ) : (
-          <NextLink href={post["data"]["permalink"]}>
-            <Link size="sm">
-              <Heading>{post["data"]["title"]}</Heading>
-            </Link>
-          </NextLink>
-        )}
-        {post["data"]["ups"]}
-        <PostBody post={post} />
-      </Card>
+        </NextLink>
+      )}
+      {post["data"]["ups"]}
+      <PostBody post={post} />
       <PostsAndCommentsModal
         post={post}
         isOpen={isOpen}

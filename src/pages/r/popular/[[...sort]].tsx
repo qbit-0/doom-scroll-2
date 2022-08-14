@@ -1,5 +1,4 @@
 import {
-  BellIcon,
   CalendarIcon,
   StarIcon,
   TimeIcon,
@@ -17,32 +16,34 @@ import {
   useState,
 } from "react";
 
-import Card from "../components/Card";
-import Frame from "../components/Frame";
-import HomeAbout from "../components/HomeAbout";
-import Post from "../components/Post";
-import Posts from "../components/Posts";
-import useMe from "../lib/hooks/useMe";
-import { redditApi } from "../lib/reddit/redditApi";
-import { withSessionSsr } from "../lib/session/withSession";
-import { getSubredditPath } from "../lib/utils/urlUtils";
+import Card from "../../../components/Card";
+import Frame from "../../../components/Frame";
+import PopularAbout from "../../../components/PopularAbout";
+import Post from "../../../components/Post";
+import useMe from "../../../lib/hooks/useMe";
+import { redditApi } from "../../../lib/reddit/redditApi";
+import { withSessionSsr } from "../../../lib/session/withSession";
+import { getSubredditPath } from "../../../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
     const { req } = context;
 
-    const sort = (context.query["sort"] as string) || "best";
+    const sort = (context.query["sort"] as string) || "hot";
     const time = (context.query["t"] as string) || "day";
 
-    const { path, query } = getSubredditPath("", sort, time);
+    const { path, query } = getSubredditPath("popular", sort, time);
 
     const postsResponse = await redditApi(req, {
       method: "GET",
       path: path,
       query: query,
     });
+
     return {
       props: {
+        initialSort: sort,
+        initialTime: time,
         initialPosts: postsResponse.data,
       },
     };
@@ -50,34 +51,44 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
 );
 
 type Props = {
+  initialSort: string;
+  intialTime: string;
   initialPosts: any;
 };
 
-const HomePage: FC<Props> = ({ initialPosts }) => {
-  const router = useRouter();
+const SUBREDDIT = "popular";
 
+const SubredditPage: FC<Props> = ({
+  initialSort,
+  intialTime,
+  initialPosts,
+}) => {
+  const router = useRouter();
   const [sort, setSort] = useState<string>(
-    (router.query["sort"] as string) || "best"
+    initialSort || (router.query["sort"] as string) || "hot"
   );
   const [time, setTime] = useState<string>(
-    (router.query["t"] as string) || "day"
+    intialTime || (router.query["t"] as string) || "day"
   );
-  const { me } = useMe();
-
   const [postListings, setPostListings] = useState([initialPosts]);
   const [after, setAfter] = useState<string | null>(
     initialPosts["data"]["after"]
   );
+  const { me } = useMe();
 
   useEffect(() => {
-    history.replaceState(null, "", getSubredditPath("", sort, time).pathname);
+    history.replaceState(
+      "",
+      "",
+      getSubredditPath(SUBREDDIT, sort, time).pathname
+    );
   }, [sort, time]);
 
   useEffect(() => {
     router.events.on("routeChangeComplete", (url) => {
       const parsedUrl = new URL(url, "http://localhost:3000");
       const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-      const urlSort = (match && match?.groups?.["sort"]) || "best";
+      const urlSort = (match && match?.groups?.["sort"]) || "hot";
       const urlTime = parsedUrl.searchParams.get("t") || "day";
       setSort(urlSort);
       setTime(urlTime);
@@ -86,7 +97,7 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
 
   useEffect(() => {
     (async () => {
-      const { path, query } = getSubredditPath("", sort, time);
+      const { path, query } = getSubredditPath(SUBREDDIT, sort, time);
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
         path: path,
@@ -110,7 +121,7 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   };
 
   const handleClickMore = async () => {
-    const { path, query } = getSubredditPath("", sort, time);
+    const { path, query } = getSubredditPath(SUBREDDIT, sort, time);
     const postsResponse = await axios.post("/api/reddit", {
       method: "GET",
       path: path,
@@ -126,15 +137,9 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   return (
     <Frame>
       <Flex py="4" justify="center" columnGap={4}>
-        <Box maxWidth="xl">
+        <Box maxW="xl">
           <VStack>
             <Card>
-              <Button
-                leftIcon={<BellIcon />}
-                onClick={getHandleSortClick("best")}
-              >
-                Best
-              </Button>
               <Button
                 leftIcon={<CalendarIcon />}
                 onClick={getHandleSortClick("hot")}
@@ -184,7 +189,7 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
         </Box>
         <Box maxW="sm">
           <VStack>
-            <HomeAbout />
+            <PopularAbout />
           </VStack>
         </Box>
       </Flex>
@@ -192,4 +197,4 @@ const HomePage: FC<Props> = ({ initialPosts }) => {
   );
 };
 
-export default HomePage;
+export default SubredditPage;
