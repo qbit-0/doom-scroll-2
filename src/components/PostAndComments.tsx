@@ -1,11 +1,12 @@
-import { VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
-import { getCommentsPath, getPathname } from "../lib/utils/urlUtils";
+import { getCommentsPath } from "../lib/utils/urlUtils";
 import Card from "./Card";
+import CommentSkeleton from "./CommentSkeleton";
 import Comments from "./Comments";
 import Post from "./Post";
+import PostSkeleton from "./PostSkeleton";
 
 type Props = {
   subreddit?: string;
@@ -53,19 +54,12 @@ const PostAndComments: FC<Props> = ({
 
   return (
     <>
-      {post && (
-        <Card>
-          <Post post={post} openModal={openModal} />
-        </Card>
-      )}
-      {comments && (
-        <Card>
-          <Comments
-            postName={post["data"]["name"]}
-            initialComments={comments}
-          />
-        </Card>
-      )}
+      <Card>
+        <Post initialPost={post} openModal={openModal} />
+      </Card>
+      <Card>
+        <Comments postName={article} initialComments={comments} />
+      </Card>
     </>
   );
 };

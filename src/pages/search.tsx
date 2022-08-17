@@ -6,7 +6,7 @@ import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 import Card from "../components/Card";
 import PageFrame from "../components/PageFrame";
-import Post from "../components/Post";
+import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
 import { withSessionSsr } from "../lib/session/withSession";
 import { getSearchPath } from "../lib/utils/urlUtils";
@@ -116,13 +116,7 @@ const SearchPage: FC<Props> = ({
               <option value="hour">Past Hour</option>
             </Select>
           </Card>
-          {postListings.map((posts: any, listingIndex: number) => {
-            return posts.data.children.map((post: any, index: number) => (
-              <Card key={listingIndex + index}>
-                <Post post={post} />
-              </Card>
-            ));
-          })}
+          <Posts postListings={postListings} />
           {after && <Button onClick={handleClickMore}>more</Button>}
         </>
       }

@@ -21,6 +21,8 @@ import Card from "../../../components/Card";
 import PageFrame from "../../../components/PageFrame";
 import PopularAbout from "../../../components/PopularAbout";
 import Post from "../../../components/Post";
+import PostSkeleton from "../../../components/PostSkeleton";
+import Posts from "../../../components/Posts";
 import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditRules from "../../../components/SubredditRules";
@@ -169,13 +171,7 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
               Rising
             </Button>
           </Card>
-          {postListings.map((posts: any, listingIndex: number) => {
-            return posts.data.children.map((post: any, index: number) => (
-              <Card key={listingIndex + index}>
-                <Post post={post} />
-              </Card>
-            ));
-          })}
+          <Posts postListings={postListings} />
           {after && <Button onClick={handleClickMore}>more</Button>}
         </>
       }

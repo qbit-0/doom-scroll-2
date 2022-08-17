@@ -5,7 +5,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, Select } from "@chakra-ui/react";
+import { Button, Select, Skeleton } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -21,6 +21,8 @@ import Card from "../components/Card";
 import HomeAbout from "../components/HomeAbout";
 import PageFrame from "../components/PageFrame";
 import Post from "../components/Post";
+import PostSkeleton from "../components/PostSkeleton";
+import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
 import { withSessionSsr } from "../lib/session/withSession";
 import { getSubredditPath } from "../lib/utils/urlUtils";
@@ -146,13 +148,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
               Rising
             </Button>
           </Card>
-          {postListings.map((posts: any, listingIndex: number) => {
-            return posts.data.children.map((post: any, index: number) => (
-              <Card key={listingIndex + index}>
-                <Post post={post} />
-              </Card>
-            ));
-          })}
+          <Posts postListings={postListings} />
           {after && <Button onClick={handleClickMore}>more</Button>}
         </>
       }

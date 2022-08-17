@@ -1,10 +1,10 @@
-import { VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
 import Comment from "./Comment";
+import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
 
 type Props = {
@@ -14,6 +14,19 @@ type Props = {
 
 const Comments: FC<Props> = ({ postName, initialComments }) => {
   const [comments, setComments] = useState(initialComments);
+
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
+
+  const commentsPlaceholder = [];
+  for (let i = 0; i < 10; i++) {
+    commentsPlaceholder.push(
+      <Box w="full">
+        <CommentSkeleton key={i} />
+      </Box>
+    );
+  }
 
   const genHandleClickMore = (more: any) => {
     return async () => {
@@ -49,18 +62,22 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
 
   return (
     <VStack>
-      {comments["data"]["children"].map((comment: any, index: number) => {
-        if (comment["kind"] === "more") {
-          return (
-            <More
-              more={comment}
-              handleClickMore={genHandleClickMore(comment)}
-              key={index}
-            />
-          );
-        }
-        return <Comment postName={postName} comment={comment} key={index} />;
-      })}
+      {comments
+        ? comments["data"]["children"].map((comment: any, index: number) => {
+            if (comment["kind"] === "more") {
+              return (
+                <More
+                  more={comment}
+                  handleClickMore={genHandleClickMore(comment)}
+                  key={index}
+                />
+              );
+            }
+            return (
+              <Comment postName={postName} comment={comment} key={index} />
+            );
+          })
+        : commentsPlaceholder}
     </VStack>
   );
 };

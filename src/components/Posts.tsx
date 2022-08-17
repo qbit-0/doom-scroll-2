@@ -1,60 +1,35 @@
-import { Button, VStack } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
-import useMe from "../lib/hooks/useMe";
 import Card from "./Card";
 import Post from "./Post";
+import PostSkeleton from "./PostSkeleton";
 
 type Props = {
-  path: string;
-  query: Record<string, string>;
-  initialPosts?: any;
+  postListings: any[];
 };
 
-const Posts: FC<Props> = ({ path, query, initialPosts }) => {
-  const [postListings, setPostListings] = useState([initialPosts]);
-  const [after, setAfter] = useState<string | null>(
-    initialPosts["data"]["after"]
-  );
-  const { me } = useMe();
-
-  useEffect(() => {
-    (async () => {
-      const postsResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: path,
-        query: query,
-      });
-      setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data["data"]["after"]);
-    })();
-  }, [me, path, query]);
-
-  const handleClickMore = async () => {
-    const postsResponse = await axios.post("/api/reddit", {
-      method: "GET",
-      path: path,
-      query: {
-        ...query,
-        after: after,
-      },
-    });
-    setPostListings([...postListings, postsResponse.data]);
-    setAfter(postsResponse.data["data"]["after"]);
-  };
+const Posts: FC<Props> = ({ postListings }) => {
+  const postsPlaceholder = [];
+  for (let i = 0; i < 4; i++) {
+    postsPlaceholder.push(
+      <Card key={i}>
+        <PostSkeleton />
+      </Card>
+    );
+  }
 
   return (
-    <VStack>
-      {postListings.map((posts: any, listingIndex: number) => {
-        return posts.data.children.map((post: any, index: number) => (
-          <Card key={listingIndex + index}>
-            <Post post={post} />
-          </Card>
-        ));
-      })}
-      {after && <Button onClick={handleClickMore}>more</Button>}
-    </VStack>
+    <>
+      {postListings.length > 0
+        ? postListings.map((posts: any, listingIndex: number) => {
+            return posts.data.children.map((post: any, index: number) => (
+              <Card key={listingIndex + index}>
+                <Post initialPost={post} />
+              </Card>
+            ));
+          })
+        : postsPlaceholder}
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Box, Heading, VStack } from "@chakra-ui/react";
+import { Box, Heading, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
@@ -22,21 +22,30 @@ const SubredditRules: FC<Props> = ({ subreddit }) => {
     })();
   }, [subreddit]);
 
+  const rulesPlaceholder = [];
+  for (let i = 0; i < 10; i++) {
+    rulesPlaceholder.push(
+      <Box w="full" key={i}>
+        <SkeletonText noOfLines={4} />
+      </Box>
+    );
+  }
+
   return (
     <Card>
       <Heading>Rules</Heading>
-      {rules && (
-        <VStack>
-          {rules["rules"].map((rule: any, index: number) => {
-            return (
-              <Box key={index} border="1px solid green">
-                <Heading>{rule["short_name"]}</Heading>
-                <SanitizeHTML dirty={rule["description_html"]} />;
-              </Box>
-            );
-          })}
-        </VStack>
-      )}
+      <VStack>
+        {rules
+          ? rules["rules"].map((rule: any, index: number) => {
+              return (
+                <Box key={index} border="1px solid green">
+                  <Heading>{rule["short_name"]}</Heading>
+                  <SanitizeHTML dirty={rule["description_html"]} />;
+                </Box>
+              );
+            })
+          : rulesPlaceholder}
+      </VStack>
     </Card>
   );
 };
