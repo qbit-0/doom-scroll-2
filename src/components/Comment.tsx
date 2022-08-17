@@ -1,9 +1,9 @@
-import { Avatar, Box, Heading } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { Box, Heading } from "@chakra-ui/react";
+import { FC } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Comments from "./Comments";
+import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
@@ -12,26 +12,9 @@ type Props = {
 };
 
 const Comment: FC<Props> = ({ postName, comment }) => {
-  const [author, setAuthor] = useState<any>(null);
-
-  useEffect(() => {
-    (async () => {
-      if (comment["data"]["author"] !== "[deleted]") {
-        const authorResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/user/${comment["data"]["author"]}/about`,
-        });
-        setAuthor(authorResponse.data);
-      }
-    })();
-  }, [comment]);
-
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
-      <Avatar
-        name={comment["data"]["author"]}
-        src={author?.["data"]["icon_img"]}
-      />
+      <RedditAvatar username={comment["data"]["author"]} />
       <Heading size="xs">
         {comment["data"]["author"]}
         {" - " + getElapsedString(comment["data"]["created_utc"])}

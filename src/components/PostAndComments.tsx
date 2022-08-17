@@ -28,7 +28,6 @@ const PostAndComments: FC<Props> = ({
   useEffect(() => {
     (async () => {
       const { path, query, pathname } = getCommentsPath(subreddit, article);
-      history.pushState(null, "", pathname);
 
       const postsResponse = await axios.post("/api/reddit", {
         method: "GET",
@@ -39,22 +38,26 @@ const PostAndComments: FC<Props> = ({
       setPost(postsResponse.data[0]["data"]["children"][0]);
       setComments(postsResponse.data[1]);
 
-      if (location.pathname === pathname) {
-        history.replaceState(
-          null,
-          "",
-          getPathname(
-            postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
-            query
-          )
-        );
-      }
+      // if (location.pathname === pathname) {
+      //   history.replaceState(
+      //     null,
+      //     "",
+      //     getPathname(
+      //       postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
+      //       query
+      //     )
+      //   );
+      // }
     })();
   }, [subreddit, article]);
 
   return (
-    <VStack>
-      {post && <Post post={post} openModal={openModal} />}
+    <>
+      {post && (
+        <Card>
+          <Post post={post} openModal={openModal} />
+        </Card>
+      )}
       {comments && (
         <Card>
           <Comments
@@ -63,7 +66,7 @@ const PostAndComments: FC<Props> = ({
           />
         </Card>
       )}
-    </VStack>
+    </>
   );
 };
 

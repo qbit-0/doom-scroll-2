@@ -10,13 +10,10 @@ export const getSubredditPath = (
   time: string
 ) => {
   let path = subreddit === "" ? "" : `/r/${subreddit}`;
-  if ((!subreddit && sort !== "best") || (subreddit && sort !== "hot")) {
-    path += `/${sort}`;
-  }
-  if (path === "") path = "/";
+  path += `/${sort}`;
 
   const query: Record<string, string> = {};
-  if (sort === "top" && time) query["t"] = time;
+  query["t"] = time;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
@@ -34,8 +31,8 @@ export const getSearchPath = (
 
   const query: Record<string, string> = {};
   query["q"] = searchQuery;
-  if (sort !== "relevance") query["sort"] = sort;
-  if (time !== "all") query["t"] = time;
+  query["sort"] = sort;
+  query["t"] = time;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
@@ -51,7 +48,7 @@ export const getCommentsPath = (
   path += `/comments/${article}`;
 
   const query: Record<string, string> = {};
-  if (sort !== "best") query["sort"] = sort;
+  query["sort"] = sort;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };

@@ -1,11 +1,24 @@
 import { Flex, Image } from "@chakra-ui/react";
-import { FC } from "react";
+import axios from "axios";
+import { FC, useEffect, useState } from "react";
 
 type Props = {
-  about: any;
+  subreddit: string;
 };
 
-const SubredditBanner: FC<Props> = ({ about }) => {
+const SubredditBanner: FC<Props> = ({ subreddit }) => {
+  const [about, setAbout] = useState<any | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const aboutResponse = await axios.post("/api/reddit", {
+        method: "GET",
+        path: `/r/${subreddit}/about`,
+      });
+      setAbout(aboutResponse.data);
+    })();
+  }, [subreddit]);
+
   if (about?.["data"]?.["banner_background_image"]) {
     return (
       <Image

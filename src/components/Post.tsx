@@ -1,13 +1,13 @@
-import { Avatar, Box, Heading, Link, useDisclosure } from "@chakra-ui/react";
-import axios from "axios";
+import { Box, Heading, Link, useDisclosure } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import Card from "./Card";
+import { getCommentsPath } from "../lib/utils/urlUtils";
 import PostBody from "./PostBody";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
+import RedditAvatar from "./RedditAvatar";
 
 type Props = {
   post: Record<string, any>;
@@ -17,20 +17,7 @@ type Props = {
 const Post: FC<Props> = ({ post, openModal = true }) => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [author, setAuthor] = useState<any>(null);
   const savedPath = router.asPath;
-
-  useEffect(() => {
-    (async () => {
-      if (post["data"]["author"] !== "[deleted]") {
-        const authorResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/user/${post["data"]["author"]}/about`,
-        });
-        setAuthor(authorResponse.data);
-      }
-    })();
-  }, [post]);
 
   return (
     <>
@@ -38,25 +25,30 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
         <Link size="sm">{post["data"]["subreddit_name_prefixed"]}</Link>
       </NextLink>
       <Box>
-        <Avatar
-          name={post["data"]["author"]}
-          src={author?.["data"]["icon_img"]}
-        />
+        <RedditAvatar username={post["data"]["author"]} />
         <Heading size="xs">
           u/{post["data"]["author"]}
           {" - " + getElapsedString(post["data"]["created_utc"])}
         </Heading>
       </Box>
       {openModal ? (
-        <Link size="sm" onClick={onOpen}>
+        <Link
+          size="sm"
+          onClick={() => {
+            const { pathname } = getCommentsPath(
+              post["data"]["subreddit"],
+              post["data"]["id"]
+            );
+            history.replaceState(null, "", pathname);
+            onOpen();
+          }}
+        >
           <Heading>{post["data"]["title"]}</Heading>
         </Link>
       ) : (
-        <NextLink href={post["data"]["permalink"]}>
-          <Link size="sm">
-            <Heading>{post["data"]["title"]}</Heading>
-          </Link>
-        </NextLink>
+        <Link size="sm">
+          <Heading>{post["data"]["title"]}</Heading>
+        </Link>
       )}
       {post["data"]["ups"]}
       <PostBody post={post} />

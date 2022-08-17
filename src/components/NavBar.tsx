@@ -21,6 +21,7 @@ import { mutate } from "swr";
 import useIsCompact from "../lib/hooks/useIsCompact";
 import useMe from "../lib/hooks/useMe";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
+import RedditAvatar from "./RedditAvatar";
 
 type Props = {};
 
@@ -66,10 +67,23 @@ const NavBar: FC<Props> = () => {
             </InputRightElement>
           </InputGroup>
         </chakra.form>
-        <Button>Popular</Button>
-        <Button>All</Button>
+        <Button
+          onClick={() => {
+            router.push("/r/popular");
+          }}
+        >
+          Popular
+        </Button>
+        <Button
+          onClick={() => {
+            router.push("/r/all");
+          }}
+        >
+          All
+        </Button>
         {me ? (
           <>
+            <RedditAvatar username={me.name} />
             <Text>{me.name}</Text>
             <Button
               onClick={async () => {

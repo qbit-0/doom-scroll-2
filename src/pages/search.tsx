@@ -1,57 +1,51 @@
-import { Box, Button, Select, VStack } from "@chakra-ui/react";
+import { Button, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 import Card from "../components/Card";
-import Frame from "../components/Frame";
+import PageFrame from "../components/PageFrame";
 import Post from "../components/Post";
-import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
-import { redditApi } from "../lib/reddit/redditApi";
 import { withSessionSsr } from "../lib/session/withSession";
 import { getSearchPath } from "../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
-    const { req } = context;
+    const initialSearchQuery = context.query["q"] || "";
+    const initialSort = context.query["sort"] || "best";
+    const initalTime = context.query["t"] || "day";
 
-    const searchQuery = context.query["q"] as string;
-    const sort = context.query["sort"] as string;
-    const time = context.query["t"] as string;
-
-    const { path, query } = getSearchPath(searchQuery, sort, time);
-
-    const postsResponse = await redditApi(req, {
-      method: "GET",
-      path: path,
-      query: query,
-    });
     return {
       props: {
-        initialPosts: postsResponse.data,
+        initialSearchQuery: initialSearchQuery,
+        initialSort: initialSort,
+        initialTime: initalTime,
       },
     };
   }
 );
 
 type Props = {
-  initialPosts: any;
+  initialSearchQuery: string;
+  initialSort: string;
+  initialTime: string;
 };
 
-const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
+const SearchPage: FC<Props> = ({
+  initialSearchQuery,
+  initialSort,
+  initialTime,
+}) => {
   const router = useRouter();
-
-  const searchQuery = router.query["q"] as string;
-  const [sort, setSort] = useState<string>("relevance");
-  const [time, setTime] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery);
+  const [sort, setSort] = useState<string>(initialSort);
+  const [time, setTime] = useState<string>(initialTime);
   const { me } = useMe();
 
-  const [postListings, setPostListings] = useState([initialPosts]);
-  const [after, setAfter] = useState<string | null>(
-    initialPosts["data"]["after"]
-  );
+  const [postListings, setPostListings] = useState<any[]>([]);
+  const [after, setAfter] = useState<string | null>(null);
 
   useEffect(() => {
     (() => {
@@ -60,6 +54,12 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
       });
     })();
   }, [searchQuery, sort, time]);
+
+  useEffect(() => {
+    setSearchQuery((router.query["q"] as string) || "");
+    setSort((router.query["sort"] as string) || "relevance");
+    setTime((router.query["t"] as string) || "all");
+  }, [router.query]);
 
   useEffect(() => {
     (async () => {
@@ -97,9 +97,9 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
   };
 
   return (
-    <Frame>
-      <Box maxWidth="xl" mx="auto">
-        <VStack>
+    <PageFrame
+      left={
+        <>
           <Card>
             <Select value={sort} onChange={handleSortChange}>
               <option value="relevance">Relevance</option>
@@ -116,19 +116,17 @@ const SearchPage: FC<Props> = ({ initialPosts = {} }) => {
               <option value="hour">Past Hour</option>
             </Select>
           </Card>
-          <VStack>
-            {postListings.map((posts: any, listingIndex: number) => {
-              return posts.data.children.map((post: any, index: number) => (
-                <Card key={listingIndex + index}>
-                  <Post post={post} />
-                </Card>
-              ));
-            })}
-            {after && <Button onClick={handleClickMore}>more</Button>}
-          </VStack>
-        </VStack>
-      </Box>
-    </Frame>
+          {postListings.map((posts: any, listingIndex: number) => {
+            return posts.data.children.map((post: any, index: number) => (
+              <Card key={listingIndex + index}>
+                <Post post={post} />
+              </Card>
+            ));
+          })}
+          {after && <Button onClick={handleClickMore}>more</Button>}
+        </>
+      }
+    />
   );
 };
 

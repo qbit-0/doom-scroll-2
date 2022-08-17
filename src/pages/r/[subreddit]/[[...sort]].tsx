@@ -4,7 +4,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Button, Flex, Select, VStack } from "@chakra-ui/react";
+import { Button, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -16,93 +16,51 @@ import {
   useState,
 } from "react";
 
+import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
-import Frame from "../../../components/Frame";
+import PageFrame from "../../../components/PageFrame";
+import PopularAbout from "../../../components/PopularAbout";
 import Post from "../../../components/Post";
 import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditRules from "../../../components/SubredditRules";
 import useMe from "../../../lib/hooks/useMe";
-import { redditApi } from "../../../lib/reddit/redditApi";
 import { withSessionSsr } from "../../../lib/session/withSession";
 import { getSubredditPath } from "../../../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
-    const { req } = context;
-
-    const subreddit = context.query["subreddit"] as string;
-    const sort = (context.query["sort"] as string) || "hot";
-    const time = (context.query["t"] as string) || "day";
-
-    const { path, query } = getSubredditPath(subreddit, sort, time);
-
-    const [postsResponse, aboutResponse, rulesResponse] = await Promise.all([
-      redditApi(req, {
-        method: "GET",
-        path: path,
-        query: query,
-      }),
-      redditApi(req, {
-        method: "GET",
-        path: `/r/${subreddit}/about`,
-      }),
-      redditApi(req, {
-        method: "GET",
-        path: `/r/${subreddit}/about/rules`,
-      }),
-    ]);
-
+    const subreddit = context.query["subreddit"];
+    const initialSort = context.query["sort"] || "hot";
+    const initalTime = context.query["t"] || "day";
     return {
       props: {
-        initialSort: sort,
-        initialTime: time,
-        initialPosts: postsResponse.data,
-        initialAbout: aboutResponse.data,
-        initialRules: rulesResponse.data,
+        subreddit: subreddit,
+        initialSort: initialSort,
+        initialTime: initalTime,
       },
     };
   }
 );
 
 type Props = {
+  subreddit: string;
   initialSort: string;
-  intialTime: string;
-  initialPosts: any;
-  initialAbout: any;
-  initialRules: any;
+  initialTime: string;
 };
 
-const SubredditPage: FC<Props> = ({
-  initialSort,
-  intialTime,
-  initialPosts,
-  initialAbout,
-  initialRules,
-}) => {
+const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
   const router = useRouter();
-  const [about, setAbout] = useState<any | null>(initialAbout || null);
-  const [rules, setRules] = useState<any | null>(initialRules || null);
-  const [sort, setSort] = useState<string>(
-    initialSort || (router.query["sort"] as string) || "hot"
-  );
-  const [time, setTime] = useState<string>(
-    intialTime || (router.query["t"] as string) || "day"
-  );
-  const subreddit = router.query["subreddit"] as string;
-  const [postListings, setPostListings] = useState([initialPosts]);
-  const [after, setAfter] = useState<string | null>(
-    initialPosts["data"]["after"]
-  );
+  const [sort, setSort] = useState<string>(initialSort);
+  const [time, setTime] = useState<string>(initialTime);
   const { me } = useMe();
 
+  const [postListings, setPostListings] = useState<any[]>([]);
+  const [after, setAfter] = useState<string | null>(null);
+
   useEffect(() => {
-    history.replaceState(
-      "",
-      "",
-      getSubredditPath(subreddit, sort, time).pathname
-    );
-  }, [sort, time]);
+    router.push(getSubredditPath(subreddit, sort, time).pathname);
+  }, [subreddit, sort, time]);
 
   useEffect(() => {
     router.events.on("routeChangeComplete", (url) => {
@@ -114,26 +72,6 @@ const SubredditPage: FC<Props> = ({
       setTime(urlTime);
     });
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      const aboutResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/r/${subreddit}/about`,
-      });
-      setAbout(aboutResponse.data);
-    })();
-  }, [subreddit]);
-
-  useEffect(() => {
-    (async () => {
-      const rulesResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/r/${subreddit}/about/rules`,
-      });
-      setRules(rulesResponse.data);
-    })();
-  }, [subreddit]);
 
   useEffect(() => {
     (async () => {
@@ -174,68 +112,75 @@ const SubredditPage: FC<Props> = ({
     setAfter(postsResponse.data["data"]["after"]);
   };
 
+  let top =
+    subreddit === "popular" || subreddit === "all" ? null : (
+      <SubredditBanner subreddit={subreddit} />
+    );
+
+  let right;
+  switch (subreddit) {
+    case "popular":
+      right = <PopularAbout />;
+      break;
+    case "all":
+      right = <AllAbout />;
+      break;
+    default:
+      right = (
+        <>
+          <SubredditAbout subreddit={subreddit} />
+          <SubredditRules subreddit={subreddit} />
+        </>
+      );
+  }
+
   return (
-    <Frame>
-      <SubredditBanner about={about} />
-      <Flex py="4" justify="center" columnGap={4}>
-        <Box maxW="xl">
-          <VStack>
-            <Card>
-              <Button
-                leftIcon={<CalendarIcon />}
-                onClick={getHandleSortClick("hot")}
-              >
-                Hot
-              </Button>
-              <Button
-                leftIcon={<TimeIcon />}
-                onClick={getHandleSortClick("new")}
-              >
-                New
-              </Button>
-              <Button
-                leftIcon={<StarIcon />}
-                onClick={getHandleSortClick("top")}
-              >
-                Top
-              </Button>
-              {sort === "top" && (
-                <Select value={time} onChange={handleTimeChange}>
-                  <option value="hour">Now</option>
-                  <option value="day">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                  <option value="all">All Time</option>
-                </Select>
-              )}
-              <Button
-                leftIcon={<TriangleUpIcon />}
-                onClick={getHandleSortClick("rising")}
-              >
-                Rising
-              </Button>
-            </Card>
-            <VStack>
-              {postListings.map((posts: any, listingIndex: number) => {
-                return posts.data.children.map((post: any, index: number) => (
-                  <Card key={listingIndex + index}>
-                    <Post post={post} />
-                  </Card>
-                ));
-              })}
-              {after && <Button onClick={handleClickMore}>more</Button>}
-            </VStack>
-          </VStack>
-        </Box>
-        <Box maxW="sm">
-          <VStack>
-            <SubredditAbout about={about} />
-            <SubredditRules rules={rules} />
-          </VStack>
-        </Box>
-      </Flex>
-    </Frame>
+    <PageFrame
+      top={top}
+      left={
+        <>
+          <Card>
+            <Button
+              leftIcon={<CalendarIcon />}
+              onClick={getHandleSortClick("hot")}
+            >
+              Hot
+            </Button>
+            <Button leftIcon={<TimeIcon />} onClick={getHandleSortClick("new")}>
+              New
+            </Button>
+            <Button leftIcon={<StarIcon />} onClick={getHandleSortClick("top")}>
+              Top
+            </Button>
+            {sort === "top" && (
+              <Select value={time} onChange={handleTimeChange}>
+                <option value="hour">Now</option>
+                <option value="day">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+                <option value="all">All Time</option>
+              </Select>
+            )}
+            <Button
+              leftIcon={<TriangleUpIcon />}
+              onClick={getHandleSortClick("rising")}
+            >
+              Rising
+            </Button>
+          </Card>
+          {postListings.map((posts: any, listingIndex: number) => {
+            return posts.data.children.map((post: any, index: number) => (
+              <Card key={listingIndex + index}>
+                <Post post={post} />
+              </Card>
+            ));
+          })}
+          {after && <Button onClick={handleClickMore}>more</Button>}
+        </>
+      }
+      right={right}
+    />
   );
 };
 

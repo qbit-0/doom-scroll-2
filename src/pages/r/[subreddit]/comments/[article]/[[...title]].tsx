@@ -1,57 +1,41 @@
-import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import { FC } from "react";
 
-import Frame from "../../../../../components/Frame";
+import PageFrame from "../../../../../components/PageFrame";
 import PostAndComments from "../../../../../components/PostAndComments";
-import { redditApi } from "../../../../../lib/reddit/redditApi";
+import SubredditAbout from "../../../../../components/SubredditAbout";
+import SubredditRules from "../../../../../components/SubredditRules";
 import { withSessionSsr } from "../../../../../lib/session/withSession";
-import { getCommentsPath } from "../../../../../lib/utils/urlUtils";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
-    const { req } = context;
-
-    const subreddit = context.query["subreddit"] as string;
-    const article = context.query["article"] as string;
-    const { path, query } = getCommentsPath(subreddit, article);
-
-    const postsResponse = await redditApi(req, {
-      method: "GET",
-      path: path,
-      query: query,
-    });
+    const subreddit = context.query["subreddit"];
+    const article = context.query["article"] || "day";
     return {
       props: {
-        initialPost: postsResponse.data[0]["data"]["children"][0],
-        initialComments: postsResponse.data[1],
+        subreddit: subreddit,
+        article: article,
       },
     };
   }
 );
 
 type Props = {
-  initialPost: any;
-  initialComments: any;
+  subreddit: string;
+  article: string;
 };
 
-const CommentsPage: FC<Props> = ({ initialPost, initialComments }) => {
-  const router = useRouter();
-  const subreddit = router.query["subreddit"] as string;
-  const article = router.query["article"] as string;
-
+const CommentsPage: FC<Props> = ({ subreddit, article }) => {
   return (
-    <Frame>
-      <Box maxWidth="2xl" mx="auto">
-        <PostAndComments
-          subreddit={subreddit}
-          article={article}
-          initialPost={initialPost}
-          initialComments={initialComments}
-        />
-      </Box>
-    </Frame>
+    <PageFrame
+      left={<PostAndComments subreddit={subreddit} article={article} />}
+      right={
+        <>
+          <SubredditAbout subreddit={subreddit} />
+          <SubredditRules subreddit={subreddit} />
+        </>
+      }
+    />
   );
 };
 
