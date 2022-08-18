@@ -22,7 +22,6 @@ export type SessionAppData = {
 };
 
 export type SessionUserData = {
-  username: string;
   userAccessToken?: {
     userAccessToken: string;
     userAccessTokenExpirationTime: number;

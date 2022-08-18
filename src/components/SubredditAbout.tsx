@@ -1,4 +1,4 @@
-import { Heading, SkeletonText } from "@chakra-ui/react";
+import { Box, Heading, SkeletonText } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
@@ -24,12 +24,14 @@ const SubredditAbout: FC<Props> = ({ subreddit }) => {
 
   return (
     <Card>
-      <Heading>About Community</Heading>
-      {about ? (
-        <SanitizeHTML dirty={about["data"]["public_description_html"]} />
-      ) : (
-        <SkeletonText noOfLines={4} />
-      )}
+      <Box p="4">
+        <Heading>About Community</Heading>
+        {about ? (
+          <SanitizeHTML dirty={about["data"]["public_description_html"]} />
+        ) : (
+          <SkeletonText noOfLines={4} />
+        )}
+      </Box>
     </Card>
   );
 };

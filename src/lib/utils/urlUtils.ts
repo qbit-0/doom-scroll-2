@@ -14,6 +14,7 @@ export const getSubredditPath = (
 
   const query: Record<string, string> = {};
   query["t"] = time;
+  query["sr_detail"] = "true";
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
@@ -33,6 +34,7 @@ export const getSearchPath = (
   query["q"] = searchQuery;
   query["sort"] = sort;
   query["t"] = time;
+  query["sr_detail"] = "true";
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
@@ -49,6 +51,7 @@ export const getCommentsPath = (
 
   const query: Record<string, string> = {};
   query["sort"] = sort;
+  query["sr_detail"] = "true";
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };

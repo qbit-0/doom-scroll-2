@@ -4,6 +4,7 @@ import { FC } from "react";
 import PageFrame from "../../../../../components/PageFrame";
 import PostAndComments from "../../../../../components/PostAndComments";
 import SubredditAbout from "../../../../../components/SubredditAbout";
+import SubredditBanner from "../../../../../components/SubredditBanner";
 import SubredditRules from "../../../../../components/SubredditRules";
 import { withSessionSsr } from "../../../../../lib/session/withSession";
 
@@ -28,6 +29,8 @@ type Props = {
 const CommentsPage: FC<Props> = ({ subreddit, article }) => {
   return (
     <PageFrame
+      subreddit={subreddit}
+      top={<SubredditBanner subreddit={subreddit} />}
       left={<PostAndComments subreddit={subreddit} article={article} />}
       right={
         <>

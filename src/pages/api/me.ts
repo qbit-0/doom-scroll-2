@@ -4,13 +4,8 @@ import { withSessionRoute } from "../../lib/session/withSession";
 
 const loginRoute: NextApiHandler = async (req, res) => {
   switch (req.method) {
-    case "POST":
-      req.session.user = {
-        userAccessToken: req.body.userAccessToken,
-        userRefreshToken: req.body.userRefreshToken,
-      };
-      await req.session.save();
-      res.send({ ok: true });
+    case "GET":
+      res.send(req.session.user?.me);
       break;
   }
 };

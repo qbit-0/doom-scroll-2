@@ -3,10 +3,8 @@ import { FC, useEffect, useState } from "react";
 
 import { getCommentsPath } from "../lib/utils/urlUtils";
 import Card from "./Card";
-import CommentSkeleton from "./CommentSkeleton";
 import Comments from "./Comments";
 import Post from "./Post";
-import PostSkeleton from "./PostSkeleton";
 
 type Props = {
   subreddit?: string;

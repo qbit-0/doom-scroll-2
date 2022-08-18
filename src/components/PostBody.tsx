@@ -13,7 +13,7 @@ const PostBody: FC<Props> = ({ post }) => {
   if (post["data"]?.["selftext_html"]) {
     return (
       <Flex w="full" maxH="96" overflow="auto" textOverflow="ellipsis">
-        <Box w="lg" mx="auto">
+        <Box w="md" mx="auto">
           <SanitizeHTML dirty={post["data"]["selftext_html"]} />
         </Box>
       </Flex>
@@ -30,7 +30,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post["data"]?.["media"]?.["reddit_video"]?.["dash_url"]) {
     return (
-      <Flex justifyContent="center" maxH="96" w="lg" mx="auto">
+      <Flex justifyContent="center" maxH="96" w="md" mx="auto">
         <video
           playsInline
           width={post["data"]["media"]["reddit_video"]["width"]}

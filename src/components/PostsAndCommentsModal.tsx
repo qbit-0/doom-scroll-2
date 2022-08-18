@@ -26,6 +26,7 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       <ModalContent>
         <ModalBody>
           <PageFrame
+            subreddit={subreddit}
             top={<SubredditBanner subreddit={subreddit} />}
             left={
               <PostAndComments

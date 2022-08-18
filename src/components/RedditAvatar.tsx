@@ -21,7 +21,9 @@ const RedditAvatar: FC<Props> = ({ username }) => {
     })();
   }, [username]);
 
-  return <Avatar name={username} src={author?.["data"]["icon_img"]} />;
+  return (
+    <Avatar size="sm" name={username} src={author?.["data"]["icon_img"]} />
+  );
 };
 
 export default RedditAvatar;

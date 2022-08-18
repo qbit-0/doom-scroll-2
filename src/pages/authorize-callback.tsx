@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 import { mutate } from "swr";
 
+import PageFrame from "../components/PageFrame";
 import { redditApi } from "../lib/reddit/redditApi";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { withSessionSsr } from "../lib/session/withSession";
@@ -28,7 +29,6 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     const me = meResponse.data;
 
     req.session.user = {
-      username: me.name,
       userAccessToken: {
         userAccessToken,
         userAccessTokenExpirationTime: Date.now().valueOf() + expiresIn,
@@ -56,7 +56,7 @@ const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
     router.replace("/");
   }, [me, router]);
 
-  return <Box>Logged In, Redirecting to Home</Box>;
+  return <PageFrame />;
 };
 
 export default AuthorizeCallbackPage;

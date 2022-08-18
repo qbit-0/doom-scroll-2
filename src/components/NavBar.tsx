@@ -2,15 +2,15 @@ import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Flex,
+  HStack,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Link,
-  Spacer,
   Text,
   chakra,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
@@ -18,15 +18,16 @@ import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
 import { mutate } from "swr";
 
-import useIsCompact from "../lib/hooks/useIsCompact";
 import useMe from "../lib/hooks/useMe";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
-type Props = {};
+type Props = {
+  subreddit?: string;
+};
 
-const NavBar: FC<Props> = () => {
-  const isCompact = useIsCompact();
+const NavBar: FC<Props> = ({ subreddit }) => {
+  const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
   const { me } = useMe();
 
@@ -43,70 +44,78 @@ const NavBar: FC<Props> = () => {
     router.push(`/search?q=${search}`);
   };
 
+  const handleSubredditButtonClick = () => {
+    if (subreddit) {
+      router.push(`/r/${subreddit}`);
+    } else {
+      router.push(`/`);
+    }
+  };
+
   return (
-    <Box bg="lightblue">
-      <Flex>
-        <NextLink href={"/"}>
-          <Link>DoomScroll</Link>
-        </NextLink>
-        <Button display="inline">Home</Button>
-        <chakra.form flex="auto" onSubmit={handleSearchSubmit}>
-          <InputGroup>
-            <Input
-              variant="filled"
-              placeholder="Search Reddit"
-              value={search}
-              onChange={handleSearchChange}
+    <HStack w="full" p="2" bg="lightblue">
+      <NextLink href={"/"}>
+        <Link>DoomScroll</Link>
+      </NextLink>
+      <Button onClick={handleSubredditButtonClick} display="inline">
+        {subreddit ? `r/${subreddit}` : "Home"}
+      </Button>
+      <chakra.form flex="auto" onSubmit={handleSearchSubmit}>
+        <InputGroup>
+          <Input
+            variant="filled"
+            placeholder="Search Reddit"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <InputRightElement>
+            <IconButton
+              icon={<SearchIcon />}
+              aria-label={"search submit"}
+              type="submit"
             />
-            <InputRightElement>
-              <IconButton
-                icon={<SearchIcon />}
-                aria-label={"search submit"}
-                type="submit"
-              />
-            </InputRightElement>
-          </InputGroup>
-        </chakra.form>
-        <Button
-          onClick={() => {
-            router.push("/r/popular");
-          }}
-        >
-          Popular
-        </Button>
-        <Button
-          onClick={() => {
-            router.push("/r/all");
-          }}
-        >
-          All
-        </Button>
-        {me ? (
-          <>
-            <RedditAvatar username={me.name} />
-            <Text>{me.name}</Text>
-            <Button
-              onClick={async () => {
-                await axios.post("/api/logout");
-                localStorage.removeItem("me");
-                mutate("me");
-              }}
-            >
-              Log Out
-            </Button>
-          </>
-        ) : (
+          </InputRightElement>
+        </InputGroup>
+      </chakra.form>
+      <Button
+        onClick={() => {
+          router.push("/r/popular");
+        }}
+      >
+        Popular
+      </Button>
+      <Button
+        onClick={() => {
+          router.push("/r/all");
+        }}
+      >
+        All
+      </Button>
+      {me ? (
+        <>
+          <RedditAvatar username={me.name} />
+          <Text>{me.name}</Text>
           <Button
-            onClick={() => {
-              const { url } = getAuthRequestUrl(isCompact);
-              router.push(url);
+            onClick={async () => {
+              await axios.post("/api/logout");
+              localStorage.removeItem("me");
+              mutate("me");
             }}
           >
-            Log In
+            Log Out
           </Button>
-        )}
-      </Flex>
-    </Box>
+        </>
+      ) : (
+        <Button
+          onClick={() => {
+            const { url } = getAuthRequestUrl(isCompact);
+            router.push(url);
+          }}
+        >
+          Log In
+        </Button>
+      )}
+    </HStack>
   );
 };
 
