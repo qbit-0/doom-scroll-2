@@ -1,6 +1,14 @@
-import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
+import {
+  Box,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+} from "@chakra-ui/react";
 import { FC } from "react";
 
+import NavBar from "./NavBar";
+import NavBarFrame from "./NavBarFrame";
 import PageFrame from "./PageFrame";
 import PostAndComments from "./PostAndComments";
 import SubredditAbout from "./SubredditAbout";
@@ -21,28 +29,30 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       onClose={onClose}
       size="6xl"
       motionPreset="slideInBottom"
+      scrollBehavior="outside"
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent>
         <ModalBody>
-          <PageFrame
-            subreddit={subreddit}
-            top={<SubredditBanner subreddit={subreddit} />}
-            left={
-              <PostAndComments
-                subreddit={subreddit}
-                article={post["data"]["id"]}
-                initialPost={post}
-                openModal={false}
-              />
-            }
-            right={
-              <>
-                <SubredditAbout subreddit={subreddit} />
-                <SubredditRules subreddit={subreddit} />
-              </>
-            }
-          />
+          <NavBarFrame>
+            <PageFrame
+              top={<SubredditBanner subreddit={subreddit} />}
+              left={
+                <PostAndComments
+                  subreddit={subreddit}
+                  article={post["data"]["id"]}
+                  initialPost={post}
+                  openModal={false}
+                />
+              }
+              right={
+                <>
+                  <SubredditAbout subreddit={subreddit} />
+                  <SubredditRules subreddit={subreddit} />
+                </>
+              }
+            />
+          </NavBarFrame>
         </ModalBody>
       </ModalContent>
     </Modal>

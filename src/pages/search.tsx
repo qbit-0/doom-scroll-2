@@ -1,10 +1,11 @@
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Box, Button, HStack, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 import Card from "../components/Card";
+import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
 import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
@@ -97,33 +98,35 @@ const SearchPage: FC<Props> = ({
   };
 
   return (
-    <PageFrame
-      left={
-        <>
-          <Card>
-            <HStack p="2">
-              <Select value={sort} w="32" onChange={handleSortChange}>
-                <option value="relevance">Relevance</option>
-                <option value="hot">Hot</option>
-                <option value="top">Top</option>k
-                <option value="new">New</option>
-                <option value="comments">Comments</option>
-              </Select>
-              <Select value={time} w="32" onChange={handleTimeChange}>
-                <option value="all">All Time</option>
-                <option value="year">Past Year</option>
-                <option value="month">Past Month</option>
-                <option value="week">Past Week</option>
-                <option value="day">Past 24 Hours</option>
-                <option value="hour">Past Hour</option>
-              </Select>
-            </HStack>
-          </Card>
-          <Posts postListings={postListings} />
-          {after && <Button onClick={handleClickMore}>more</Button>}
-        </>
-      }
-    />
+    <NavBarFrame>
+      <PageFrame
+        left={
+          <>
+            <Card>
+              <HStack p="2">
+                <Select value={sort} w="32" onChange={handleSortChange}>
+                  <option value="relevance">Relevance</option>
+                  <option value="hot">Hot</option>
+                  <option value="top">Top</option>k
+                  <option value="new">New</option>
+                  <option value="comments">Comments</option>
+                </Select>
+                <Select value={time} w="32" onChange={handleTimeChange}>
+                  <option value="all">All Time</option>
+                  <option value="year">Past Year</option>
+                  <option value="month">Past Month</option>
+                  <option value="week">Past Week</option>
+                  <option value="day">Past 24 Hours</option>
+                  <option value="hour">Past Hour</option>
+                </Select>
+              </HStack>
+            </Card>
+            <Posts postListings={postListings} />
+            {after && <Button onClick={handleClickMore}>more</Button>}
+          </>
+        }
+      />
+    </NavBarFrame>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Flex, Image } from "@chakra-ui/react";
+import { Avatar, Box, Flex, HStack, Heading, Image } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
@@ -8,6 +8,8 @@ type Props = {
 
 const SubredditBanner: FC<Props> = ({ subreddit }) => {
   const [about, setAbout] = useState<any | null>(null);
+
+  console.log(about);
 
   useEffect(() => {
     (async () => {
@@ -19,33 +21,49 @@ const SubredditBanner: FC<Props> = ({ subreddit }) => {
     })();
   }, [subreddit]);
 
+  let background;
   if (about?.["data"]?.["banner_background_image"]) {
-    return (
-      <Image
-        src={about["data"]["banner_background_image"]}
-        alt="subreddit banner"
+    background = (
+      <Box
+        w="full"
+        h="36"
+        bgImage={about["data"]["banner_background_image"]}
+        bgPos="center"
       />
     );
-  }
-
-  if (about?.["data"]["header_img"]) {
-    return (
+  } else if (about?.["data"]["header_img"]) {
+    background = (
       <Flex
         justify="center"
         align="center"
         bgColor={about["data"]["banner_background_color"]}
-        minH="36"
+        h="36"
       >
-        <Image
-          src={about["data"]["header_img"]}
-          mx="auto"
-          alt="subreddit banner"
-        />
+        <Box bgImage={about["data"]["header_img"]} bgPos="center" />
       </Flex>
     );
+  } else {
+    background = <Box w="full" h="36" bgColor="gray" />;
   }
 
-  return null;
+  return (
+    <Box>
+      {background}
+      <Box bgColor="darkgray" p="4">
+        <HStack mx="auto" w="fit-content">
+          <Avatar
+            name={subreddit}
+            src={
+              about?.["data"]?.["community_icon"] ||
+              about?.["data"]?.["icon_img"]
+            }
+            size="lg"
+          />
+          <Heading display="inline-block">{about?.["data"]?.["title"]}</Heading>
+        </HStack>
+      </Box>
+    </Box>
+  );
 };
 
 export default SubredditBanner;

@@ -5,7 +5,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, HStack, Select, StackDivider } from "@chakra-ui/react";
+import { Box, Button, HStack, Select, StackDivider } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -19,6 +19,7 @@ import {
 
 import Card from "../components/Card";
 import HomeAbout from "../components/HomeAbout";
+import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
 import Posts from "../components/Posts";
 import useMe from "../lib/hooks/useMe";
@@ -109,60 +110,62 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   };
 
   return (
-    <PageFrame
-      left={
-        <>
-          <Card>
-            <HStack p="2">
-              <Button
-                leftIcon={<BellIcon />}
-                onClick={getHandleSortClick("best")}
-              >
-                Best
-              </Button>
-              <Button
-                leftIcon={<CalendarIcon />}
-                onClick={getHandleSortClick("hot")}
-              >
-                Hot
-              </Button>
-              <Button
-                leftIcon={<TimeIcon />}
-                onClick={getHandleSortClick("new")}
-              >
-                New
-              </Button>
-              <Button
-                leftIcon={<StarIcon />}
-                onClick={getHandleSortClick("top")}
-              >
-                Top
-              </Button>
-              {sort === "top" && (
-                <Select w={32} value={time} onChange={handleTimeChange}>
-                  <option value="hour">Now</option>
-                  <option value="day">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                  <option value="all">All Time</option>
-                </Select>
-              )}
-              <Button
-                leftIcon={<TriangleUpIcon />}
-                onClick={getHandleSortClick("rising")}
-              >
-                Rising
-              </Button>
-            </HStack>
-          </Card>
-          <Posts postListings={postListings} />
-          {after && <Button onClick={handleClickMore}>more</Button>}
-        </>
-      }
-      right={<HomeAbout />}
-      showExplanation={true}
-    />
+    <NavBarFrame>
+      <PageFrame
+        left={
+          <>
+            <Card>
+              <HStack p="2">
+                <Button
+                  leftIcon={<BellIcon />}
+                  onClick={getHandleSortClick("best")}
+                >
+                  Best
+                </Button>
+                <Button
+                  leftIcon={<CalendarIcon />}
+                  onClick={getHandleSortClick("hot")}
+                >
+                  Hot
+                </Button>
+                <Button
+                  leftIcon={<TimeIcon />}
+                  onClick={getHandleSortClick("new")}
+                >
+                  New
+                </Button>
+                <Button
+                  leftIcon={<StarIcon />}
+                  onClick={getHandleSortClick("top")}
+                >
+                  Top
+                </Button>
+                {sort === "top" && (
+                  <Select w={32} value={time} onChange={handleTimeChange}>
+                    <option value="hour">Now</option>
+                    <option value="day">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="year">This Year</option>
+                    <option value="all">All Time</option>
+                  </Select>
+                )}
+                <Button
+                  leftIcon={<TriangleUpIcon />}
+                  onClick={getHandleSortClick("rising")}
+                >
+                  Rising
+                </Button>
+              </HStack>
+            </Card>
+            <Posts postListings={postListings} />
+            {after && <Button onClick={handleClickMore}>more</Button>}
+          </>
+        }
+        right={<HomeAbout />}
+        showExplanation={true}
+      />
+    </NavBarFrame>
   );
 };
 

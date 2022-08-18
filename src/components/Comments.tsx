@@ -22,8 +22,8 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
   const commentsPlaceholder = [];
   for (let i = 0; i < 10; i++) {
     commentsPlaceholder.push(
-      <Box w="full">
-        <CommentSkeleton key={i} />
+      <Box w="full" key={i}>
+        <CommentSkeleton />
       </Box>
     );
   }

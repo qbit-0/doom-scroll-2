@@ -1,6 +1,8 @@
+import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
+import NavBarFrame from "../../../../../components/NavBarFrame";
 import PageFrame from "../../../../../components/PageFrame";
 import PostAndComments from "../../../../../components/PostAndComments";
 import SubredditAbout from "../../../../../components/SubredditAbout";
@@ -28,17 +30,18 @@ type Props = {
 
 const CommentsPage: FC<Props> = ({ subreddit, article }) => {
   return (
-    <PageFrame
-      subreddit={subreddit}
-      top={<SubredditBanner subreddit={subreddit} />}
-      left={<PostAndComments subreddit={subreddit} article={article} />}
-      right={
-        <>
-          <SubredditAbout subreddit={subreddit} />
-          <SubredditRules subreddit={subreddit} />
-        </>
-      }
-    />
+    <NavBarFrame subreddit={subreddit}>
+      <PageFrame
+        top={<SubredditBanner subreddit={subreddit} />}
+        left={<PostAndComments subreddit={subreddit} article={article} />}
+        right={
+          <>
+            <SubredditAbout subreddit={subreddit} />
+            <SubredditRules subreddit={subreddit} />
+          </>
+        }
+      />
+    </NavBarFrame>
   );
 };
 

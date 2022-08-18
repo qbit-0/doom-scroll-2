@@ -59,7 +59,10 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
           <HStack>
             <Avatar
               name={post["data"]["subreddit"]}
-              src={post["data"]["sr_detail"]["community_icon"]}
+              src={
+                post?.["data"]?.["sr_detail"]["community_icon"] ||
+                post?.["data"]?.["icon_img"]
+              }
               size="sm"
             />
             <HStack display="inline" divider={<> &middot; </>}>

@@ -29,7 +29,7 @@ const ImagePreview: React.FC<Props> = ({ src, href }) => {
         onClose={onClose}
         size="2xl"
         motionPreset="slideInBottom"
-        isCentered={true}
+        isCentered
       >
         <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>

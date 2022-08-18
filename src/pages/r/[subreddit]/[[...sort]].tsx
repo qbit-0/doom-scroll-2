@@ -4,7 +4,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Box, Button, HStack, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -19,6 +19,7 @@ import {
 import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
 import DoomScrollSettings from "../../../components/DoomScrollSettings";
+import NavBarFrame from "../../../components/NavBarFrame";
 import PageFrame from "../../../components/PageFrame";
 import PopularAbout from "../../../components/PopularAbout";
 import Post from "../../../components/Post";
@@ -138,55 +139,56 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
   }
 
   return (
-    <PageFrame
-      subreddit={subreddit}
-      top={top}
-      left={
-        <>
-          <Card>
-            <HStack p="2">
-              <Button
-                leftIcon={<CalendarIcon />}
-                onClick={getHandleSortClick("hot")}
-              >
-                Hot
-              </Button>
-              <Button
-                leftIcon={<TimeIcon />}
-                onClick={getHandleSortClick("new")}
-              >
-                New
-              </Button>
-              <Button
-                leftIcon={<StarIcon />}
-                onClick={getHandleSortClick("top")}
-              >
-                Top
-              </Button>
-              {sort === "top" && (
-                <Select value={time} onChange={handleTimeChange}>
-                  <option value="hour">Now</option>
-                  <option value="day">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                  <option value="all">All Time</option>
-                </Select>
-              )}
-              <Button
-                leftIcon={<TriangleUpIcon />}
-                onClick={getHandleSortClick("rising")}
-              >
-                Rising
-              </Button>
-            </HStack>
-          </Card>
-          <Posts postListings={postListings} />
-          {after && <Button onClick={handleClickMore}>more</Button>}
-        </>
-      }
-      right={about}
-    />
+    <NavBarFrame subreddit={subreddit}>
+      <PageFrame
+        top={top}
+        left={
+          <>
+            <Card>
+              <HStack p="2">
+                <Button
+                  leftIcon={<CalendarIcon />}
+                  onClick={getHandleSortClick("hot")}
+                >
+                  Hot
+                </Button>
+                <Button
+                  leftIcon={<TimeIcon />}
+                  onClick={getHandleSortClick("new")}
+                >
+                  New
+                </Button>
+                <Button
+                  leftIcon={<StarIcon />}
+                  onClick={getHandleSortClick("top")}
+                >
+                  Top
+                </Button>
+                {sort === "top" && (
+                  <Select value={time} onChange={handleTimeChange}>
+                    <option value="hour">Now</option>
+                    <option value="day">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="year">This Year</option>
+                    <option value="all">All Time</option>
+                  </Select>
+                )}
+                <Button
+                  leftIcon={<TriangleUpIcon />}
+                  onClick={getHandleSortClick("rising")}
+                >
+                  Rising
+                </Button>
+              </HStack>
+            </Card>
+            <Posts postListings={postListings} />
+            {after && <Button onClick={handleClickMore}>more</Button>}
+          </>
+        }
+        right={about}
+      />
+    </NavBarFrame>
   );
 };
 
