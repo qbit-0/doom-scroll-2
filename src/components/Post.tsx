@@ -18,7 +18,6 @@ import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import { getCommentsPath } from "../lib/utils/urlUtils";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -46,13 +45,19 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
     );
   }
 
+  const handleOpenModal = () => {
+    const pathname = `/r/${post["data"]["subreddit"]}/comments/${post["data"]["id"]}`;
+    history.replaceState(null, "", pathname);
+    onOpen();
+  };
+
   return (
     <>
       <Flex>
         <Box bgColor="red.100" w="18" flex="0 0 auto" p="4">
-          <Text>{`${
+          <Text>{`${Math.round(
             Number.parseFloat(post["data"]["upvote_ratio"]) * 100
-          }%`}</Text>
+          )}%`}</Text>
           <Text>ratio</Text>
         </Box>
         <Box p="4" bgColor="blue.100" flex="1">
@@ -79,25 +84,14 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
               </Heading>
             </HStack>
           </HStack>
-          {openModal ? (
-            <Link
-              size="sm"
-              onClick={() => {
-                const { pathname } = getCommentsPath(
-                  post["data"]["subreddit"],
-                  post["data"]["id"]
-                );
-                history.replaceState(null, "", pathname);
-                onOpen();
-              }}
-            >
-              <Heading>{post["data"]["title"]}</Heading>
-            </Link>
-          ) : (
-            <Link size="sm">
-              <Heading>{post["data"]["title"]}</Heading>
-            </Link>
-          )}
+          <Link
+            size="sm"
+            onClick={() => {
+              if (openModal) handleOpenModal();
+            }}
+          >
+            <Heading>{post["data"]["title"]}</Heading>
+          </Link>
           <Box mt="2" bgColor="gray.100">
             <PostBody post={post} />
           </Box>
@@ -128,6 +122,9 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
             display="inline"
             icon={<Icon as={IoChatboxOutline} />}
             aria-label="comments"
+            onClick={() => {
+              if (openModal) handleOpenModal();
+            }}
           />
         </Box>
       </HStack>

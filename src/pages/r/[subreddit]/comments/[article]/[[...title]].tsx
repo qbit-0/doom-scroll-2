@@ -13,7 +13,7 @@ import { withSessionSsr } from "../../../../../lib/session/withSession";
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
     const subreddit = context.query["subreddit"];
-    const article = context.query["article"] || "day";
+    const article = context.query["article"];
     return {
       props: {
         subreddit: subreddit,
@@ -33,7 +33,7 @@ const CommentsPage: FC<Props> = ({ subreddit, article }) => {
     <NavBarFrame subreddit={subreddit}>
       <PageFrame
         top={<SubredditBanner showTitle={true} subreddit={subreddit} />}
-        left={<PostAndComments subreddit={subreddit} article={article} />}
+        left={<PostAndComments article={article} />}
         right={
           <>
             <SubredditAbout subreddit={subreddit} />

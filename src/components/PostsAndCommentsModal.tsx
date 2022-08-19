@@ -32,7 +32,6 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
               top={<SubredditBanner showTitle={false} subreddit={subreddit} />}
               left={
                 <PostAndComments
-                  subreddit={subreddit}
                   article={post["data"]["id"]}
                   initialPost={post}
                   openModal={false}

@@ -7,7 +7,8 @@ export const getPathname = (path: string, query: Record<string, string>) => {
 export const getSubredditPath = (
   subreddit: string,
   sort: string,
-  time: string
+  time: string,
+  after?: string
 ) => {
   let path = subreddit === "" ? "" : `/r/${subreddit}`;
   path += `/${sort}`;
@@ -15,6 +16,7 @@ export const getSubredditPath = (
   const query: Record<string, string> = {};
   query["t"] = time;
   query["sr_detail"] = "true";
+  if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
@@ -23,35 +25,49 @@ export const getSubredditPath = (
 export const getSearchPath = (
   searchQuery: string,
   sort: string,
-  time: string
+  time: string,
+  type: string,
+  after?: string
 ) => {
   sort = sort || "relevance";
   time = time || "all";
 
-  let path = "/search";
+  const path = "/search";
 
   const query: Record<string, string> = {};
   query["q"] = searchQuery;
   query["sort"] = sort;
   query["t"] = time;
   query["sr_detail"] = "true";
+  query["type"] = type;
+  if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
 };
 
-export const getCommentsPath = (
-  subreddit: string | undefined | null,
-  article: string,
-  sort = "best"
-) => {
-  let path = "";
-  if (subreddit) path += `/r/${subreddit}`;
-  path += `/comments/${article}`;
+export const getCommentsPath = (article: string, sort = "best") => {
+  const path = `/comments/${article}`;
 
   const query: Record<string, string> = {};
   query["sort"] = sort;
   query["sr_detail"] = "true";
+
+  const pathname = getPathname(path, query);
+  return { path, query, pathname };
+};
+
+export const getSearchSubredditsPath = (
+  searchQuery: string,
+  after?: string
+) => {
+  const path = "/subreddits/search";
+
+  const query: Record<string, string> = {};
+  query["q"] = searchQuery;
+  query["sort"] = "relevance";
+  query["sr_detail"] = "true";
+  if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };

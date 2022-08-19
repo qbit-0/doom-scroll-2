@@ -4,33 +4,24 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Button, HStack, Select } from "@chakra-ui/react";
-import axios from "axios";
+import { Button, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import {
-  ChangeEventHandler,
-  FC,
-  MouseEventHandler,
-  useEffect,
-  useState,
-} from "react";
+import { FC, useEffect, useState } from "react";
 
 import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
-import DoomScrollSettings from "../../../components/DoomScrollSettings";
 import NavBarFrame from "../../../components/NavBarFrame";
 import PageFrame from "../../../components/PageFrame";
 import PopularAbout from "../../../components/PopularAbout";
-import Post from "../../../components/Post";
-import PostSkeleton from "../../../components/PostSkeleton";
-import Posts from "../../../components/Posts";
 import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
+import SubredditPostsContainer from "../../../components/SubredditPostsContainer";
 import SubredditRules from "../../../components/SubredditRules";
-import useMe from "../../../lib/hooks/useMe";
+import useAtBottom from "../../../lib/hooks/useAtBottom";
+import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
 import { withSessionSsr } from "../../../lib/session/withSession";
-import { getSubredditPath } from "../../../lib/utils/urlUtils";
+import setValue from "../../../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async (context) => {
@@ -57,10 +48,7 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
   const router = useRouter();
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
-  const { me } = useMe();
-
-  const [postListings, setPostListings] = useState<any[]>([]);
-  const [after, setAfter] = useState<string | null>(null);
+  const atBottom = useAtBottom();
 
   useEffect(() => {
     router.push(getSubredditPath(subreddit, sort, time).pathname);
@@ -76,45 +64,6 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
       setTime(urlTime);
     });
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      const { path, query } = getSubredditPath(subreddit, sort, time);
-      const postsResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: path,
-        query: query,
-      });
-      setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data["data"]["after"]);
-    })();
-  }, [me, subreddit, sort, time]);
-
-  const getHandleSortClick = (sortValue: string) => {
-    const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
-      event.preventDefault();
-      setSort(sortValue);
-    };
-    return handleSortClick;
-  };
-
-  const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-    setTime(event.target.value);
-  };
-
-  const handleClickMore = async () => {
-    const { path, query } = getSubredditPath(subreddit, sort, time);
-    const postsResponse = await axios.post("/api/reddit", {
-      method: "GET",
-      path: path,
-      query: {
-        ...query,
-        after: after,
-      },
-    });
-    setPostListings([...postListings, postsResponse.data]);
-    setAfter(postsResponse.data["data"]["after"]);
-  };
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
@@ -147,25 +96,28 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
             <Card>
               <HStack p="2">
                 <Button
+                  value="hot"
                   leftIcon={<CalendarIcon />}
-                  onClick={getHandleSortClick("hot")}
+                  onClick={setValue(setSort)}
                 >
                   Hot
                 </Button>
                 <Button
+                  value="new"
                   leftIcon={<TimeIcon />}
-                  onClick={getHandleSortClick("new")}
+                  onClick={setValue(setSort)}
                 >
                   New
                 </Button>
                 <Button
+                  value="top"
                   leftIcon={<StarIcon />}
-                  onClick={getHandleSortClick("top")}
+                  onClick={setValue(setSort)}
                 >
                   Top
                 </Button>
                 {sort === "top" && (
-                  <Select value={time} onChange={handleTimeChange}>
+                  <Select value={time} onChange={setValue(setTime)}>
                     <option value="hour">Now</option>
                     <option value="day">Today</option>
                     <option value="week">This Week</option>
@@ -175,15 +127,21 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
                   </Select>
                 )}
                 <Button
+                  value="rising"
                   leftIcon={<TriangleUpIcon />}
-                  onClick={getHandleSortClick("rising")}
+                  onClick={setValue(setSort)}
                 >
                   Rising
                 </Button>
               </HStack>
             </Card>
-            <Posts postListings={postListings} />
-            {after && <Button onClick={handleClickMore}>more</Button>}
+            <SubredditPostsContainer
+              subreddit={subreddit}
+              sort={sort}
+              time={time}
+              initialPostListings={[]}
+              loadNext={atBottom}
+            />
           </>
         }
         right={about}

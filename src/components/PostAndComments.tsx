@@ -1,13 +1,11 @@
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
-import { getCommentsPath } from "../lib/utils/urlUtils";
+import { getComments } from "../lib/reddit/redditAxios";
 import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
-  subreddit?: string;
   article: string;
   initialPost?: any;
   initialComments?: any;
@@ -15,7 +13,6 @@ type Props = {
 };
 
 const PostAndComments: FC<Props> = ({
-  subreddit,
   article,
   initialPost,
   initialComments,
@@ -26,16 +23,9 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      const { path, query, pathname } = getCommentsPath(subreddit, article);
-
-      const postsResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: path,
-        query: query,
-      });
-
-      setPost(postsResponse.data[0]["data"]["children"][0]);
-      setComments(postsResponse.data[1]);
+      const commentsResponse = await getComments(article);
+      setPost(commentsResponse.data[0]["data"]["children"][0]);
+      setComments(commentsResponse.data[1]);
 
       // if (location.pathname === pathname) {
       //   history.replaceState(
@@ -48,7 +38,7 @@ const PostAndComments: FC<Props> = ({
       //   );
       // }
     })();
-  }, [subreddit, article]);
+  }, [article]);
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { Box, VStack } from "@chakra-ui/react";
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
+import { getMore } from "../lib/reddit/redditAxios";
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
 import Comment from "./Comment";
 import CommentSkeleton from "./CommentSkeleton";
@@ -30,18 +30,11 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
 
   const genHandleClickMore = (more: any) => {
     return async () => {
-      const moreResponse = await axios.post("/api/reddit", {
-        method: "POST",
-        path: "/api/morechildren",
-        query: {
-          api_type: "json",
-          id: more["data"]["id"],
-          link_id: postName,
-        },
-        data: new URLSearchParams({
-          children: more["data"]["children"].join(","),
-        }).toString(),
-      });
+      const moreResponse = await getMore(
+        more["data"]["id"],
+        postName,
+        more["data"]["children"]
+      );
 
       const newComments = {
         ...comments,

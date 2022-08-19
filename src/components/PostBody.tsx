@@ -35,7 +35,6 @@ const PostBody: FC<Props> = ({ post }) => {
           playsInline
           width={post["data"]["media"]["reddit_video"]["width"]}
           height={post["data"]["media"]["reddit_video"]["height"]}
-          muted
           loop
           preload="auto"
           controls
