@@ -118,7 +118,7 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
-      <SubredditBanner subreddit={subreddit} />
+      <SubredditBanner showTitle={true} subreddit={subreddit} />
     );
 
   let about;

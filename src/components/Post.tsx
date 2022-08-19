@@ -58,7 +58,7 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
         <Box p="4" bgColor="blue.100" flex="1">
           <HStack>
             <Avatar
-              name={post["data"]["subreddit"]}
+              name={"r /"}
               src={
                 post?.["data"]?.["sr_detail"]["community_icon"] ||
                 post?.["data"]?.["icon_img"]
@@ -98,8 +98,9 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
               <Heading>{post["data"]["title"]}</Heading>
             </Link>
           )}
-
-          <PostBody post={post} />
+          <Box mt="2" bgColor="gray.100">
+            <PostBody post={post} />
+          </Box>
         </Box>
       </Flex>
       <HStack

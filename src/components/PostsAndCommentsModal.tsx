@@ -1,13 +1,6 @@
-import {
-  Box,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-} from "@chakra-ui/react";
+import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { FC } from "react";
 
-import NavBar from "./NavBar";
 import NavBarFrame from "./NavBarFrame";
 import PageFrame from "./PageFrame";
 import PostAndComments from "./PostAndComments";
@@ -27,16 +20,16 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="6xl"
+      size="5xl"
       motionPreset="slideInBottom"
       scrollBehavior="outside"
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-      <ModalContent>
-        <ModalBody>
-          <NavBarFrame>
+      <ModalContent mt="0">
+        <ModalBody p="2">
+          <NavBarFrame subreddit={post["data"]["subreddit"]}>
             <PageFrame
-              top={<SubredditBanner subreddit={subreddit} />}
+              top={<SubredditBanner showTitle={false} subreddit={subreddit} />}
               left={
                 <PostAndComments
                   subreddit={subreddit}

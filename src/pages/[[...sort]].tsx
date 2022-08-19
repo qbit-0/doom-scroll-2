@@ -22,6 +22,7 @@ import HomeAbout from "../components/HomeAbout";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
 import Posts from "../components/Posts";
+import useAtBottom from "../lib/hooks/useAtBottom";
 import useMe from "../lib/hooks/useMe";
 import { withSessionSsr } from "../lib/session/withSession";
 import { getSubredditPath } from "../lib/utils/urlUtils";
@@ -54,6 +55,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   const [after, setAfter] = useState<string | null>(null);
 
   const { me } = useMe();
+  const atBottom = useAtBottom(0);
 
   useEffect(() => {
     router.push(getSubredditPath("", sort, time).pathname);
@@ -83,6 +85,25 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
     })();
   }, [me, sort, time]);
 
+  useEffect(() => {
+    if (after && atBottom) {
+      (async () => {
+        console.log(atBottom);
+        const { path, query } = getSubredditPath("", sort, time);
+        const postsResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: path,
+          query: {
+            ...query,
+            after: after,
+          },
+        });
+        setPostListings([...postListings, postsResponse.data]);
+        setAfter(postsResponse.data["data"]["after"]);
+      })();
+    }
+  }, [after, postListings, sort, time, atBottom]);
+
   const getHandleSortClick = (sortValue: string) => {
     const handleSortClick: MouseEventHandler<HTMLButtonElement> = (event) => {
       event.preventDefault();
@@ -93,20 +114,6 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
 
   const handleTimeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
     setTime(event.target.value);
-  };
-
-  const handleClickMore = async () => {
-    const { path, query } = getSubredditPath("", sort, time);
-    const postsResponse = await axios.post("/api/reddit", {
-      method: "GET",
-      path: path,
-      query: {
-        ...query,
-        after: after,
-      },
-    });
-    setPostListings([...postListings, postsResponse.data]);
-    setAfter(postsResponse.data["data"]["after"]);
   };
 
   return (
@@ -159,7 +166,6 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
               </HStack>
             </Card>
             <Posts postListings={postListings} />
-            {after && <Button onClick={handleClickMore}>more</Button>}
           </>
         }
         right={<HomeAbout />}

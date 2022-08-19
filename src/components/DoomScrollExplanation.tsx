@@ -9,7 +9,7 @@ const DoomScrollExplanation: FC<Props> = () => {
   return (
     <Card>
       <Box p="4">
-        <Heading>DoomScroll: The Best and Wost of Reddit</Heading>
+        <Heading size="2xl">DoomScroll: The Best and Wost of Reddit</Heading>
         <Text>
           Doomscrolling refers to the tendency to continue to surf or scroll
           through bad news, even though that news is saddening, disheartening,

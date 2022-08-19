@@ -21,7 +21,7 @@ const PageFrame: FC<Props> = ({
   return (
     <Box>
       {top}
-      <Flex pt="4" justify="center" columnGap={4}>
+      <Flex py="4" justify="center" columnGap={4}>
         <Box w="xl">
           <VStack>{left}</VStack>
         </Box>
