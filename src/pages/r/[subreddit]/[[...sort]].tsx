@@ -5,6 +5,7 @@ import {
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Button, HStack, Select } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -21,36 +22,50 @@ import useAtBottom from "../../../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
 import setValue from "../../../lib/utils/setValue";
 
-type Props = {};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const initialSubreddit = context.query["subreddit"] || "";
+  const initialSort = context.query["sort"] || "best";
+  const initialTime = context.query["t"] || "day";
 
-const SubredditPage: FC<Props> = ({}) => {
+  return {
+    props: {
+      initialSubreddit: initialSubreddit,
+      initialSort: initialSort,
+      initialTime: initialTime,
+    },
+  };
+};
+
+type Props = {
+  initialSubreddit: string;
+  initialSort: string;
+  initialTime: string;
+};
+
+const SubredditPage: FC<Props> = ({
+  initialSubreddit,
+  initialSort,
+  initialTime,
+}) => {
   const router = useRouter();
-  const [subreddit, setSubreddit] = useState<string | null>(null);
-  const [sort, setSort] = useState<string | null>(null);
-  const [time, setTime] = useState<string | null>(null);
+  const [subreddit, setSubreddit] = useState<string>(initialSubreddit);
+  const [sort, setSort] = useState<string>(initialSort);
+  const [time, setTime] = useState<string>(initialTime);
   const atBottom = useAtBottom();
 
   useEffect(() => {
-    if (!subreddit) setSubreddit((router.query["subreddit"] as string) || "");
-    if (!sort) setSort((router.query["sort"] as string) || "best");
-    if (!time) setTime((router.query["t"] as string) || "day");
-  }, [router.query, subreddit, sort, time]);
+    setSubreddit((router.query["subreddit"] as string) || "");
+    setSort((router.query["sort"] as string) || "best");
+    setTime((router.query["t"] as string) || "day");
+  }, [router.query]);
 
   useEffect(() => {
-    if (!subreddit || !sort || !time) return;
-    router.push(getSubredditPath(subreddit, sort, time).pathname);
+    history.pushState(
+      null,
+      "",
+      getSubredditPath(subreddit, sort, time).pathname
+    );
   }, [subreddit, sort, time]);
-
-  useEffect(() => {
-    router.events.on("routeChangeComplete", (url) => {
-      const parsedUrl = new URL(url, "http://localhost:3000");
-      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-      const urlSort = (match && match?.groups?.["sort"]) || "hot";
-      const urlTime = parsedUrl.searchParams.get("t") || "day";
-      setSort(urlSort);
-      setTime(urlTime);
-    });
-  }, []);
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (

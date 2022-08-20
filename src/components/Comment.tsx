@@ -8,7 +8,7 @@ import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  article: string | null;
+  article: string;
   comment: any;
 };
 

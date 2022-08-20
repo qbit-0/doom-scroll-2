@@ -16,7 +16,7 @@ import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  subreddit: string | null;
+  subreddit?: string;
 };
 
 const SubredditRules: FC<Props> = ({ subreddit }) => {

@@ -11,34 +11,49 @@ import SubredditListings from "../components/SubredditListings";
 import UserListings from "../components/UsersListings";
 import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSearchPath } from "../lib/reddit/redditUrlUtils";
-import { withSessionSsr } from "../lib/session/withSession";
 import setValue from "../lib/utils/setValue";
 
-type Props = {};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const initialSearchQuery = context.query["q"] || "";
+  const initialSort = context.query["sort"] || "relevance";
+  const initialTime = context.query["t"] || "all";
+  const initialType = context.query["type"] || "link";
 
-const SearchPage: FC<Props> = ({}) => {
+  return {
+    props: {
+      initialSearchQuery: initialSearchQuery,
+      initialSort: initialSort,
+      initialTime: initialTime,
+      intialType: initialType,
+    },
+  };
+};
+
+type Props = {
+  initialSearchQuery: string;
+  initialSort: string;
+  initialTime: string;
+  initialType: string;
+};
+
+const SearchPage: FC<Props> = ({
+  initialSearchQuery,
+  initialSort,
+  initialTime,
+  initialType,
+}) => {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState<string | null>();
-  const [sort, setSort] = useState<string | undefined>(undefined);
-  const [time, setTime] = useState<string | undefined>(undefined);
-  const [type, setType] = useState<string | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery);
+  const [sort, setSort] = useState<string>(initialSort);
+  const [time, setTime] = useState<string>(initialTime);
+  const [type, setType] = useState<string>(initialType);
   const atBottom = useAtBottom();
 
   useEffect(() => {
-    if (!searchQuery) setSearchQuery((router.query["q"] as string) || "");
-    if (!sort) setSort((router.query["sort"] as string) || "relevance");
-    if (!time) setTime((router.query["t"] as string) || "all");
-    if (!type) setType((router.query["type"] as string) || "link");
-  }, [router.query, searchQuery, sort, time, type]);
-
-  useEffect(() => {
-    if (!searchQuery || !sort || !time || !type) return;
-    router.push(
-      getSearchPath(searchQuery, sort, time, type).pathname,
-      undefined,
-      {
-        shallow: true,
-      }
+    history.pushState(
+      null,
+      "",
+      getSearchPath(searchQuery, sort, time, type).pathname
     );
   }, [searchQuery, sort, time, type]);
 
@@ -46,6 +61,7 @@ const SearchPage: FC<Props> = ({}) => {
     setSearchQuery((router.query["q"] as string) || "");
     setSort((router.query["sort"] as string) || "relevance");
     setTime((router.query["t"] as string) || "all");
+    setType((router.query["type"] as string) || "link");
   }, [router.query]);
 
   let content;
@@ -107,7 +123,7 @@ const SearchPage: FC<Props> = ({}) => {
   }
 
   return (
-    <NavBarFrame subreddit={null}>
+    <NavBarFrame>
       <PageFrame
         left={
           <>

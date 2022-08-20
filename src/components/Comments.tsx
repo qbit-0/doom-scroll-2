@@ -8,7 +8,7 @@ import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
 
 type Props = {
-  article: string | null;
+  article: string;
   initialComments: any;
 };
 
@@ -30,8 +30,6 @@ const Comments: FC<Props> = ({ article, initialComments }) => {
 
   const genHandleClickMore = (more: any) => {
     return async () => {
-      if (!article) return;
-
       const moreResponse = await getMore(
         more["data"]["id"],
         article,

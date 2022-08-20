@@ -1,5 +1,6 @@
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import NavBarFrame from "../../../../../components/NavBarFrame";
 import PageFrame from "../../../../../components/PageFrame";
@@ -8,17 +9,25 @@ import SubredditAbout from "../../../../../components/SubredditAbout";
 import SubredditBanner from "../../../../../components/SubredditBanner";
 import SubredditRules from "../../../../../components/SubredditRules";
 
-type Props = {};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const subreddit = context.query["subreddit"] || "";
+  const article = context.query["article"] || "";
 
-const CommentsPage: FC<Props> = ({}) => {
+  return {
+    props: {
+      subreddit: subreddit,
+      article: article,
+    },
+  };
+};
+
+type Props = {
+  article: string;
+  subreddit: string;
+};
+
+const CommentsPage: FC<Props> = ({ article, subreddit }) => {
   const router = useRouter();
-  const [subreddit, setSubreddit] = useState<string | null>(null);
-  const [article, setArticle] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!subreddit) setSubreddit((router.query["subreddit"] as string) || "");
-    if (!article) setArticle((router.query["article"] as string) || "");
-  }, [router.query, subreddit, article]);
 
   return (
     <NavBarFrame subreddit={subreddit}>

@@ -5,9 +5,9 @@ import { getSubredditPosts } from "../lib/reddit/redditClientApi";
 import Posts from "./Posts";
 
 type Props = {
-  subreddit: string | null;
-  sort: string | null;
-  time: string | null;
+  subreddit: string;
+  sort: string;
+  time: string;
   loadNext?: boolean;
 };
 
@@ -22,7 +22,6 @@ const SubredditPostsListings: FC<Props> = ({
   const { me } = useMe();
 
   useEffect(() => {
-    if (subreddit === null || !sort || !time) return;
     (async () => {
       const postsResponse = await getSubredditPosts(subreddit, sort, time);
       setPostListings([postsResponse.data]);
@@ -31,18 +30,16 @@ const SubredditPostsListings: FC<Props> = ({
   }, [me, subreddit, sort, time]);
 
   useEffect(() => {
-    if (after && loadNext) {
+    if (postListings && after && loadNext) {
       (async () => {
-        if (subreddit !== null && sort && time && postListings) {
-          const postsResponse = await getSubredditPosts(
-            subreddit,
-            sort,
-            time,
-            after
-          );
-          setPostListings([...postListings, postsResponse.data]);
-          setAfter(postsResponse.data["data"]["after"]);
-        }
+        const postsResponse = await getSubredditPosts(
+          subreddit,
+          sort,
+          time,
+          after
+        );
+        setPostListings([...postListings, postsResponse.data]);
+        setAfter(postsResponse.data["data"]["after"]);
       })();
     }
   }, [subreddit, sort, time, postListings, after, loadNext]);
