@@ -3,16 +3,25 @@ import { FC } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import CommentSkeleton from "./CommentSkeleton";
 import Comments from "./Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  article: string;
-  comment: any;
+  article?: string;
+  comment?: any;
 };
 
 const Comment: FC<Props> = ({ article, comment }) => {
+  if (!comment) {
+    return (
+      <Box w="full">
+        <CommentSkeleton />
+      </Box>
+    );
+  }
+
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
       <Box pt="2" pl="2">
@@ -54,8 +63,8 @@ const Comment: FC<Props> = ({ article, comment }) => {
       {comment["data"]["replies"] && (
         <Box pl={2}>
           <Comments
-            article={article}
             initialComments={comment["data"]["replies"]}
+            article={article}
           />
         </Box>
       )}

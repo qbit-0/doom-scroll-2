@@ -6,7 +6,7 @@ import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
-  article: string | null;
+  article: string;
   initialPost?: any;
   initialComments?: any;
   openModal?: boolean;
@@ -23,8 +23,6 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      if (!article) return;
-
       const commentsResponse = await getComments(article);
       setPost(commentsResponse.data[0]["data"]["children"][0]);
       setComments(commentsResponse.data[1]);
@@ -45,10 +43,10 @@ const PostAndComments: FC<Props> = ({
   return (
     <>
       <Card>
-        <Post initialPost={post} openModal={openModal} />
+        <Post post={post} openModal={openModal} />
       </Card>
       <Card>
-        <Comments article={article} initialComments={comments} />
+        <Comments initialComments={comments} article={article} />
       </Card>
     </>
   );

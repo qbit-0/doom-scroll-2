@@ -50,7 +50,7 @@ const SearchPage: FC<Props> = ({
   const atBottom = useAtBottom();
 
   useEffect(() => {
-    history.pushState(
+    history.replaceState(
       null,
       "",
       getSearchPath(searchQuery, sort, time, type).pathname

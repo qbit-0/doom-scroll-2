@@ -1,17 +1,13 @@
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
-import useAtBottom from "../lib/hooks/useAtBottom";
 import useMe from "../lib/hooks/useMe";
 import { getSearchPosts } from "../lib/reddit/redditClientApi";
-import { getSearchPath, getSubredditPath } from "../lib/reddit/redditUrlUtils";
 import Posts from "./Posts";
 
 type Props = {
   searchQuery: string;
   sort: string;
   time: string;
-  initialPostListings: any[];
   loadNext: boolean;
 };
 
@@ -19,15 +15,16 @@ const SearchPostsListings: FC<Props> = ({
   searchQuery,
   sort,
   time,
-  initialPostListings,
   loadNext,
 }) => {
-  const [postListings, setPostListings] = useState(initialPostListings);
+  const [postListings, setPostListings] = useState<any[] | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const { me } = useMe();
 
   useEffect(() => {
     (async () => {
+      setPostListings(null);
+      setAfter(null);
       const postsResponse = await getSearchPosts(searchQuery, sort, time);
       setPostListings([postsResponse.data]);
       setAfter(postsResponse.data["data"]["after"]);
@@ -35,7 +32,7 @@ const SearchPostsListings: FC<Props> = ({
   }, [me, searchQuery, sort, time]);
 
   useEffect(() => {
-    if (after && loadNext) {
+    if (postListings && after && loadNext) {
       (async () => {
         const postsResponse = await getSearchPosts(
           searchQuery,

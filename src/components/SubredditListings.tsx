@@ -3,21 +3,17 @@ import { FC, useEffect, useState } from "react";
 import useMe from "../lib/hooks/useMe";
 import { getSearchSubreddits } from "../lib/reddit/redditClientApi";
 import Card from "./Card";
+import PostSkeleton from "./PostSkeleton";
 import Subreddit from "./Subreddit";
 
 type Props = {
   searchQuery: string;
-  initialSubredditListings: any[];
   loadNext: boolean;
 };
 
-const SubredditListings: FC<Props> = ({
-  searchQuery,
-  initialSubredditListings,
-  loadNext,
-}) => {
-  const [subredditListings, setSubredditListings] = useState(
-    initialSubredditListings
+const SubredditListings: FC<Props> = ({ searchQuery, loadNext }) => {
+  const [subredditListings, setSubredditListings] = useState<any[] | null>(
+    null
   );
   const [after, setAfter] = useState<string | null>(null);
   const { me } = useMe();
@@ -31,7 +27,7 @@ const SubredditListings: FC<Props> = ({
   }, [me, searchQuery]);
 
   useEffect(() => {
-    if (after && loadNext) {
+    if (subredditListings && after && loadNext) {
       (async () => {
         const subredditsResponse = await getSearchSubreddits(
           searchQuery,
@@ -42,6 +38,16 @@ const SubredditListings: FC<Props> = ({
       })();
     }
   }, [searchQuery, after, subredditListings, loadNext]);
+
+  if (!subredditListings) {
+    return new Array(4).fill(null).map((_, index: number) => {
+      return (
+        <Card key={index}>
+          <PostSkeleton />
+        </Card>
+      );
+    });
+  }
 
   return (
     subredditListings.length > 0 &&

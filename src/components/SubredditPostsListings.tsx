@@ -23,6 +23,8 @@ const SubredditPostsListings: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
+      setPostListings(null);
+      setAfter(null);
       const postsResponse = await getSubredditPosts(subreddit, sort, time);
       setPostListings([postsResponse.data]);
       setAfter(postsResponse.data["data"]["after"]);

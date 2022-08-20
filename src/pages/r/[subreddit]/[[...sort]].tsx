@@ -54,18 +54,18 @@ const SubredditPage: FC<Props> = ({
   const atBottom = useAtBottom();
 
   useEffect(() => {
-    setSubreddit((router.query["subreddit"] as string) || "");
-    setSort((router.query["sort"] as string) || "best");
-    setTime((router.query["t"] as string) || "day");
-  }, [router.query]);
-
-  useEffect(() => {
-    history.pushState(
+    history.replaceState(
       null,
       "",
       getSubredditPath(subreddit, sort, time).pathname
     );
   }, [subreddit, sort, time]);
+
+  useEffect(() => {
+    setSubreddit((router.query["subreddit"] as string) || "");
+    setSort((router.query["sort"] as string) || "best");
+    setTime((router.query["t"] as string) || "day");
+  }, [router.query]);
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (

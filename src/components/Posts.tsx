@@ -13,7 +13,7 @@ const Posts: FC<Props> = ({ postListings }) => {
     return new Array(4).fill(null).map((_, index: number) => {
       return (
         <Card key={index}>
-          <Post initialPost={null} />
+          <PostSkeleton />
         </Card>
       );
     });
@@ -22,7 +22,7 @@ const Posts: FC<Props> = ({ postListings }) => {
   return postListings.map((postListing: any, listingIndex: number) => {
     return postListing.data.children.map((post: any, index: number) => (
       <Card key={listingIndex + index}>
-        <Post initialPost={post} />
+        <Post post={post} />
       </Card>
     ));
   });

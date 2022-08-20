@@ -1,15 +1,14 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import { getMore } from "../lib/reddit/redditClientApi";
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
 import Comment from "./Comment";
-import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
 
 type Props = {
-  article: string;
-  initialComments: any;
+  initialComments?: any;
+  article?: string;
 };
 
 const Comments: FC<Props> = ({ article, initialComments }) => {
@@ -19,17 +18,10 @@ const Comments: FC<Props> = ({ article, initialComments }) => {
     setComments(initialComments);
   }, [initialComments]);
 
-  const commentsPlaceholder = [];
-  for (let i = 0; i < 10; i++) {
-    commentsPlaceholder.push(
-      <Box w="full" key={i}>
-        <CommentSkeleton />
-      </Box>
-    );
-  }
-
   const genHandleClickMore = (more: any) => {
     return async () => {
+      if (!article) return;
+
       const moreResponse = await getMore(
         more["data"]["id"],
         article,
@@ -53,22 +45,28 @@ const Comments: FC<Props> = ({ article, initialComments }) => {
     };
   };
 
+  if (!comments) {
+    const commentsPlaceholder = [];
+    for (let i = 0; i < 10; i++) {
+      commentsPlaceholder.push(<Comment key={i} />);
+    }
+    return <>{commentsPlaceholder}</>;
+  }
+
   return (
     <VStack>
-      {comments
-        ? comments["data"]["children"].map((comment: any, index: number) => {
-            if (comment["kind"] === "more") {
-              return (
-                <More
-                  more={comment}
-                  handleClickMore={genHandleClickMore(comment)}
-                  key={index}
-                />
-              );
-            }
-            return <Comment article={article} comment={comment} key={index} />;
-          })
-        : commentsPlaceholder}
+      {comments["data"]["children"].map((comment: any, index: number) => {
+        if (comment["kind"] === "more") {
+          return (
+            <More
+              more={comment}
+              handleClickMore={genHandleClickMore(comment)}
+              key={index}
+            />
+          );
+        }
+        return <Comment article={article} comment={comment} key={index} />;
+      })}
     </VStack>
   );
 };

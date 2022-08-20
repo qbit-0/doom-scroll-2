@@ -1,5 +1,4 @@
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import { FC } from "react";
 
 import NavBarFrame from "../../../../../components/NavBarFrame";
@@ -27,8 +26,6 @@ type Props = {
 };
 
 const CommentsPage: FC<Props> = ({ article, subreddit }) => {
-  const router = useRouter();
-
   return (
     <NavBarFrame subreddit={subreddit}>
       <PageFrame

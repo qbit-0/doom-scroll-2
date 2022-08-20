@@ -3,21 +3,17 @@ import { FC, useEffect, useState } from "react";
 import useMe from "../lib/hooks/useMe";
 import { getSearchUsers } from "../lib/reddit/redditClientApi";
 import Card from "./Card";
+import PostSkeleton from "./PostSkeleton";
 import Subreddit from "./Subreddit";
 import User from "./User";
 
 type Props = {
   searchQuery: string;
-  initialUserListings: any[];
   loadNext: boolean;
 };
 
-const UserListings: FC<Props> = ({
-  searchQuery,
-  initialUserListings,
-  loadNext,
-}) => {
-  const [userListings, setUserListings] = useState(initialUserListings);
+const UserListings: FC<Props> = ({ searchQuery, loadNext }) => {
+  const [userListings, setUserListings] = useState<any[] | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const { me } = useMe();
 
@@ -30,7 +26,7 @@ const UserListings: FC<Props> = ({
   }, [me, searchQuery]);
 
   useEffect(() => {
-    if (after && loadNext) {
+    if (userListings && after && loadNext) {
       (async () => {
         console.log(loadNext);
         const usersResponse = await getSearchUsers(searchQuery, after);
@@ -39,6 +35,16 @@ const UserListings: FC<Props> = ({
       })();
     }
   }, [searchQuery, after, userListings, loadNext]);
+
+  if (!userListings) {
+    return new Array(4).fill(null).map((_, index: number) => {
+      return (
+        <Card key={index}>
+          <PostSkeleton />
+        </Card>
+      );
+    });
+  }
 
   return (
     userListings.length > 0 &&

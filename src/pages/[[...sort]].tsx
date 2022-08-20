@@ -43,13 +43,13 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   const atBottom = useAtBottom(0);
 
   useEffect(() => {
+    history.replaceState(null, "", getSubredditPath("", sort, time).pathname);
+  }, [sort, time]);
+
+  useEffect(() => {
     setSort((router.query["sort"] as string) || "best");
     setTime((router.query["t"] as string) || "day");
   }, [router.query]);
-
-  useEffect(() => {
-    history.pushState(null, "", getSubredditPath("", sort, time).pathname);
-  }, [sort, time]);
 
   return (
     <NavBarFrame>

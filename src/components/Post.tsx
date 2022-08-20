@@ -18,38 +18,34 @@ import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
 
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import Card from "./Card";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
 
 type Props = {
-  initialPost: Record<string, any> | null;
+  post?: Record<string, any>;
   openModal?: boolean;
 };
 
-const Post: FC<Props> = ({ initialPost, openModal = true }) => {
+const Post: FC<Props> = ({ post, openModal = true }) => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const savedPath = router.asPath;
-  const [post, setPost] = useState(initialPost);
-
-  useEffect(() => {
-    setPost(initialPost);
-  }, [initialPost]);
-
-  if (!post) {
-    return (
-      <Box>
-        <PostSkeleton />
-      </Box>
-    );
-  }
 
   const handleOpenModal = () => {
     const pathname = `/r/${post["data"]["subreddit"]}/comments/${post["data"]["id"]}`;
     history.replaceState(null, "", pathname);
     onOpen();
   };
+
+  if (!post) {
+    return (
+      <Card>
+        <PostSkeleton />
+      </Card>
+    );
+  }
 
   return (
     <>
