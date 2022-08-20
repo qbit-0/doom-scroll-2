@@ -1,18 +1,18 @@
 import { Box, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-import { getMore } from "../lib/reddit/redditAxios";
+import { getMore } from "../lib/reddit/redditClientApi";
 import { genCommentTrees } from "../lib/reddit/redditDataStructs";
 import Comment from "./Comment";
 import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
 
 type Props = {
-  postName: string;
+  article: string | null;
   initialComments: any;
 };
 
-const Comments: FC<Props> = ({ postName, initialComments }) => {
+const Comments: FC<Props> = ({ article, initialComments }) => {
   const [comments, setComments] = useState(initialComments);
 
   useEffect(() => {
@@ -30,9 +30,11 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
 
   const genHandleClickMore = (more: any) => {
     return async () => {
+      if (!article) return;
+
       const moreResponse = await getMore(
         more["data"]["id"],
-        postName,
+        article,
         more["data"]["children"]
       );
 
@@ -66,9 +68,7 @@ const Comments: FC<Props> = ({ postName, initialComments }) => {
                 />
               );
             }
-            return (
-              <Comment postName={postName} comment={comment} key={index} />
-            );
+            return <Comment article={article} comment={comment} key={index} />;
           })
         : commentsPlaceholder}
     </VStack>

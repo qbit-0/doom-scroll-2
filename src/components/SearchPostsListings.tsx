@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
 import useMe from "../lib/hooks/useMe";
-import { getSearchPosts } from "../lib/reddit/redditAxios";
+import { getSearchPosts } from "../lib/reddit/redditClientApi";
 import { getSearchPath, getSubredditPath } from "../lib/reddit/redditUrlUtils";
 import Posts from "./Posts";
 
@@ -15,7 +15,7 @@ type Props = {
   loadNext: boolean;
 };
 
-const SearchPostsContainer: FC<Props> = ({
+const SearchPostsListings: FC<Props> = ({
   searchQuery,
   sort,
   time,
@@ -52,4 +52,4 @@ const SearchPostsContainer: FC<Props> = ({
   return <Posts postListings={postListings} />;
 };
 
-export default SearchPostsContainer;
+export default SearchPostsListings;

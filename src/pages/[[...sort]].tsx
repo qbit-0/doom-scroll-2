@@ -6,7 +6,6 @@ import {
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Button, HStack, Select } from "@chakra-ui/react";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -14,54 +13,42 @@ import Card from "../components/Card";
 import HomeAbout from "../components/HomeAbout";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
-import SubredditPostsContainer from "../components/SubredditPostsContainer";
+import SubredditPostsListings from "../components/SubredditPostsListings";
 import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
-import { withSessionSsr } from "../lib/session/withSession";
 import setValue from "../lib/utils/setValue";
 
-export const getServerSideProps: GetServerSideProps = withSessionSsr(
-  async (context) => {
-    const initialSort = context.query["sort"] || "best";
-    const initialTime = context.query["t"] || "day";
+type Props = {};
 
-    return {
-      props: {
-        initialSort,
-        initialTime,
-      },
-    };
-  }
-);
-
-type Props = {
-  initialSort: string;
-  initialTime: string;
-};
-
-const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
+const HomePage: FC<Props> = ({}) => {
   const router = useRouter();
-  const [sort, setSort] = useState<string>(initialSort);
-  const [time, setTime] = useState<string>(initialTime);
+  const [sort, setSort] = useState<string | null>(null);
+  const [time, setTime] = useState<string | null>(null);
   const atBottom = useAtBottom(0);
 
   useEffect(() => {
+    if (!sort) setSort((router.query["sort"] as string) || "best");
+    if (!time) setTime((router.query["t"] as string) || "day");
+  }, [router.query, sort, time]);
+
+  useEffect(() => {
+    if (!sort || !time) return;
     router.push(getSubredditPath("", sort, time).pathname);
   }, [sort, time]);
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", (url) => {
-      const parsedUrl = new URL(url, "http://localhost:3000");
-      const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
-      const urlSort = (match && match?.groups?.["sort"]) || "best";
-      const urlTime = parsedUrl.searchParams.get("t") || "day";
-      setSort(urlSort);
-      setTime(urlTime);
-    });
-  }, []);
+  // useEffect(() => {
+  //   router.events.on("routeChangeComplete", (url) => {
+  //     const parsedUrl = new URL(url, "http://localhost:3000");
+  //     const match = parsedUrl.pathname.match(/^\/(r\/(\w+)\/)?(?<sort>\w+)$/);
+  //     const urlSort = (match && match?.groups?.["sort"]) || "best";
+  //     const urlTime = parsedUrl.searchParams.get("t") || "day";
+  //     setSort(urlSort);
+  //     setTime(urlTime);
+  //   });
+  // }, []);
 
   return (
-    <NavBarFrame>
+    <NavBarFrame subreddit={null}>
       <PageFrame
         left={
           <>
@@ -95,7 +82,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 >
                   Top
                 </Button>
-                {sort === "top" && (
+                {sort === "top" && time && (
                   <Select w={32} value={time} onChange={setValue(setTime)}>
                     <option value="hour">Now</option>
                     <option value="day">Today</option>
@@ -114,11 +101,10 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 </Button>
               </HStack>
             </Card>
-            <SubredditPostsContainer
+            <SubredditPostsListings
               subreddit={""}
               sort={sort}
               time={time}
-              initialPostListings={[]}
               loadNext={atBottom}
             />
           </>

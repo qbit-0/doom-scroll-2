@@ -23,7 +23,7 @@ import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
 type Props = {
-  subreddit?: string;
+  subreddit: string | null;
 };
 
 const NavBar: FC<Props> = ({ subreddit }) => {

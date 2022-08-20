@@ -8,11 +8,11 @@ import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  postName: string;
+  article: string | null;
   comment: any;
 };
 
-const Comment: FC<Props> = ({ postName, comment }) => {
+const Comment: FC<Props> = ({ article, comment }) => {
   return (
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
       <Box pt="2" pl="2">
@@ -54,7 +54,7 @@ const Comment: FC<Props> = ({ postName, comment }) => {
       {comment["data"]["replies"] && (
         <Box pl={2}>
           <Comments
-            postName={postName}
+            article={article}
             initialComments={comment["data"]["replies"]}
           />
         </Box>

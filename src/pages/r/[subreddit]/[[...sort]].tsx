@@ -5,7 +5,6 @@ import {
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Button, HStack, Select } from "@chakra-ui/react";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -16,41 +15,29 @@ import PageFrame from "../../../components/PageFrame";
 import PopularAbout from "../../../components/PopularAbout";
 import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
-import SubredditPostsContainer from "../../../components/SubredditPostsContainer";
+import SubredditPostsListings from "../../../components/SubredditPostsListings";
 import SubredditRules from "../../../components/SubredditRules";
 import useAtBottom from "../../../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
-import { withSessionSsr } from "../../../lib/session/withSession";
 import setValue from "../../../lib/utils/setValue";
 
-export const getServerSideProps: GetServerSideProps = withSessionSsr(
-  async (context) => {
-    const subreddit = context.query["subreddit"];
-    const initialSort = context.query["sort"] || "hot";
-    const initalTime = context.query["t"] || "day";
-    return {
-      props: {
-        subreddit: subreddit,
-        initialSort: initialSort,
-        initialTime: initalTime,
-      },
-    };
-  }
-);
+type Props = {};
 
-type Props = {
-  subreddit: string;
-  initialSort: string;
-  initialTime: string;
-};
-
-const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
+const SubredditPage: FC<Props> = ({}) => {
   const router = useRouter();
-  const [sort, setSort] = useState<string>(initialSort);
-  const [time, setTime] = useState<string>(initialTime);
+  const [subreddit, setSubreddit] = useState<string | null>(null);
+  const [sort, setSort] = useState<string | null>(null);
+  const [time, setTime] = useState<string | null>(null);
   const atBottom = useAtBottom();
 
   useEffect(() => {
+    if (!subreddit) setSubreddit((router.query["subreddit"] as string) || "");
+    if (!sort) setSort((router.query["sort"] as string) || "best");
+    if (!time) setTime((router.query["t"] as string) || "day");
+  }, [router.query, subreddit, sort, time]);
+
+  useEffect(() => {
+    if (!subreddit || !sort || !time) return;
     router.push(getSubredditPath(subreddit, sort, time).pathname);
   }, [subreddit, sort, time]);
 
@@ -72,6 +59,9 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
 
   let about;
   switch (subreddit) {
+    case undefined:
+      about = null;
+      break;
     case "popular":
       about = <PopularAbout />;
       break;
@@ -117,7 +107,7 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
                   Top
                 </Button>
                 {sort === "top" && (
-                  <Select value={time} onChange={setValue(setTime)}>
+                  <Select value={time || "day"} onChange={setValue(setTime)}>
                     <option value="hour">Now</option>
                     <option value="day">Today</option>
                     <option value="week">This Week</option>
@@ -135,11 +125,10 @@ const SubredditPage: FC<Props> = ({ subreddit, initialSort, initialTime }) => {
                 </Button>
               </HStack>
             </Card>
-            <SubredditPostsContainer
+            <SubredditPostsListings
               subreddit={subreddit}
               sort={sort}
               time={time}
-              initialPostListings={[]}
               loadNext={atBottom}
             />
           </>

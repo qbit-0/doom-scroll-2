@@ -4,6 +4,7 @@ import {
   getCommentsPath,
   getSearchPath,
   getSearchSubredditsPath,
+  getSearchUsersPath,
   getSubredditPath,
 } from "./redditUrlUtils";
 
@@ -81,4 +82,14 @@ export const getSearchSubreddits = async (
     query: query,
   });
   return subredditsResponse;
+};
+
+export const getSearchUsers = async (searchQuery: string, after?: string) => {
+  const { path, query } = getSearchUsersPath(searchQuery, after);
+  const usersResponse = await axios.post("/api/reddit", {
+    method: "GET",
+    path: path,
+    query: query,
+  });
+  return usersResponse;
 };

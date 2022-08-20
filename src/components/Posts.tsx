@@ -5,32 +5,27 @@ import Post from "./Post";
 import PostSkeleton from "./PostSkeleton";
 
 type Props = {
-  postListings: any[];
+  postListings: any[] | null;
 };
 
 const Posts: FC<Props> = ({ postListings }) => {
-  const postsPlaceholder = [];
-  for (let i = 0; i < 4; i++) {
-    postsPlaceholder.push(
-      <Card key={i}>
-        <PostSkeleton />
-      </Card>
-    );
+  if (postListings === null) {
+    return new Array(4).fill(null).map((_, index: number) => {
+      return (
+        <Card key={index}>
+          <Post initialPost={null} />
+        </Card>
+      );
+    });
   }
 
-  return (
-    <>
-      {postListings.length > 0
-        ? postListings.map((posts: any, listingIndex: number) => {
-            return posts.data.children.map((post: any, index: number) => (
-              <Card key={listingIndex + index}>
-                <Post initialPost={post} />
-              </Card>
-            ));
-          })
-        : postsPlaceholder}
-    </>
-  );
+  return postListings.map((postListing: any, listingIndex: number) => {
+    return postListing.data.children.map((post: any, index: number) => (
+      <Card key={listingIndex + index}>
+        <Post initialPost={post} />
+      </Card>
+    ));
+  });
 };
 
 export default Posts;

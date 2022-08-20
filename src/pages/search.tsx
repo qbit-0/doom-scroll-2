@@ -6,56 +6,40 @@ import { FC, useEffect, useState } from "react";
 import Card from "../components/Card";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
-import SearchPostsContainer from "../components/SearchPostsContainer";
-import SubredditsContainer from "../components/SubredditsContainer";
+import SearchPostsListings from "../components/SearchPostsListings";
+import SubredditListings from "../components/SubredditListings";
+import UserListings from "../components/UsersListings";
 import useAtBottom from "../lib/hooks/useAtBottom";
-import useMe from "../lib/hooks/useMe";
 import { getSearchPath } from "../lib/reddit/redditUrlUtils";
 import { withSessionSsr } from "../lib/session/withSession";
 import setValue from "../lib/utils/setValue";
 
-export const getServerSideProps: GetServerSideProps = withSessionSsr(
-  async (context) => {
-    const initialSearchQuery = context.query["q"] || "";
-    const initialSort = context.query["sort"] || "best";
-    const initalTime = context.query["t"] || "day";
-    const initialType = context.query["type"] || "link";
+type Props = {};
 
-    return {
-      props: {
-        initialSearchQuery: initialSearchQuery,
-        initialSort: initialSort,
-        initialTime: initalTime,
-        initialType: initialType,
-      },
-    };
-  }
-);
-
-type Props = {
-  initialSearchQuery: string;
-  initialSort: string;
-  initialTime: string;
-  initialType: string;
-};
-
-const SearchPage: FC<Props> = ({
-  initialSearchQuery,
-  initialSort,
-  initialTime,
-  initialType,
-}) => {
+const SearchPage: FC<Props> = ({}) => {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery);
-  const [sort, setSort] = useState<string>(initialSort);
-  const [time, setTime] = useState<string>(initialTime);
-  const [type, setType] = useState<string>(initialType);
+  const [searchQuery, setSearchQuery] = useState<string | null>();
+  const [sort, setSort] = useState<string | undefined>(undefined);
+  const [time, setTime] = useState<string | undefined>(undefined);
+  const [type, setType] = useState<string | undefined>(undefined);
   const atBottom = useAtBottom();
 
   useEffect(() => {
-    router.push(getSearchPath(searchQuery, sort, time, type).pathname, undefined, {
-      shallow: true,
-    });
+    if (!searchQuery) setSearchQuery((router.query["q"] as string) || "");
+    if (!sort) setSort((router.query["sort"] as string) || "relevance");
+    if (!time) setTime((router.query["t"] as string) || "all");
+    if (!type) setType((router.query["type"] as string) || "link");
+  }, [router.query, searchQuery, sort, time, type]);
+
+  useEffect(() => {
+    if (!searchQuery || !sort || !time || !type) return;
+    router.push(
+      getSearchPath(searchQuery, sort, time, type).pathname,
+      undefined,
+      {
+        shallow: true,
+      }
+    );
   }, [searchQuery, sort, time, type]);
 
   useEffect(() => {
@@ -65,56 +49,65 @@ const SearchPage: FC<Props> = ({
   }, [router.query]);
 
   let content;
-  switch (type) {
-    case "link":
-      content = (
-        <>
-          <Card>
-            <HStack p="2">
-              <Select value={sort} w="32" onChange={setValue(setSort)}>
-                <option value="relevance">Relevance</option>
-                <option value="hot">Hot</option>
-                <option value="top">Top</option>k
-                <option value="new">New</option>
-                <option value="comments">Comments</option>
-              </Select>
-              <Select value={time} w="32" onChange={setValue(setTime)}>
-                <option value="all">All Time</option>
-                <option value="year">Past Year</option>
-                <option value="month">Past Month</option>
-                <option value="week">Past Week</option>
-                <option value="day">Past 24 Hours</option>
-                <option value="hour">Past Hour</option>
-              </Select>
-            </HStack>
-          </Card>
-          <SearchPostsContainer
+  if (searchQuery && sort && time && type) {
+    switch (type) {
+      case "link":
+        content = (
+          <>
+            <Card>
+              <HStack p="2">
+                <Select value={sort} w="32" onChange={setValue(setSort)}>
+                  <option value="relevance">Relevance</option>
+                  <option value="hot">Hot</option>
+                  <option value="top">Top</option>k
+                  <option value="new">New</option>
+                  <option value="comments">Comments</option>
+                </Select>
+                <Select value={time} w="32" onChange={setValue(setTime)}>
+                  <option value="all">All Time</option>
+                  <option value="year">Past Year</option>
+                  <option value="month">Past Month</option>
+                  <option value="week">Past Week</option>
+                  <option value="day">Past 24 Hours</option>
+                  <option value="hour">Past Hour</option>
+                </Select>
+              </HStack>
+            </Card>
+            <SearchPostsListings
+              searchQuery={searchQuery}
+              sort={sort}
+              time={time}
+              initialPostListings={[]}
+              loadNext={atBottom}
+            />
+          </>
+        );
+        break;
+      case "comment":
+        break;
+      case "sr":
+        content = (
+          <SubredditListings
             searchQuery={searchQuery}
-            sort={sort}
-            time={time}
-            initialPostListings={[]}
+            initialSubredditListings={[]}
             loadNext={atBottom}
           />
-        </>
-      );
-      break;
-    case "comment":
-      break;
-    case "sr":
-      content = (
-        <SubredditsContainer
-          searchQuery={searchQuery}
-          initialSubredditListings={[]}
-          loadNext={atBottom}
-        />
-      );
-      break;
-    case "user":
-      break;
+        );
+        break;
+      case "user":
+        content = (
+          <UserListings
+            searchQuery={searchQuery}
+            initialUserListings={[]}
+            loadNext={atBottom}
+          />
+        );
+        break;
+    }
   }
 
   return (
-    <NavBarFrame>
+    <NavBarFrame subreddit={null}>
       <PageFrame
         left={
           <>
@@ -123,9 +116,9 @@ const SearchPage: FC<Props> = ({
                 <Button value="link" onClick={setValue(setType)}>
                   Posts
                 </Button>
-                <Button value="comment" onClick={setValue(setType)}>
+                {/* <Button value="comment" onClick={setValue(setType)}>
                   Comments
-                </Button>
+                </Button> */}
                 <Button value="sr" onClick={setValue(setType)}>
                   Communities
                 </Button>

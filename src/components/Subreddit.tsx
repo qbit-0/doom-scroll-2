@@ -8,8 +8,6 @@ import SanitizeHTML from "./SanitizeHTML";
 type Props = { subreddit: any };
 
 const Subreddit: FC<Props> = ({ subreddit }) => {
-  const router = useRouter();
-
   return (
     <Box p="4">
       <NextLink href={`/r/${subreddit["data"]["display_name"]}`}>

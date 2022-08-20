@@ -6,13 +6,14 @@ import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  subreddit: string;
+  subreddit: string | null;
 };
 
 const SubredditAbout: FC<Props> = ({ subreddit }) => {
   const [about, setAbout] = useState<any | null>(null);
 
   useEffect(() => {
+    if (!subreddit) return;
     (async () => {
       const aboutResponse = await axios.post("/api/reddit", {
         method: "GET",

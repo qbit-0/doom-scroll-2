@@ -4,26 +4,24 @@ import { FC, useEffect, useState } from "react";
 
 type Props = {
   username: string;
+  initialIconImg?: string;
 };
 
-const RedditAvatar: FC<Props> = ({ username }) => {
-  const [author, setAuthor] = useState<any>(null);
+const RedditAvatar: FC<Props> = ({ username, initialIconImg }) => {
+  const [iconImg, setIconImg] = useState(initialIconImg);
 
   useEffect(() => {
+    if (username === "[deleted]") return;
     (async () => {
-      if (username !== "[deleted]") {
-        const authorResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/user/${username}/about`,
-        });
-        setAuthor(authorResponse.data);
-      }
+      const authorResponse = await axios.post("/api/reddit", {
+        method: "GET",
+        path: `/user/${username}/about`,
+      });
+      setIconImg(authorResponse.data["data"]["icon_img"]);
     })();
   }, [username]);
 
-  return (
-    <Avatar size="sm" name={username} src={author?.["data"]["icon_img"]} />
-  );
+  return <Avatar size="sm" name={username} src={iconImg} />;
 };
 
 export default RedditAvatar;

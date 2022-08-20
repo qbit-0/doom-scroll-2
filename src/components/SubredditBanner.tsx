@@ -3,7 +3,7 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 type Props = {
-  subreddit: string;
+  subreddit: string | null;
   showTitle: boolean;
 };
 
@@ -11,6 +11,7 @@ const SubredditBanner: FC<Props> = ({ subreddit, showTitle }) => {
   const [about, setAbout] = useState<any | null>(null);
 
   useEffect(() => {
+    if (!subreddit) return;
     (async () => {
       const aboutResponse = await axios.post("/api/reddit", {
         method: "GET",
@@ -21,12 +22,16 @@ const SubredditBanner: FC<Props> = ({ subreddit, showTitle }) => {
   }, [subreddit]);
 
   let background;
-  if (about?.["data"]?.["banner_background_image"]) {
+  if (about?.["data"]["banner_background_image"]) {
     background = (
       <Box
         w="full"
         h="36"
         bgImage={about["data"]["banner_background_image"]}
+        bgColor={
+          about["data"]["banner_background_color"] ||
+          about?.["data"]["primary_color"]
+        }
         bgPos="center"
       />
     );
@@ -35,14 +40,27 @@ const SubredditBanner: FC<Props> = ({ subreddit, showTitle }) => {
       <Flex
         justify="center"
         align="center"
-        bgColor={about["data"]["banner_background_color"]}
+        bgColor={
+          about["data"]["banner_background_color"] ||
+          about?.["data"]["primary_color"]
+        }
         h="36"
       >
         <Box bgImage={about["data"]["header_img"]} bgPos="center" />
       </Flex>
     );
   } else {
-    background = <Box w="full" h="36" bgColor="gray" />;
+    background = (
+      <Box
+        w="full"
+        h="36"
+        bgColor={
+          about?.["data"]["banner_background_color"] ||
+          about?.["data"]["primary_color"] ||
+          "gray"
+        }
+      />
+    );
   }
 
   return (

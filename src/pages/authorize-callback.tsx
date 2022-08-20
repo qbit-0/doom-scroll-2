@@ -5,7 +5,7 @@ import { FC, useEffect } from "react";
 import { mutate } from "swr";
 
 import PageFrame from "../components/PageFrame";
-import { redditApi } from "../lib/reddit/redditApi";
+import { redditApi } from "../lib/reddit/redditServerApi";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { withSessionSsr } from "../lib/session/withSession";
 

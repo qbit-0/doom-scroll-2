@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
 
-import { getComments } from "../lib/reddit/redditAxios";
+import { getComments } from "../lib/reddit/redditClientApi";
 import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
-  article: string;
+  article: string | null;
   initialPost?: any;
   initialComments?: any;
   openModal?: boolean;
@@ -23,6 +23,8 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
+      if (!article) return;
+
       const commentsResponse = await getComments(article);
       setPost(commentsResponse.data[0]["data"]["children"][0]);
       setComments(commentsResponse.data[1]);
@@ -46,7 +48,7 @@ const PostAndComments: FC<Props> = ({
         <Post initialPost={post} openModal={openModal} />
       </Card>
       <Card>
-        <Comments postName={article} initialComments={comments} />
+        <Comments article={article} initialComments={comments} />
       </Card>
     </>
   );

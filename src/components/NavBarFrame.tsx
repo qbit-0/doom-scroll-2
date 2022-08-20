@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import NavBar from "./NavBar";
 
 type Props = {
-  subreddit?: string;
+  subreddit: string | null;
   children: React.ReactNode;
 };
 

@@ -1,6 +1,4 @@
 import axios from "axios";
-import { log } from "console";
-import { useScroll } from "framer-motion";
 import { IncomingMessage } from "http";
 import { NextApiRequest } from "next";
 

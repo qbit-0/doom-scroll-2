@@ -16,13 +16,15 @@ import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  subreddit: string;
+  subreddit: string | null;
 };
 
 const SubredditRules: FC<Props> = ({ subreddit }) => {
   const [rules, setRules] = useState<any | null>(null);
 
   useEffect(() => {
+    if (!subreddit) return;
+
     (async () => {
       const rulesResponse = await axios.post("/api/reddit", {
         method: "GET",

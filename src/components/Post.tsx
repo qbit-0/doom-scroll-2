@@ -23,7 +23,7 @@ import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
 
 type Props = {
-  initialPost: Record<string, any>;
+  initialPost: Record<string, any> | null;
   openModal?: boolean;
 };
 
@@ -66,7 +66,7 @@ const Post: FC<Props> = ({ initialPost, openModal = true }) => {
               name={"r /"}
               src={
                 post?.["data"]?.["sr_detail"]["community_icon"] ||
-                post?.["data"]?.["icon_img"]
+                post?.["data"]?.["sr_detail"]?.["icon_img"]
               }
               size="sm"
             />

@@ -1,4 +1,4 @@
-import { redditApi } from "../../lib/reddit/redditApi";
+import { redditApi } from "../../lib/reddit/redditServerApi";
 import { withSessionRoute } from "../../lib/session/withSession";
 
 const redditRoute = withSessionRoute(async (req, res) => {

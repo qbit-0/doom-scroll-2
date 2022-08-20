@@ -10,7 +10,7 @@ export const getSubredditPath = (
   time: string,
   after?: string
 ) => {
-  let path = subreddit === "" ? "" : `/r/${subreddit}`;
+  let path = !subreddit ? "" : `/r/${subreddit}`;
   path += `/${sort}`;
 
   const query: Record<string, string> = {};
@@ -67,6 +67,18 @@ export const getSearchSubredditsPath = (
   query["q"] = searchQuery;
   query["sort"] = "relevance";
   query["sr_detail"] = "true";
+  if (after) query["after"] = after;
+
+  const pathname = getPathname(path, query);
+  return { path, query, pathname };
+};
+
+export const getSearchUsersPath = (searchQuery: string, after?: string) => {
+  const path = "/users/search";
+
+  const query: Record<string, string> = {};
+  query["q"] = searchQuery;
+  query["sort"] = "relevance";
   if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);
