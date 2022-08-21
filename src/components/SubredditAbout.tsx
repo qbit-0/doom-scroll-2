@@ -29,7 +29,7 @@ const SubredditAbout: FC<Props> = ({ subreddit }) => {
       <Box p="4">
         <Heading>About Community</Heading>
         {about ? (
-          <SanitizeHTML dirty={about["data"]["public_description_html"]} />
+          <SanitizeHTML dirty={about.data.public_description_html} />
         ) : (
           <SkeletonText noOfLines={4} />
         )}

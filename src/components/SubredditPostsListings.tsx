@@ -27,7 +27,7 @@ const SubredditPostsListings: FC<Props> = ({
       setAfter(null);
       const postsResponse = await getSubredditPosts(subreddit, sort, time);
       setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data["data"]["after"]);
+      setAfter(postsResponse.data.data.after);
     })();
   }, [me, subreddit, sort, time]);
 
@@ -41,7 +41,7 @@ const SubredditPostsListings: FC<Props> = ({
           after
         );
         setPostListings([...postListings, postsResponse.data]);
-        setAfter(postsResponse.data["data"]["after"]);
+        setAfter(postsResponse.data.data.after);
       })();
     }
   }, [subreddit, sort, time, postListings, after, loadNext]);

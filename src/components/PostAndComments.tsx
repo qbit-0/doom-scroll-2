@@ -1,14 +1,20 @@
 import { FC, useEffect, useState } from "react";
 
 import { getComments } from "../lib/reddit/redditClientApi";
+import {
+  RedditComment,
+  RedditLink,
+  RedditListing,
+  RedditMore,
+} from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
   article: string;
-  initialPost?: any;
-  initialComments?: any;
+  initialPost?: RedditLink;
+  initialComments?: RedditListing<RedditComment | RedditMore>;
   openModal?: boolean;
 };
 
@@ -24,8 +30,12 @@ const PostAndComments: FC<Props> = ({
   useEffect(() => {
     (async () => {
       const commentsResponse = await getComments(article);
-      setPost(commentsResponse.data[0]["data"]["children"][0]);
-      setComments(commentsResponse.data[1]);
+      const commentsResponseData: [
+        RedditListing<RedditLink>,
+        RedditListing<RedditComment | RedditMore>
+      ] = commentsResponse.data;
+      setPost(commentsResponseData[0].data.children[0]);
+      setComments(commentsResponseData[1]);
 
       // if (location.pathname === pathname) {
       //   history.replaceState(

@@ -93,7 +93,6 @@ const SearchPage: FC<Props> = ({
               searchQuery={searchQuery}
               sort={sort}
               time={time}
-              initialPostListings={[]}
               loadNext={atBottom}
             />
           </>
@@ -103,20 +102,12 @@ const SearchPage: FC<Props> = ({
         break;
       case "sr":
         content = (
-          <SubredditListings
-            searchQuery={searchQuery}
-            initialSubredditListings={[]}
-            loadNext={atBottom}
-          />
+          <SubredditListings searchQuery={searchQuery} loadNext={atBottom} />
         );
         break;
       case "user":
         content = (
-          <UserListings
-            searchQuery={searchQuery}
-            initialUserListings={[]}
-            loadNext={atBottom}
-          />
+          <UserListings searchQuery={searchQuery} loadNext={atBottom} />
         );
         break;
     }

@@ -17,7 +17,7 @@ const RedditAvatar: FC<Props> = ({ username, initialIconImg }) => {
         method: "GET",
         path: `/user/${username}/about`,
       });
-      setIconImg(authorResponse.data["data"]["icon_img"]);
+      setIconImg(authorResponse.data.data.icon_img);
     })();
   }, [username]);
 

@@ -7,11 +7,11 @@ import {
   Box,
   Heading,
   SkeletonText,
-  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
+import { RedditRule } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const SubredditRules: FC<Props> = ({ subreddit }) => {
-  const [rules, setRules] = useState<any | null>(null);
+  const [rules, setRules] = useState<RedditRule | null>(null);
 
   useEffect(() => {
     if (!subreddit) return;
@@ -55,17 +55,17 @@ const SubredditRules: FC<Props> = ({ subreddit }) => {
         <Heading>Rules</Heading>
         <Accordion allowMultiple>
           {rules
-            ? rules["rules"].map((rule: any, index: number) => {
+            ? rules.rules.map((rule: RedditRule["rules"][0], index: number) => {
                 return (
                   <AccordionItem overflowWrap="anywhere" key={index}>
                     <AccordionButton>
                       <Heading flex="1" size="md">
-                        {rule["short_name"]}
+                        {rule.short_name}
                       </Heading>
                       <AccordionIcon />
                     </AccordionButton>
                     <AccordionPanel>
-                      <SanitizeHTML dirty={rule["description_html"]} />;
+                      <SanitizeHTML dirty={rule.description_html} />;
                     </AccordionPanel>
                   </AccordionItem>
                 );

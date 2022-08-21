@@ -2,6 +2,7 @@ import { Box, HStack, Heading, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 
+import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import CommentSkeleton from "./CommentSkeleton";
 import Comments from "./Comments";
@@ -10,7 +11,7 @@ import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
   article?: string;
-  comment?: any;
+  comment?: RedditComment;
 };
 
 const Comment: FC<Props> = ({ article, comment }) => {
@@ -26,23 +27,23 @@ const Comment: FC<Props> = ({ article, comment }) => {
     <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
       <Box pt="2" pl="2">
         <HStack>
-          <RedditAvatar username={comment["data"]["author"]} />
+          <RedditAvatar username={comment.data.author} />
           <HStack ml="1" display="inline" divider={<> &middot; </>}>
             <Heading size="sm" display="inline">
-              {comment["data"]["author"]}
+              {comment.data.author}
             </Heading>
             <Heading size="sm" display="inline" color="gray">
-              {getElapsedString(comment["data"]["created_utc"])}
+              {getElapsedString(comment.data.created_utc)}
             </Heading>
-            {comment["data"]["edited"] && (
+            {comment.data.edited && (
               <Heading size="sm" display="inline" color="gray">
-                {getElapsedString(comment["data"]["edited"])}
+                {getElapsedString(comment.data.edited)}
               </Heading>
             )}
           </HStack>
         </HStack>
         <Box>
-          <SanitizeHTML dirty={comment["data"]["body_html"]} />
+          <SanitizeHTML dirty={comment.data.body_html} />
         </Box>
         <HStack p="1" bgColor="green.100">
           <Box>
@@ -51,7 +52,7 @@ const Comment: FC<Props> = ({ article, comment }) => {
               icon={<Icon as={BiUpvote} />}
               aria-label="upvote"
             />
-            <Text display="inline">{comment["data"]["score"]}</Text>
+            <Text display="inline">{comment.data.score}</Text>
             <IconButton
               display="inline"
               icon={<Icon as={BiDownvote} />}
@@ -60,12 +61,9 @@ const Comment: FC<Props> = ({ article, comment }) => {
           </Box>
         </HStack>
       </Box>
-      {comment["data"]["replies"] && (
+      {comment.data.replies && (
         <Box pl={2}>
-          <Comments
-            initialComments={comment["data"]["replies"]}
-            article={article}
-          />
+          <Comments initialComments={comment.data.replies} article={article} />
         </Box>
       )}
     </Box>

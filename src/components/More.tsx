@@ -1,13 +1,15 @@
 import { Box, Button } from "@chakra-ui/react";
 import { FC, MouseEventHandler } from "react";
 
+import { RedditMore } from "../lib/reddit/redditDataStructs";
+
 type Props = {
-  more: any;
+  more: RedditMore;
   handleClickMore: MouseEventHandler<HTMLButtonElement>;
 };
 
 const More: FC<Props> = ({ more, handleClickMore }) => {
-  const count = more["data"]["count"];
+  const count = more.data.count;
   return (
     <Box w="full">
       {count > 0 ? (

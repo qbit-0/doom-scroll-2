@@ -27,7 +27,7 @@ const SearchPostsListings: FC<Props> = ({
       setAfter(null);
       const postsResponse = await getSearchPosts(searchQuery, sort, time);
       setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data["data"]["after"]);
+      setAfter(postsResponse.data.data.after);
     })();
   }, [me, searchQuery, sort, time]);
 
@@ -41,7 +41,7 @@ const SearchPostsListings: FC<Props> = ({
           after
         );
         setPostListings([...postListings, postsResponse.data]);
-        setAfter(postsResponse.data["data"]["after"]);
+        setAfter(postsResponse.data.data.after);
       })();
     }
   }, [searchQuery, sort, time, postListings, after, loadNext]);
