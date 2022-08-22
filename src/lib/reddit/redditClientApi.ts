@@ -38,8 +38,12 @@ export const getSearchPosts = async (
   return postsResponse;
 };
 
-export const getComments = async (article: string) => {
-  const { path, query } = getCommentsPath(article);
+export const getComments = async (
+  subreddit: string,
+  article: string,
+  commentId?: string
+) => {
+  const { path, query } = getCommentsPath(subreddit, article, commentId);
 
   const commentsResponse = await axios.post("/api/reddit", {
     method: "GET",
@@ -52,7 +56,7 @@ export const getComments = async (article: string) => {
 
 export const getMore = async (
   moreId: string,
-  articleId: string,
+  article: string,
   childrenIds: string[]
 ) => {
   const moreResponse = await axios.post("/api/reddit", {
@@ -61,7 +65,7 @@ export const getMore = async (
     query: {
       api_type: "json",
       id: moreId,
-      link_id: `t3_${articleId}`,
+      link_id: `t3_${article}`,
     },
     data: new URLSearchParams({
       children: childrenIds.join(","),

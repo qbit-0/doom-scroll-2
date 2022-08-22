@@ -30,7 +30,7 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
     <NavBarFrame subreddit={subreddit}>
       <PageFrame
         top={<SubredditBanner showTitle={true} subreddit={subreddit} />}
-        left={<PostAndComments article={article} />}
+        left={<PostAndComments subreddit={subreddit} article={article} />}
         right={
           <>
             <SubredditAbout subreddit={subreddit} />

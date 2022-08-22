@@ -35,11 +35,7 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
   const savedPath = router.asPath;
 
   if (!post) {
-    return (
-      <Card>
-        <PostSkeleton />
-      </Card>
-    );
+    return <PostSkeleton />;
   }
 
   const handleOpenModal = () => {

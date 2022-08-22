@@ -12,14 +12,18 @@ import Comments from "./Comments";
 import Post from "./Post";
 
 type Props = {
+  subreddit: string;
   article: string;
+  commentId?: string;
   initialPost?: RedditLink;
   initialComments?: RedditListing<RedditComment | RedditMore>;
   openModal?: boolean;
 };
 
 const PostAndComments: FC<Props> = ({
+  subreddit,
   article,
+  commentId,
   initialPost,
   initialComments,
   openModal = true,
@@ -29,7 +33,7 @@ const PostAndComments: FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      const commentsResponse = await getComments(article);
+      const commentsResponse = await getComments(subreddit, article, commentId);
       const commentsResponseData: [
         RedditListing<RedditLink>,
         RedditListing<RedditComment | RedditMore>
@@ -56,7 +60,11 @@ const PostAndComments: FC<Props> = ({
         <Post post={post} openModal={openModal} />
       </Card>
       <Card>
-        <Comments initialComments={comments} article={article} />
+        <Comments
+          initialComments={comments}
+          subreddit={subreddit}
+          article={article}
+        />
       </Card>
     </>
   );

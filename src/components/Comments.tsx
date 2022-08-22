@@ -13,17 +13,18 @@ import More from "./More";
 
 type Props = {
   initialComments?: RedditListing<RedditComment | RedditMore>;
-  article?: string;
+  subreddit: string;
+  article: string;
 };
 
-const Comments: FC<Props> = ({ article, initialComments }) => {
+const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
   const [comments, setComments] = useState(initialComments);
 
   useEffect(() => {
     setComments(initialComments);
   }, [initialComments]);
 
-  const genHandleClickMore = (more: any) => {
+  const genLoadMore = (more: any) => {
     return async () => {
       if (!comments || !article) return;
 
@@ -53,7 +54,7 @@ const Comments: FC<Props> = ({ article, initialComments }) => {
   if (!comments) {
     const commentsPlaceholder = [];
     for (let i = 0; i < 10; i++) {
-      commentsPlaceholder.push(<Comment key={i} />);
+      commentsPlaceholder.push(<Comment article={article} key={i} />);
     }
     return <>{commentsPlaceholder}</>;
   }
@@ -66,12 +67,14 @@ const Comments: FC<Props> = ({ article, initialComments }) => {
             return (
               <More
                 more={comment}
-                handleClickMore={genHandleClickMore(comment)}
+                loadMore={genLoadMore(comment)}
+                subreddit={subreddit}
+                article={article}
                 key={index}
               />
             );
           }
-          return <Comment article={article} comment={comment} key={index} />;
+          return <Comment comment={comment} article={article} key={index} />;
         }
       )}
     </VStack>

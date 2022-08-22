@@ -1,9 +1,9 @@
 export const genCommentTrees = (comments: any) => {
   const lastDepths: Record<number, any> = {};
-  const commentsTrees: any[] = [];
+  const commentsTrees: (RedditComment | RedditMore)[] = [];
 
-  comments.forEach((comment: any) => {
-    const parent = lastDepths[comment["data"]["depth"] - 1];
+  comments.forEach((comment: RedditComment | RedditMore) => {
+    const parent = lastDepths[comment.data.depth - 1];
     if (!parent) commentsTrees.push(comment);
     else if (!parent.data.replies) {
       parent.data.replies = {
@@ -18,9 +18,9 @@ export const genCommentTrees = (comments: any) => {
         },
       };
     } else {
-      parent["data"]["replies"]["data"]["children"].push(comment);
+      parent.data.replies.data.children.push(comment);
     }
-    lastDepths[comment["data"]["depth"]] = comment;
+    lastDepths[comment.data.depth] = comment;
   });
 
   return commentsTrees;
@@ -32,9 +32,12 @@ export type RedditComment = {
     author: string;
     body_html: string;
     created_utc: number;
+    depth: number;
     edited?: number;
+    link_id: string;
     replies: RedditListing<RedditComment | RedditMore> | "";
     score: number;
+    subreddit: string;
   };
 };
 
@@ -122,7 +125,9 @@ export type RedditMore = {
   data: {
     children: string[];
     count: number;
+    depth: number;
     id: string;
+    parent_id: string;
   };
   kind: "more";
 };

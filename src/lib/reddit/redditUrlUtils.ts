@@ -26,7 +26,6 @@ export const getSearchPath = (
   searchQuery: string,
   sort: string,
   time: string,
-  type: string,
   after?: string
 ) => {
   sort = sort || "relevance";
@@ -39,15 +38,23 @@ export const getSearchPath = (
   query["sort"] = sort;
   query["t"] = time;
   query["sr_detail"] = "true";
-  query["type"] = type;
+  query["type"] = "link";
   if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);
   return { path, query, pathname };
 };
 
-export const getCommentsPath = (article: string, sort = "best") => {
-  const path = `/comments/${article}`;
+export const getCommentsPath = (
+  subreddit: string,
+  article: string,
+  commentId?: string,
+  sort = "best"
+) => {
+  let path = `/r/${subreddit}/comments/${article}`;
+  if (commentId) {
+    path += `/comment/${commentId}`;
+  }
 
   const query: Record<string, string> = {};
   query["sort"] = sort;

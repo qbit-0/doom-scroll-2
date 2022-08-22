@@ -1,15 +1,18 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps } from "next/app";
+import { useState } from "react";
 
-import MeProvider from "../lib/context/MeProvider";
+import NavBarContext from "../lib/context/NavBarContext";
 import theme from "../styles/theme";
 
 const App = ({ Component, pageProps }: AppProps) => {
+  const [navBarSubreddit, setNavBarSubreddit] = useState("");
+
   return (
     <ChakraProvider theme={theme}>
-      <MeProvider>
+      <NavBarContext.Provider value={{ navBarSubreddit, setNavBarSubreddit }}>
         <Component {...pageProps} />
-      </MeProvider>
+      </NavBarContext.Provider>
     </ChakraProvider>
   );
 };

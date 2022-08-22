@@ -1,7 +1,7 @@
 import { Button, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 import Card from "../components/Card";
 import NavBarFrame from "../components/NavBarFrame";
@@ -9,6 +9,7 @@ import PageFrame from "../components/PageFrame";
 import SearchPostsListings from "../components/SearchPostsListings";
 import SubredditListings from "../components/SubredditListings";
 import UserListings from "../components/UsersListings";
+import { NavBarContext } from "../lib/context/NavBarContext";
 import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSearchPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
@@ -48,6 +49,9 @@ const SearchPage: FC<Props> = ({
   const [time, setTime] = useState<string>(initialTime);
   const [type, setType] = useState<string>(initialType);
   const atBottom = useAtBottom();
+
+  const { setNavBarSubreddit } = useContext(NavBarContext);
+  setNavBarSubreddit("");
 
   useEffect(() => {
     history.replaceState(

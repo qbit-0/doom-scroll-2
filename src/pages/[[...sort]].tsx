@@ -8,13 +8,14 @@ import {
 import { Button, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 import Card from "../components/Card";
 import HomeAbout from "../components/HomeAbout";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
 import SubredditPostsListings from "../components/SubredditPostsListings";
+import NavBarContext from "../lib/context/NavBarContext";
 import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
@@ -41,6 +42,9 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
   const atBottom = useAtBottom(0);
+
+  const { setNavBarSubreddit } = useContext(NavBarContext);
+  setNavBarSubreddit("");
 
   useEffect(() => {
     history.replaceState(null, "", getSubredditPath("", sort, time).pathname);

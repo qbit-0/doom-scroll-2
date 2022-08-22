@@ -1,6 +1,5 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   HStack,
   IconButton,
@@ -15,21 +14,28 @@ import {
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
+import {
+  ChangeEventHandler,
+  FC,
+  FormEventHandler,
+  useContext,
+  useState,
+} from "react";
 import { mutate } from "swr";
 
+import NavBarContext from "../lib/context/NavBarContext";
 import useMe from "../lib/hooks/useMe";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
-type Props = {
-  subreddit?: string;
-};
+type Props = {};
 
-const NavBar: FC<Props> = ({ subreddit }) => {
+const NavBar: FC<Props> = () => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
   const { me } = useMe();
+
+  const { navBarSubreddit: subreddit } = useContext(NavBarContext);
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""

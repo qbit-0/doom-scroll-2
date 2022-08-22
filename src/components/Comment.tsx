@@ -10,11 +10,11 @@ import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  article?: string;
   comment?: RedditComment;
+  article: string;
 };
 
-const Comment: FC<Props> = ({ article, comment }) => {
+const Comment: FC<Props> = ({ comment, article }) => {
   if (!comment) {
     return (
       <Box w="full">
@@ -63,7 +63,11 @@ const Comment: FC<Props> = ({ article, comment }) => {
       </Box>
       {comment.data.replies && (
         <Box pl={2}>
-          <Comments initialComments={comment.data.replies} article={article} />
+          <Comments
+            initialComments={comment.data.replies}
+            subreddit={comment.data.subreddit}
+            article={article}
+          />
         </Box>
       )}
     </Box>
