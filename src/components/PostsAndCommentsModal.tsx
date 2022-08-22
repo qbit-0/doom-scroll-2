@@ -1,7 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { FC, useState } from "react";
 
-import NavBarContext from "../lib/context/NavBarContext";
 import { RedditLink } from "../lib/reddit/redditDataStructs";
 import NavBarFrame from "./NavBarFrame";
 import PageFrame from "./PageFrame";
@@ -17,8 +16,6 @@ type Props = {
 };
 
 const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
-  const [navBarSubreddit, setNavBarSubreddit] = useState(post.data.subreddit);
-
   const subreddit = post.data.subreddit;
   return (
     <Modal
@@ -31,31 +28,25 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent mt="0">
         <ModalBody p="2">
-          <NavBarContext.Provider
-            value={{ navBarSubreddit, setNavBarSubreddit }}
-          >
-            <NavBarFrame subreddit={post.data.subreddit}>
-              <PageFrame
-                top={
-                  <SubredditBanner showTitle={false} subreddit={subreddit} />
-                }
-                left={
-                  <PostAndComments
-                    subreddit={post.data.subreddit}
-                    article={post.data.id}
-                    initialPost={post}
-                    openModal={false}
-                  />
-                }
-                right={
-                  <>
-                    <SubredditAbout subreddit={subreddit} />
-                    <SubredditRules subreddit={subreddit} />
-                  </>
-                }
-              />
-            </NavBarFrame>
-          </NavBarContext.Provider>
+          <NavBarFrame subreddit={post.data.subreddit}>
+            <PageFrame
+              top={<SubredditBanner showTitle={false} subreddit={subreddit} />}
+              left={
+                <PostAndComments
+                  subreddit={post.data.subreddit}
+                  article={post.data.id}
+                  initialPost={post}
+                  openModal={false}
+                />
+              }
+              right={
+                <>
+                  <SubredditAbout subreddit={subreddit} />
+                  <SubredditRules subreddit={subreddit} />
+                </>
+              }
+            />
+          </NavBarFrame>
         </ModalBody>
       </ModalContent>
     </Modal>

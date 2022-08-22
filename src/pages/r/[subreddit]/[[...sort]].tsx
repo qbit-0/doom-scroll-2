@@ -18,7 +18,6 @@ import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditPostsListings from "../../../components/SubredditPostsListings";
 import SubredditRules from "../../../components/SubredditRules";
-import { NavBarContext } from "../../../lib/context/NavBarContext";
 import useAtBottom from "../../../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
 import setValue from "../../../lib/utils/setValue";
@@ -53,9 +52,6 @@ const SubredditPage: FC<Props> = ({
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
   const atBottom = useAtBottom();
-
-  const { setNavBarSubreddit } = useContext(NavBarContext);
-  setNavBarSubreddit(initialSubreddit);
 
   useEffect(() => {
     history.replaceState(

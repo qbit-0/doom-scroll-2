@@ -19,7 +19,6 @@ import { IoChatboxOutline } from "react-icons/io5";
 
 import { RedditLink } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import Card from "./Card";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";

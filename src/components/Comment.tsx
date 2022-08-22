@@ -42,7 +42,7 @@ const Comment: FC<Props> = ({ comment, article }) => {
             )}
           </HStack>
         </HStack>
-        <Box>
+        <Box wordBreak="break-all" textOverflow="ellipsis">
           <SanitizeHTML dirty={comment.data.body_html} />
         </Box>
         <HStack p="1" bgColor="green.100">

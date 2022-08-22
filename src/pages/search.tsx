@@ -50,9 +50,6 @@ const SearchPage: FC<Props> = ({
   const [type, setType] = useState<string>(initialType);
   const atBottom = useAtBottom();
 
-  const { setNavBarSubreddit } = useContext(NavBarContext);
-  setNavBarSubreddit("");
-
   useEffect(() => {
     history.replaceState(
       null,

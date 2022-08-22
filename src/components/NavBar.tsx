@@ -23,19 +23,18 @@ import {
 } from "react";
 import { mutate } from "swr";
 
-import NavBarContext from "../lib/context/NavBarContext";
 import useMe from "../lib/hooks/useMe";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
-type Props = {};
+type Props = {
+  subreddit: string;
+};
 
-const NavBar: FC<Props> = () => {
+const NavBar: FC<Props> = ({ subreddit }) => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
   const { me } = useMe();
-
-  const { navBarSubreddit: subreddit } = useContext(NavBarContext);
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""

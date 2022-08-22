@@ -43,9 +43,6 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   const [time, setTime] = useState<string>(initialTime);
   const atBottom = useAtBottom(0);
 
-  const { setNavBarSubreddit } = useContext(NavBarContext);
-  setNavBarSubreddit("");
-
   useEffect(() => {
     history.replaceState(null, "", getSubredditPath("", sort, time).pathname);
   }, [sort, time]);
