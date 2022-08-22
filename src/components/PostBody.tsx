@@ -13,17 +13,21 @@ type Props = {
 const PostBody: FC<Props> = ({ post }) => {
   if (post.data?.selftext_html) {
     return (
-      <Flex w="full" maxH="96" overflow="auto" textOverflow="ellipsis">
-        <Box w="md" mx="auto">
-          <SanitizeHTML dirty={post.data.selftext_html} />
-        </Box>
+      <Flex
+        justify="center"
+        w="full"
+        maxH="96"
+        overflow="auto"
+        textOverflow="ellipsis"
+      >
+        <SanitizeHTML dirty={post.data.selftext_html} />
       </Flex>
     );
   }
 
   if (post.data?.media?.oembed?.html) {
     return (
-      <Flex maxH="96" overflow="auto">
+      <Flex justify="center" maxH="96" overflow="auto">
         <SanitizeHTML dirty={post.data.media.oembed.html} />
       </Flex>
     );
@@ -31,7 +35,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.media?.reddit_video?.dash_url) {
     return (
-      <Flex justifyContent="center" maxH="96" w="md" mx="auto">
+      <Flex justify="center" maxH="96" w="md" mx="auto">
         <video
           playsInline
           width={post.data.media.reddit_video.width}
@@ -53,7 +57,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.gallery_data?.items) {
     return (
-      <Flex justifyContent="center">
+      <Flex justify="center">
         <Gallery
           srcs={Object.values(post.data.gallery_data.items)
             .filter(
@@ -71,7 +75,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.post_hint === "image") {
     return (
-      <Flex justifyContent="center" maxH="96">
+      <Flex justify="center" maxH="96">
         <ImagePreview
           src={post.data.url_overridden_by_dest}
           href={post.data.url_overridden_by_dest}
@@ -82,7 +86,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.preview?.images?.[0]?.source?.url) {
     return (
-      <Flex justifyContent="center" maxH="96">
+      <Flex justify="center" maxH="96">
         <ImagePreview
           src={post.data.preview.images[0].source.url}
           href={post.data.url_overridden_by_dest}
@@ -98,7 +102,7 @@ const PostBody: FC<Props> = ({ post }) => {
     post.data?.thumbnail !== ""
   ) {
     return (
-      <Flex justifyContent="center" maxH="96">
+      <Flex justify="center" maxH="96">
         <ImagePreview
           src={post.data.thumbnail}
           href={post.data.url_overridden_by_dest}

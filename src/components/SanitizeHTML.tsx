@@ -10,7 +10,10 @@ const SanitizeHTML: FC<Props> = ({ dirty }) => {
   return (
     <Box
       dangerouslySetInnerHTML={{
-        __html: sanitizeHtml(dirty),
+        __html: sanitizeHtml(dirty, {
+          allowedTags: sanitizeHtml.defaults.allowedTags.concat(["iframe"]),
+          allowedAttributes: false,
+        }),
       }}
     />
   );
