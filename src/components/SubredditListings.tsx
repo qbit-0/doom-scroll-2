@@ -73,7 +73,7 @@ const SubredditListings: FC<Props> = ({ searchQuery, loadNext }) => {
             ...flattenedSubreddits,
             ...subredditListing.data.children.map(
               (subreddit: RedditSubreddit, index: number) => (
-                <Card key={listingIndex + index}>
+                <Card key={listingIndex + " " + index}>
                   <Subreddit subreddit={subreddit} />
                 </Card>
               )

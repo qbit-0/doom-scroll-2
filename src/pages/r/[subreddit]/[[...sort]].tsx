@@ -54,6 +54,7 @@ const SubredditPage: FC<Props> = ({
   const atBottom = useAtBottom();
 
   useEffect(() => {
+    if (!subreddit || !sort || !time) return;
     history.replaceState(
       null,
       "",
@@ -62,10 +63,10 @@ const SubredditPage: FC<Props> = ({
   }, [subreddit, sort, time]);
 
   useEffect(() => {
-    setSubreddit((router.query["subreddit"] as string) || "");
-    setSort((router.query["sort"] as string) || "best");
-    setTime((router.query["t"] as string) || "day");
-  }, [router.query]);
+    setSubreddit(initialSubreddit);
+    setSort(initialSort);
+    setTime(initialTime);
+  }, [router, initialSubreddit, initialSort, initialTime]);
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (

@@ -1,7 +1,7 @@
 import { Button, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import Card from "../components/Card";
 import NavBarFrame from "../components/NavBarFrame";
@@ -9,7 +9,6 @@ import PageFrame from "../components/PageFrame";
 import SearchPostsListings from "../components/SearchPostsListings";
 import SubredditListings from "../components/SubredditListings";
 import UserListings from "../components/UsersListings";
-import { NavBarContext } from "../lib/context/NavBarContext";
 import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSearchPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
@@ -51,6 +50,7 @@ const SearchPage: FC<Props> = ({
   const atBottom = useAtBottom();
 
   useEffect(() => {
+    if (!searchQuery || !sort || !time || !type) return;
     history.replaceState(
       null,
       "",
@@ -59,11 +59,11 @@ const SearchPage: FC<Props> = ({
   }, [searchQuery, sort, time, type]);
 
   useEffect(() => {
-    setSearchQuery((router.query["q"] as string) || "");
-    setSort((router.query["sort"] as string) || "relevance");
-    setTime((router.query["t"] as string) || "all");
-    setType((router.query["type"] as string) || "link");
-  }, [router.query]);
+    setSearchQuery(initialSearchQuery);
+    setSort(initialSort);
+    setTime(initialTime);
+    setType(initialType);
+  }, [router, initialSearchQuery, initialSort, initialTime, initialType]);
 
   let content;
   if (searchQuery && sort && time && type) {

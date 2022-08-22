@@ -36,7 +36,7 @@ const Posts: FC<Props> = ({ postListings }) => {
             ...flattenedPosts,
             ...postListing.data.children.map(
               (post: RedditLink, index: number) => (
-                <Card key={listingIndex + index}>
+                <Card key={listingIndex + " " + index}>
                   <Post post={post} />
                 </Card>
               )

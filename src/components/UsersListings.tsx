@@ -65,7 +65,7 @@ const UserListings: FC<Props> = ({ searchQuery, loadNext }) => {
           return [
             ...flattenedUsers,
             ...users.data.children.map((user: RedditAccount, index: number) => (
-              <Card key={listingIndex + index}>
+              <Card key={listingIndex + " " + index}>
                 <User user={user} />
               </Card>
             )),
