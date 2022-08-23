@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       initialSearchQuery: initialSearchQuery,
       initialSort: initialSort,
       initialTime: initialTime,
-      intialType: initialType,
+      initialType: initialType,
     },
   };
 };

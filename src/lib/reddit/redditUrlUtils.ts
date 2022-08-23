@@ -26,10 +26,12 @@ export const getSearchPath = (
   searchQuery: string,
   sort: string,
   time: string,
+  type: string,
   after?: string
 ) => {
   sort = sort || "relevance";
   time = time || "all";
+  type = type || "link";
 
   const path = "/search";
 
@@ -38,7 +40,7 @@ export const getSearchPath = (
   query["sort"] = sort;
   query["t"] = time;
   query["sr_detail"] = "true";
-  query["type"] = "link";
+  query["type"] = type;
   if (after) query["after"] = after;
 
   const pathname = getPathname(path, query);

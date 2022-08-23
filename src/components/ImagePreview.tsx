@@ -1,5 +1,7 @@
 import {
+  AspectRatio,
   Box,
+  Flex,
   Image,
   Link,
   Modal,
@@ -34,14 +36,14 @@ const ImagePreview: React.FC<Props> = ({ src, href }) => {
         <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>
           <ModalBody>
-            <Box display="flex" justifyContent="center" maxW="75vw" maxH="75vh">
+            <Flex maxW="75vw" maxH="75vh">
               <Image
                 src={src}
                 alt="post image"
                 objectFit="contain"
                 dropShadow="lg"
               />
-            </Box>
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>

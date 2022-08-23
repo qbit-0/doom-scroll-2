@@ -1,4 +1,10 @@
-import { Box, Flex } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Box,
+  ChakraProvider,
+  Flex,
+  chakra,
+} from "@chakra-ui/react";
 import { FC } from "react";
 
 import { RedditLink } from "../lib/reddit/redditDataStructs";
@@ -13,21 +19,17 @@ type Props = {
 const PostBody: FC<Props> = ({ post }) => {
   if (post.data?.selftext_html) {
     return (
-      <Flex
-        justify="center"
-        w="full"
-        maxH="96"
-        overflow="auto"
-        textOverflow="ellipsis"
-      >
+      <Flex justify="center" maxH="2xl">
         <SanitizeHTML dirty={post.data.selftext_html} />
       </Flex>
     );
   }
 
   if (post.data?.media?.oembed?.html) {
+    console.log(post.data.media.oembed.html);
+
     return (
-      <Flex justify="center" maxH="96" overflow="auto">
+      <Flex justify="center" maxH="2xl">
         <SanitizeHTML dirty={post.data.media.oembed.html} />
       </Flex>
     );
@@ -35,7 +37,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.media?.reddit_video?.dash_url) {
     return (
-      <Flex justify="center" maxH="96" w="md" mx="auto">
+      <Flex justify="center" maxH="2xl">
         <video
           playsInline
           width={post.data.media.reddit_video.width}
@@ -57,7 +59,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.gallery_data?.items) {
     return (
-      <Flex justify="center">
+      <Flex justify="center" maxH="2xl">
         <Gallery
           srcs={Object.values(post.data.gallery_data.items)
             .filter(
@@ -75,7 +77,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.post_hint === "image") {
     return (
-      <Flex justify="center" maxH="96">
+      <Flex justify="center" maxH="2xl">
         <ImagePreview
           src={post.data.url_overridden_by_dest}
           href={post.data.url_overridden_by_dest}
@@ -86,7 +88,7 @@ const PostBody: FC<Props> = ({ post }) => {
 
   if (post.data?.preview?.images?.[0]?.source?.url) {
     return (
-      <Flex justify="center" maxH="96">
+      <Flex justify="center" maxH="2xl">
         <ImagePreview
           src={post.data.preview.images[0].source.url}
           href={post.data.url_overridden_by_dest}
@@ -102,7 +104,7 @@ const PostBody: FC<Props> = ({ post }) => {
     post.data?.thumbnail !== ""
   ) {
     return (
-      <Flex justify="center" maxH="96">
+      <Flex justify="center" maxH="2xl">
         <ImagePreview
           src={post.data.thumbnail}
           href={post.data.url_overridden_by_dest}

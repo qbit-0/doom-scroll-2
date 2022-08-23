@@ -9,10 +9,15 @@ type Props = {
 const SanitizeHTML: FC<Props> = ({ dirty }) => {
   return (
     <Box
+      wordBreak="break-word"
+      textOverflow="ellipsis"
       dangerouslySetInnerHTML={{
         __html: sanitizeHtml(dirty, {
-          allowedTags: sanitizeHtml.defaults.allowedTags.concat(["iframe"]),
-          allowedAttributes: false,
+          allowedTags: [...sanitizeHtml.defaults.allowedTags, "iframe"],
+          allowedAttributes: {
+            ...sanitizeHtml.defaults.allowedAttributes,
+            iframe: ["src"],
+          },
         }),
       }}
     />
