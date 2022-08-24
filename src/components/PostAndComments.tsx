@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 
-import { getComments } from "../lib/reddit/redditClientApi";
+import { getComments } from "../lib/api/redditApi";
 import {
   RedditComment,
   RedditLink,

@@ -21,20 +21,19 @@ import {
   useContext,
   useState,
 } from "react";
-import { mutate } from "swr";
 
-import useMe from "../lib/hooks/useMe";
+import { MeContext } from "../lib/context/MeProvider";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
 type Props = {
-  subreddit: string;
+  subreddit?: string;
 };
 
 const NavBar: FC<Props> = ({ subreddit }) => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
-  const { me } = useMe();
+  const { me, setMe } = useContext(MeContext);
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""
@@ -104,7 +103,7 @@ const NavBar: FC<Props> = ({ subreddit }) => {
             onClick={async () => {
               await axios.post("/api/logout");
               localStorage.removeItem("me");
-              mutate("me");
+              setMe(undefined);
             }}
           >
             Log Out

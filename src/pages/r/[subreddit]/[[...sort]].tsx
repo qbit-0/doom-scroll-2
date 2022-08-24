@@ -5,9 +5,10 @@ import {
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import { Button, HStack, Select } from "@chakra-ui/react";
+import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
@@ -19,6 +20,10 @@ import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditPostsListings from "../../../components/SubredditPostsListings";
 import SubredditRules from "../../../components/SubredditRules";
 import useAtBottom from "../../../lib/hooks/useAtBottom";
+import {
+  RedditRule,
+  RedditSubreddit,
+} from "../../../lib/reddit/redditDataStructs";
 import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
 import setValue from "../../../lib/utils/setValue";
 
@@ -48,9 +53,11 @@ const SubredditPage: FC<Props> = ({
   initialTime,
 }) => {
   const router = useRouter();
-  const [subreddit, setSubreddit] = useState<string>(initialSubreddit);
+  const [subreddit, setSubreddit] = useState(initialSubreddit);
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
+  const [about, setAbout] = useState<RedditSubreddit | null>(null);
+  const [rules, setRules] = useState<RedditRule | null>(null);
   const atBottom = useAtBottom();
 
   useEffect(() => {
@@ -68,27 +75,49 @@ const SubredditPage: FC<Props> = ({
     setTime(initialTime);
   }, [router, initialSubreddit, initialSort, initialTime]);
 
+  useEffect(() => {
+    if (subreddit)
+      (async () => {
+        const aboutResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/r/${subreddit}/about`,
+        });
+        setAbout(aboutResponse.data);
+      })();
+  }, [subreddit]);
+
+  useEffect(() => {
+    if (subreddit)
+      (async () => {
+        const rulesResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/r/${subreddit}/about/rules`,
+        });
+        setRules(rulesResponse.data);
+      })();
+  }, [subreddit]);
+
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
-      <SubredditBanner showTitle={true} subreddit={subreddit} />
+      <SubredditBanner showTitle={true} subreddit={subreddit} about={about} />
     );
 
-  let about;
+  let aboutDisplay;
   switch (subreddit) {
     case undefined:
-      about = null;
+      aboutDisplay = null;
       break;
     case "popular":
-      about = <PopularAbout />;
+      aboutDisplay = <PopularAbout />;
       break;
     case "all":
-      about = <AllAbout />;
+      aboutDisplay = <AllAbout />;
       break;
     default:
-      about = (
+      aboutDisplay = (
         <>
-          <SubredditAbout subreddit={subreddit} />
-          <SubredditRules subreddit={subreddit} />
+          <SubredditAbout about={about} />
+          <SubredditRules rules={rules} />
         </>
       );
   }
@@ -149,7 +178,8 @@ const SubredditPage: FC<Props> = ({
             />
           </>
         }
-        right={about}
+        right={aboutDisplay}
+        showExplanation={false}
       />
     </NavBarFrame>
   );

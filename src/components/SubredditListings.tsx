@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
-import useMe from "../lib/hooks/useMe";
-import { getSearchSubreddits } from "../lib/reddit/redditClientApi";
+import { getSearchSubreddits } from "../lib/api/redditApi";
+import { MeContext } from "../lib/context/MeProvider";
+import useAtBottom from "../lib/hooks/useAtBottom";
 import {
   RedditListing,
   RedditSubreddit,
@@ -12,15 +13,15 @@ import Subreddit from "./Subreddit";
 
 type Props = {
   searchQuery: string;
-  loadNext: boolean;
 };
 
-const SubredditListings: FC<Props> = ({ searchQuery, loadNext }) => {
+const SubredditListings: FC<Props> = ({ searchQuery }) => {
   const [subredditListings, setSubredditListings] = useState<
     RedditListing<RedditSubreddit>[] | null
   >(null);
   const [after, setAfter] = useState<string | null>(null);
-  const { me } = useMe();
+  const { me } = useContext(MeContext);
+  const atBottom = useAtBottom(0);
 
   useEffect(() => {
     (async () => {
@@ -31,7 +32,7 @@ const SubredditListings: FC<Props> = ({ searchQuery, loadNext }) => {
   }, [me, searchQuery]);
 
   useEffect(() => {
-    if (subredditListings && after && loadNext) {
+    if (subredditListings && after && atBottom) {
       (async () => {
         const subredditsResponse = await getSearchSubreddits(
           searchQuery,
@@ -41,7 +42,7 @@ const SubredditListings: FC<Props> = ({ searchQuery, loadNext }) => {
         setAfter(subredditsResponse.data.data.after);
       })();
     }
-  }, [searchQuery, after, subredditListings, loadNext]);
+  }, [searchQuery, after, subredditListings, atBottom]);
 
   if (!subredditListings) {
     return (

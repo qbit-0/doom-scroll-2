@@ -1,10 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  ChakraProvider,
-  Flex,
-  chakra,
-} from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { RedditLink } from "../lib/reddit/redditDataStructs";
@@ -19,15 +13,13 @@ type Props = {
 const PostBody: FC<Props> = ({ post }) => {
   if (post.data?.selftext_html) {
     return (
-      <Flex justify="center" maxH="2xl">
+      <Flex justify="center" maxH="2xl" overflowY="scroll">
         <SanitizeHTML dirty={post.data.selftext_html} />
       </Flex>
     );
   }
 
   if (post.data?.media?.oembed?.html) {
-    console.log(post.data.media.oembed.html);
-
     return (
       <Flex justify="center" maxH="2xl">
         <SanitizeHTML dirty={post.data.media.oembed.html} />

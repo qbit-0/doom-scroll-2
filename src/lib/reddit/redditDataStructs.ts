@@ -145,3 +145,7 @@ export type RedditRule = {
   site_rules: [];
   site_rules_flow: [];
 };
+
+export type RedditMe = {
+  name: string;
+};

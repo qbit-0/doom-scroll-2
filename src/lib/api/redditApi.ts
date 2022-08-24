@@ -6,7 +6,7 @@ import {
   getSearchSubredditsPath,
   getSearchUsersPath,
   getSubredditPath,
-} from "./redditUrlUtils";
+} from "../reddit/redditUrlUtils";
 
 export const getSubredditPosts = async (
   subreddit: string,
@@ -29,7 +29,7 @@ export const getSearchPosts = async (
   time: string,
   after?: string
 ) => {
-  const { path, query } = getSearchPath(searchQuery, sort, time, after);
+  const { path, query } = getSearchPath(searchQuery, sort, time, "link", after);
   const postsResponse = await axios.post("/api/reddit", {
     method: "GET",
     path: path,

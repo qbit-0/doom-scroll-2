@@ -10,11 +10,11 @@ import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  comment?: RedditComment;
   article: string;
+  comment?: RedditComment;
 };
 
-const Comment: FC<Props> = ({ comment, article }) => {
+const Comment: FC<Props> = ({ article, comment }) => {
   if (!comment) {
     return (
       <Box w="full">

@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
-import useMe from "../lib/hooks/useMe";
-import { getSearchUsers } from "../lib/reddit/redditClientApi";
+import { getSearchUsers } from "../lib/api/redditApi";
+import { MeContext } from "../lib/context/MeProvider";
+import useAtBottom from "../lib/hooks/useAtBottom";
 import { RedditAccount, RedditListing } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import PostSkeleton from "./PostSkeleton";
@@ -9,15 +10,15 @@ import User from "./User";
 
 type Props = {
   searchQuery: string;
-  loadNext: boolean;
 };
 
-const UserListings: FC<Props> = ({ searchQuery, loadNext }) => {
+const UserListings: FC<Props> = ({ searchQuery }) => {
   const [userListings, setUserListings] = useState<
     RedditListing<RedditAccount>[] | null
   >(null);
   const [after, setAfter] = useState<string | null>(null);
-  const { me } = useMe();
+  const { me } = useContext(MeContext);
+  const atBottom = useAtBottom(0);
 
   useEffect(() => {
     (async () => {
@@ -28,15 +29,14 @@ const UserListings: FC<Props> = ({ searchQuery, loadNext }) => {
   }, [me, searchQuery]);
 
   useEffect(() => {
-    if (userListings && after && loadNext) {
+    if (userListings && after && atBottom) {
       (async () => {
-        console.log(loadNext);
         const usersResponse = await getSearchUsers(searchQuery, after);
         setUserListings([...userListings, usersResponse.data]);
         setAfter(usersResponse.data.data.after);
       })();
     }
-  }, [searchQuery, after, userListings, loadNext]);
+  }, [searchQuery, after, userListings, atBottom]);
 
   if (!userListings) {
     return (

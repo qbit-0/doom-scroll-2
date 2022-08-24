@@ -5,10 +5,10 @@ import { FC, MouseEventHandler, useState } from "react";
 import { RedditMore } from "../lib/reddit/redditDataStructs";
 
 type Props = {
-  more: RedditMore;
-  loadMore: MouseEventHandler<HTMLButtonElement>;
   subreddit: string;
   article: string;
+  more: RedditMore;
+  loadMore: MouseEventHandler<HTMLButtonElement>;
 };
 
 const More: FC<Props> = ({ more, loadMore, subreddit, article }) => {

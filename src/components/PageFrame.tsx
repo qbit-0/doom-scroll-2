@@ -1,5 +1,5 @@
 import { Box, Flex, VStack } from "@chakra-ui/react";
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 
 import BackToTop from "./BackToTop";
 import DoomScrollExplanation from "./DoomScrollExplanation";
@@ -18,25 +18,35 @@ const PageFrame: FC<Props> = ({
   right,
   showExplanation = false,
 }) => {
+  const topRef = useRef<HTMLDivElement>(null);
   return (
-    <Box>
-      {top}
-      <Flex py="4" justify="center" columnGap={4}>
-        <Box w="xl">
-          <VStack h="full">{left}</VStack>
-        </Box>
-        <Box w="sm">
-          <VStack h="full">
-            {showExplanation && <DoomScrollExplanation />}
-            <DoomScrollSettings />
-            {right}
-            <Flex justify="center" position="sticky" top="16" mt="2" mx="auto">
-              <BackToTop />
-            </Flex>
-          </VStack>
-        </Box>
-      </Flex>
-    </Box>
+    <>
+      <Box ref={topRef} />
+      <Box>
+        {top}
+        <Flex py="4" justify="center" columnGap={4}>
+          <Box w="xl">
+            <VStack h="full">{left}</VStack>
+          </Box>
+          <Box w="sm">
+            <VStack h="full">
+              {showExplanation && <DoomScrollExplanation />}
+              <DoomScrollSettings />
+              {right}
+              <Flex
+                justify="center"
+                position="sticky"
+                top="16"
+                mt="2"
+                mx="auto"
+              >
+                <BackToTop topRef={topRef} />
+              </Flex>
+            </VStack>
+          </Box>
+        </Flex>
+      </Box>
+    </>
   );
 };
 

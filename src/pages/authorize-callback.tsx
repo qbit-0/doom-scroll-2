@@ -1,10 +1,12 @@
 import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { mutate } from "swr";
 
 import PageFrame from "../components/PageFrame";
+import { MeContext } from "../lib/context/MeProvider";
+import { RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { redditApi } from "../lib/reddit/redditServerApi";
 import { withSessionSsr } from "../lib/session/withSession";
@@ -44,19 +46,22 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
 );
 
 type Props = {
-  me: Record<string, any>;
+  me: RedditMe;
 };
 
 const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
   const router = useRouter();
+  const { setMe } = useContext(MeContext);
 
   useEffect(() => {
     localStorage.setItem("me", JSON.stringify(me));
-    mutate("me");
+    setMe(me);
     router.replace("/");
-  }, [me, router]);
+  }, [me, setMe, router]);
 
-  return <PageFrame />;
+  return (
+    <PageFrame top={null} left={null} right={null} showExplanation={false} />
+  );
 };
 
 export default AuthorizeCallbackPage;

@@ -1,25 +1,21 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
-import useMe from "../lib/hooks/useMe";
-import { getSubredditPosts } from "../lib/reddit/redditClientApi";
+import { getSubredditPosts } from "../lib/api/redditApi";
+import { MeContext } from "../lib/context/MeProvider";
+import useAtBottom from "../lib/hooks/useAtBottom";
 import Posts from "./Posts";
 
 type Props = {
   subreddit: string;
   sort: string;
   time: string;
-  loadNext?: boolean;
 };
 
-const SubredditPostsListings: FC<Props> = ({
-  subreddit,
-  sort,
-  time,
-  loadNext = false,
-}) => {
+const SubredditPostsListings: FC<Props> = ({ subreddit, sort, time }) => {
   const [postListings, setPostListings] = useState<any[] | null>(null);
   const [after, setAfter] = useState<string | null>(null);
-  const { me } = useMe();
+  const { me } = useContext(MeContext);
+  const atBottom = useAtBottom(0);
 
   useEffect(() => {
     (async () => {
@@ -32,7 +28,7 @@ const SubredditPostsListings: FC<Props> = ({
   }, [me, subreddit, sort, time]);
 
   useEffect(() => {
-    if (postListings && after && loadNext) {
+    if (postListings && after && atBottom) {
       (async () => {
         const postsResponse = await getSubredditPosts(
           subreddit,
@@ -44,7 +40,7 @@ const SubredditPostsListings: FC<Props> = ({
         setAfter(postsResponse.data.data.after);
       })();
     }
-  }, [subreddit, sort, time, postListings, after, loadNext]);
+  }, [subreddit, sort, time, postListings, after, atBottom]);
 
   return <Posts postListings={postListings} />;
 };

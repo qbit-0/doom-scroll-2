@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
-import useMe from "../lib/hooks/useMe";
-import { getSearchPosts } from "../lib/reddit/redditClientApi";
+import { getSearchPosts } from "../lib/api/redditApi";
+import { MeContext } from "../lib/context/MeProvider";
 import Posts from "./Posts";
 
 type Props = {
@@ -19,7 +19,7 @@ const SearchPostsListings: FC<Props> = ({
 }) => {
   const [postListings, setPostListings] = useState<any[] | null>(null);
   const [after, setAfter] = useState<string | null>(null);
-  const { me } = useMe();
+  const { me } = useContext(MeContext);
 
   useEffect(() => {
     (async () => {

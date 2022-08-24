@@ -1,29 +1,15 @@
 import { Box, Heading, SkeletonText } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
+import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  subreddit?: string;
+  about?: RedditSubreddit;
 };
 
-const SubredditAbout: FC<Props> = ({ subreddit }) => {
-  const [about, setAbout] = useState<any | null>(null);
-
-  useEffect(() => {
-    if (!subreddit) return;
-
-    (async () => {
-      const aboutResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/r/${subreddit}/about`,
-      });
-      setAbout(aboutResponse.data);
-    })();
-  }, [subreddit]);
-
+const SubredditAbout: FC<Props> = ({ about }) => {
   return (
     <Card>
       <Box p="4">

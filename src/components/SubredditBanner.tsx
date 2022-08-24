@@ -1,28 +1,15 @@
 import { Avatar, Box, Flex, Heading } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
 
 type Props = {
-  subreddit: string | null;
+  subreddit: string;
+  about?: RedditSubreddit;
   showTitle: boolean;
 };
 
-const SubredditBanner: FC<Props> = ({ subreddit, showTitle }) => {
-  const [about, setAbout] = useState<RedditSubreddit | null>(null);
-
-  useEffect(() => {
-    if (!subreddit) return;
-    (async () => {
-      const aboutResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/r/${subreddit}/about`,
-      });
-      setAbout(aboutResponse.data);
-    })();
-  }, [subreddit]);
-
+const SubredditBanner: FC<Props> = ({ subreddit, about, showTitle }) => {
   let background;
   if (about?.data?.banner_background_image) {
     background = (

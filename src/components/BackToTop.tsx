@@ -1,13 +1,15 @@
 import { Button } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, RefObject, useRef } from "react";
 
-type Props = {};
+type Props = {
+  topRef: RefObject<HTMLDivElement>;
+};
 
-const BackToTop: FC<Props> = () => {
+const BackToTop: FC<Props> = ({ topRef }) => {
   return (
     <Button
       onClick={() => {
-        window.scrollTo(0, 0);
+        topRef.current?.scrollIntoView();
       }}
     >
       Back to Top

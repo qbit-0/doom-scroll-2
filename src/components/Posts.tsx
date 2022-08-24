@@ -6,7 +6,7 @@ import Post from "./Post";
 import PostSkeleton from "./PostSkeleton";
 
 type Props = {
-  postListings?: RedditListing<RedditLink>[] | null;
+  postListings: RedditListing<RedditLink>[] | null;
 };
 
 const Posts: FC<Props> = ({ postListings }) => {

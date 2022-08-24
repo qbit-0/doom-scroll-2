@@ -1,7 +1,7 @@
 import { VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-import { getMore } from "../lib/reddit/redditClientApi";
+import { getMore } from "../lib/api/redditApi";
 import {
   RedditComment,
   RedditListing,
@@ -12,9 +12,9 @@ import Comment from "./Comment";
 import More from "./More";
 
 type Props = {
-  initialComments?: RedditListing<RedditComment | RedditMore>;
   subreddit: string;
   article: string;
+  initialComments?: RedditListing<RedditComment | RedditMore>;
 };
 
 const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {

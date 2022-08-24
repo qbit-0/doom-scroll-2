@@ -8,32 +8,17 @@ import {
   Heading,
   SkeletonText,
 } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import { RedditRule } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  subreddit?: string;
+  rules?: RedditRule;
 };
 
-const SubredditRules: FC<Props> = ({ subreddit }) => {
-  const [rules, setRules] = useState<RedditRule | null>(null);
-
-  useEffect(() => {
-    if (!subreddit) return;
-
-    (async () => {
-      const rulesResponse = await axios.post("/api/reddit", {
-        method: "GET",
-        path: `/r/${subreddit}/about/rules`,
-      });
-      setRules(rulesResponse.data);
-    })();
-  }, [subreddit]);
-
+const SubredditRules: FC<Props> = ({ rules }) => {
   const rulesPlaceholder = [];
   for (let i = 0; i < 4; i++) {
     rulesPlaceholder.push(

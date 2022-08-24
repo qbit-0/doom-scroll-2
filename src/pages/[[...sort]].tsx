@@ -40,7 +40,6 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   const router = useRouter();
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
-  const atBottom = useAtBottom(0);
 
   useEffect(() => {
     if (!sort || !time) return;
@@ -53,8 +52,9 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
   }, [router, initialSort, initialTime]);
 
   return (
-    <NavBarFrame>
+    <NavBarFrame subreddit={""}>
       <PageFrame
+        top={null}
         left={
           <>
             <Card>
@@ -106,12 +106,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 </Button>
               </HStack>
             </Card>
-            <SubredditPostsListings
-              subreddit={""}
-              sort={sort}
-              time={time}
-              loadNext={atBottom}
-            />
+            <SubredditPostsListings subreddit={""} sort={sort} time={time} />
           </>
         }
         right={<HomeAbout />}

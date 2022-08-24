@@ -1,7 +1,12 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
-import { FC, useState } from "react";
+import axios from "axios";
+import { FC, useEffect, useState } from "react";
 
-import { RedditLink } from "../lib/reddit/redditDataStructs";
+import {
+  RedditLink,
+  RedditRule,
+  RedditSubreddit,
+} from "../lib/reddit/redditDataStructs";
 import NavBarFrame from "./NavBarFrame";
 import PageFrame from "./PageFrame";
 import PostAndComments from "./PostAndComments";
@@ -16,7 +21,32 @@ type Props = {
 };
 
 const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
+  const [about, setAbout] = useState<RedditSubreddit | undefined>(undefined);
+  const [rules, setRules] = useState<RedditRule | undefined>(undefined);
   const subreddit = post.data.subreddit;
+
+  useEffect(() => {
+    if (subreddit)
+      (async () => {
+        const aboutResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/r/${subreddit}/about`,
+        });
+        setAbout(aboutResponse.data);
+      })();
+  }, [subreddit]);
+
+  useEffect(() => {
+    if (subreddit)
+      (async () => {
+        const rulesResponse = await axios.post("/api/reddit", {
+          method: "GET",
+          path: `/r/${subreddit}/about/rules`,
+        });
+        setRules(rulesResponse.data);
+      })();
+  }, [subreddit]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -28,12 +58,18 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent mt="0">
         <ModalBody p="2">
-          <NavBarFrame subreddit={post.data.subreddit}>
+          <NavBarFrame subreddit={subreddit}>
             <PageFrame
-              top={<SubredditBanner showTitle={false} subreddit={subreddit} />}
+              top={
+                <SubredditBanner
+                  showTitle={false}
+                  subreddit={subreddit}
+                  about={about}
+                />
+              }
               left={
                 <PostAndComments
-                  subreddit={post.data.subreddit}
+                  subreddit={subreddit}
                   article={post.data.id}
                   initialPost={post}
                   openModal={false}
@@ -41,10 +77,11 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
               }
               right={
                 <>
-                  <SubredditAbout subreddit={subreddit} />
-                  <SubredditRules subreddit={subreddit} />
+                  <SubredditAbout about={about} />
+                  <SubredditRules rules={rules} />
                 </>
               }
+              showExplanation={false}
             />
           </NavBarFrame>
         </ModalBody>
