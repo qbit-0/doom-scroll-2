@@ -74,11 +74,11 @@ const SubredditPage: FC<Props> = ({
     setTime(initialTime);
   }, [router, initialSubreddit, initialSort, initialTime]);
 
-  const about = useReddit<RedditSubreddit>({
+  const { data: about } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const rules = useReddit<RedditRules>({
+  const { data: rules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });

@@ -31,11 +31,11 @@ type Props = {
 };
 
 const CommentsPage: FC<Props> = ({ article, subreddit }) => {
-  const about = useReddit<RedditSubreddit>({
+  const { data: about } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const rules = useReddit<RedditRules>({
+  const { data: rules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });

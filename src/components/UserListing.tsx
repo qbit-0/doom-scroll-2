@@ -12,7 +12,7 @@ type Props = {
 };
 
 const UserListing: FC<Props> = ({ path, query, updateAfter }) => {
-  const userListing = useReddit<RedditListing<RedditAccount>>({
+  const { data: userListing } = useReddit<RedditListing<RedditAccount>>({
     method: "GET",
     path,
     query,

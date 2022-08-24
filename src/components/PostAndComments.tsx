@@ -33,7 +33,11 @@ const PostAndComments: FC<Props> = ({
   const [comments, setComments] = useState(initialComments);
 
   const { path, query } = getCommentsPath(subreddit, article, commentId);
-  const postAndComments = useReddit<any>({ method: "GET", path, query });
+  const { data: postAndComments } = useReddit<any>({
+    method: "GET",
+    path,
+    query,
+  });
 
   useEffect(() => {
     if (postAndComments) {

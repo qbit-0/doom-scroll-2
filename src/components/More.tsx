@@ -14,7 +14,7 @@ type Props = {
 
 const More: FC<Props> = ({ more, updateReplies, subreddit, article }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const moreChildren = useReddit<any>(
+  const { data: moreChildren } = useReddit<any>(
     isLoading
       ? {
           method: "POST",

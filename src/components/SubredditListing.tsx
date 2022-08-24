@@ -17,7 +17,7 @@ type Props = {
 };
 
 const SubredditListing: FC<Props> = ({ path, query, updateAfter }) => {
-  const subredditListing = useReddit<RedditListing<RedditSubreddit>>({
+  const { data: subredditListing } = useReddit<RedditListing<RedditSubreddit>>({
     method: "GET",
     path,
     query,

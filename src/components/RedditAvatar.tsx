@@ -14,7 +14,7 @@ const RedditAvatar: FC<Props> = ({ username }) => {
 
   const avatarOnScreen = useOnScreen<HTMLDivElement | null>(avatarRef);
 
-  const user = useReddit<RedditAccount>(
+  const { data: user } = useReddit<RedditAccount>(
     username !== "[deleted]" && avatarOnScreen
       ? { method: "GET", path: `/user/${username}/about` }
       : null

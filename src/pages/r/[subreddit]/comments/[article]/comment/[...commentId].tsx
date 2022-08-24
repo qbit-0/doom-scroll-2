@@ -34,11 +34,11 @@ type Props = {
 };
 
 const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
-  const about = useReddit<RedditSubreddit>({
+  const { data: about } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const rules = useReddit<RedditRules>({
+  const { data: rules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });
