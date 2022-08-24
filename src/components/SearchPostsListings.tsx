@@ -1,52 +1,58 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { getSearchPosts } from "../lib/api/redditApi";
-import { MeContext } from "../lib/context/MeProvider";
-import Posts from "./Posts";
+import useAtBottom from "../lib/hooks/useAtBottom";
+import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
+import PostListing from "./PostListing";
 
 type Props = {
   searchQuery: string;
   sort: string;
   time: string;
-  loadNext: boolean;
 };
 
-const SearchPostsListings: FC<Props> = ({
-  searchQuery,
-  sort,
-  time,
-  loadNext,
-}) => {
-  const [postListings, setPostListings] = useState<any[] | null>(null);
-  const [after, setAfter] = useState<string | null>(null);
-  const { me } = useContext(MeContext);
+const SearchPostsListings: FC<Props> = ({ searchQuery, sort, time }) => {
+  const [pageCount, setPageCount] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
+  const atBottom = useAtBottom(0);
 
   useEffect(() => {
-    (async () => {
-      setPostListings(null);
-      setAfter(null);
-      const postsResponse = await getSearchPosts(searchQuery, sort, time);
-      setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data.data.after);
-    })();
-  }, [me, searchQuery, sort, time]);
-
-  useEffect(() => {
-    if (postListings && after && loadNext) {
-      (async () => {
-        const postsResponse = await getSearchPosts(
-          searchQuery,
-          sort,
-          time,
-          after
-        );
-        setPostListings([...postListings, postsResponse.data]);
-        setAfter(postsResponse.data.data.after);
-      })();
+    if (atBottom && !isLoading) {
+      setPageCount(pageCount + 1);
+      setIsLoading(true);
     }
-  }, [searchQuery, sort, time, postListings, after, loadNext]);
+  }, [atBottom, pageCount, isLoading]);
 
-  return <Posts postListings={postListings} />;
+  useEffect(() => {
+    setIsLoading(false);
+  }, [afters]);
+
+  const genUpdateAfter = (page: number) => {
+    return (after: string) => {
+      setAfters({ ...afters, [page + 1]: after });
+    };
+  };
+
+  const pages: JSX.Element[] = [];
+  for (let i = 0; i < pageCount; i++) {
+    const { path, query } = getSearchPostsPath(
+      searchQuery,
+      sort,
+      time,
+      "link",
+      afters[i]
+    );
+    pages.push(
+      <PostListing
+        path={path}
+        query={query}
+        updateAfter={genUpdateAfter(i)}
+        key={i}
+      />
+    );
+  }
+
+  return <>{pages}</>;
 };
 
 export default SearchPostsListings;

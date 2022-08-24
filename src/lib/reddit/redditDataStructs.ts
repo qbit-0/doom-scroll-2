@@ -112,12 +112,12 @@ export type RedditSubreddit = {
 };
 
 export type RedditListing<T> = {
-  before: string;
-  after: string;
-  geo_filter: string;
   kind: "Listing";
   data: {
+    after: string;
+    before: string;
     children: T[];
+    geo_filter: string;
   };
 };
 
@@ -132,7 +132,7 @@ export type RedditMore = {
   kind: "more";
 };
 
-export type RedditRule = {
+export type RedditRules = {
   rules: {
     kind: "all";
     description: string;

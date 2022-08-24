@@ -1,80 +1,50 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { getSearchUsers } from "../lib/api/redditApi";
-import { MeContext } from "../lib/context/MeProvider";
 import useAtBottom from "../lib/hooks/useAtBottom";
-import { RedditAccount, RedditListing } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
-import PostSkeleton from "./PostSkeleton";
-import User from "./User";
+import { getSearchUsersPath } from "../lib/reddit/redditUrlUtils";
+import UserListing from "./UserListing";
 
 type Props = {
   searchQuery: string;
 };
 
 const UserListings: FC<Props> = ({ searchQuery }) => {
-  const [userListings, setUserListings] = useState<
-    RedditListing<RedditAccount>[] | null
-  >(null);
-  const [after, setAfter] = useState<string | null>(null);
-  const { me } = useContext(MeContext);
+  const [pageCount, setPageCount] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
   const atBottom = useAtBottom(0);
 
   useEffect(() => {
-    (async () => {
-      const usersResponse = await getSearchUsers(searchQuery);
-      setUserListings([usersResponse.data]);
-      setAfter(usersResponse.data.data.after);
-    })();
-  }, [me, searchQuery]);
+    if (atBottom && !isLoading) {
+      setPageCount(pageCount + 1);
+      setIsLoading(true);
+    }
+  }, [atBottom, pageCount, isLoading]);
 
   useEffect(() => {
-    if (userListings && after && atBottom) {
-      (async () => {
-        const usersResponse = await getSearchUsers(searchQuery, after);
-        setUserListings([...userListings, usersResponse.data]);
-        setAfter(usersResponse.data.data.after);
-      })();
-    }
-  }, [searchQuery, after, userListings, atBottom]);
+    setIsLoading(false);
+  }, [afters]);
 
-  if (!userListings) {
-    return (
-      <>
-        {new Array(4).fill(null).map((_, index: number) => {
-          return (
-            <Card key={index}>
-              <PostSkeleton />
-            </Card>
-          );
-        })}
-      </>
+  const genUpdateAfter = (page: number) => {
+    return (after: string) => {
+      setAfters({ ...afters, [page + 1]: after });
+    };
+  };
+
+  const pages: JSX.Element[] = [];
+  for (let i = 0; i < pageCount; i++) {
+    const { path, query } = getSearchUsersPath(searchQuery, afters[i]);
+    pages.push(
+      <UserListing
+        path={path}
+        query={query}
+        updateAfter={genUpdateAfter(i)}
+        key={i}
+      />
     );
   }
 
-  if (UserListings.length === 0) return null;
-
-  return (
-    <>
-      {userListings.reduce(
-        (
-          flattenedUsers: JSX.Element[],
-          users: RedditListing<RedditAccount>,
-          listingIndex: number
-        ) => {
-          return [
-            ...flattenedUsers,
-            ...users.data.children.map((user: RedditAccount, index: number) => (
-              <Card key={listingIndex + " " + index}>
-                <User user={user} />
-              </Card>
-            )),
-          ];
-        },
-        []
-      )}
-    </>
-  );
+  return <>{pages}</>;
 };
 
 export default UserListings;

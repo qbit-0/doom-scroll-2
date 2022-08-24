@@ -15,7 +15,6 @@ import HomeAbout from "../components/HomeAbout";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
 import SubredditPostsListings from "../components/SubredditPostsListings";
-import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 

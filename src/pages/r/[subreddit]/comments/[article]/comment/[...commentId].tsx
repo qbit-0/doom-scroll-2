@@ -1,6 +1,5 @@
-import axios from "axios";
 import { GetServerSideProps } from "next";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import NavBarFrame from "../../../../../../components/NavBarFrame";
 import PageFrame from "../../../../../../components/PageFrame";
@@ -8,8 +7,9 @@ import PostAndComments from "../../../../../../components/PostAndComments";
 import SubredditAbout from "../../../../../../components/SubredditAbout";
 import SubredditBanner from "../../../../../../components/SubredditBanner";
 import SubredditRules from "../../../../../../components/SubredditRules";
+import useReddit from "../../../../../../lib/hooks/useReddit";
 import {
-  RedditRule,
+  RedditRules,
   RedditSubreddit,
 } from "../../../../../../lib/reddit/redditDataStructs";
 
@@ -34,30 +34,14 @@ type Props = {
 };
 
 const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
-  const [about, setAbout] = useState<RedditSubreddit | null>(null);
-  const [rules, setRules] = useState<RedditRule | null>(null);
-
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const aboutResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about`,
-        });
-        setAbout(aboutResponse.data);
-      })();
-  }, [subreddit]);
-
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const rulesResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about/rules`,
-        });
-        setRules(rulesResponse.data);
-      })();
-  }, [subreddit]);
+  const about = useReddit<RedditSubreddit>({
+    method: "GET",
+    path: `/r/${subreddit}/about`,
+  });
+  const rules = useReddit<RedditRules>({
+    method: "GET",
+    path: `/r/${subreddit}/about/rules`,
+  });
 
   return (
     <NavBarFrame subreddit={subreddit}>

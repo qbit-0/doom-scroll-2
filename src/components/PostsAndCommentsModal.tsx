@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 
 import {
   RedditLink,
-  RedditRule,
+  RedditRules,
   RedditSubreddit,
 } from "../lib/reddit/redditDataStructs";
 import NavBarFrame from "./NavBarFrame";
@@ -22,7 +22,7 @@ type Props = {
 
 const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
   const [about, setAbout] = useState<RedditSubreddit | undefined>(undefined);
-  const [rules, setRules] = useState<RedditRule | undefined>(undefined);
+  const [rules, setRules] = useState<RedditRules | undefined>(undefined);
   const subreddit = post.data.subreddit;
 
   useEffect(() => {

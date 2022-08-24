@@ -74,7 +74,7 @@ export const getAccessToken = async (req: NextApiRequest | IncomingMessage) => {
   return accessToken;
 };
 
-export const redditApi = async (
+export const requestReddit = async (
   req: NextApiRequest | IncomingMessage,
   redditApiParams: {
     method: string;

@@ -3,11 +3,16 @@ import NextLink from "next/link";
 import { FC } from "react";
 
 import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
+import PostSkeleton from "./PostSkeleton";
 import SanitizeHTML from "./SanitizeHTML";
 
-type Props = { subreddit: RedditSubreddit };
+type Props = { subreddit?: RedditSubreddit };
 
 const Subreddit: FC<Props> = ({ subreddit }) => {
+  if (!subreddit) {
+    return <PostSkeleton />;
+  }
+
   return (
     <Box p="4">
       <NextLink href={`/r/${subreddit.data.display_name}`}>

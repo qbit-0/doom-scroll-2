@@ -5,7 +5,7 @@ import { withSessionRoute } from "../../lib/session/withSession";
 
 const nlp = winkNLP(model, ["sbd", "negation", "sentiment"]);
 
-export type analysis = {
+export type Analysis = {
   sentiment: number;
 };
 

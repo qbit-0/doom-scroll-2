@@ -9,6 +9,7 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
+import useSWR from "swr";
 
 import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
@@ -20,8 +21,9 @@ import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditPostsListings from "../../../components/SubredditPostsListings";
 import SubredditRules from "../../../components/SubredditRules";
 import useAtBottom from "../../../lib/hooks/useAtBottom";
+import useReddit from "../../../lib/hooks/useReddit";
 import {
-  RedditRule,
+  RedditRules,
   RedditSubreddit,
 } from "../../../lib/reddit/redditDataStructs";
 import { getSubredditPath } from "../../../lib/reddit/redditUrlUtils";
@@ -56,9 +58,6 @@ const SubredditPage: FC<Props> = ({
   const [subreddit, setSubreddit] = useState(initialSubreddit);
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
-  const [about, setAbout] = useState<RedditSubreddit | null>(null);
-  const [rules, setRules] = useState<RedditRule | null>(null);
-  const atBottom = useAtBottom();
 
   useEffect(() => {
     if (!subreddit || !sort || !time) return;
@@ -75,27 +74,14 @@ const SubredditPage: FC<Props> = ({
     setTime(initialTime);
   }, [router, initialSubreddit, initialSort, initialTime]);
 
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const aboutResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about`,
-        });
-        setAbout(aboutResponse.data);
-      })();
-  }, [subreddit]);
-
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const rulesResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about/rules`,
-        });
-        setRules(rulesResponse.data);
-      })();
-  }, [subreddit]);
+  const about = useReddit<RedditSubreddit>({
+    method: "GET",
+    path: `/r/${subreddit}/about`,
+  });
+  const rules = useReddit<RedditRules>({
+    method: "GET",
+    path: `/r/${subreddit}/about/rules`,
+  });
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
@@ -120,6 +106,7 @@ const SubredditPage: FC<Props> = ({
           <SubredditRules rules={rules} />
         </>
       );
+      break;
   }
 
   return (
@@ -174,12 +161,10 @@ const SubredditPage: FC<Props> = ({
               subreddit={subreddit}
               sort={sort}
               time={time}
-              loadNext={atBottom}
             />
           </>
         }
         right={aboutDisplay}
-        showExplanation={false}
       />
     </NavBarFrame>
   );

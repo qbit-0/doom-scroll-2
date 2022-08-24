@@ -12,17 +12,17 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
+import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
+import useSWR from "swr";
 
-import { getNlp } from "../lib/api/nlpApi";
-import useOnScreen from "../lib/hooks/useOnScreen";
 import { RedditLink } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import { analysis } from "../pages/api/nlp";
+import { Analysis } from "../pages/api/nlp";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -37,18 +37,15 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
   const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [titleNlp, setTitleNlp] = useState<analysis | null>(null);
-
-  const postRef = useRef<HTMLDivElement | null>(null);
-  const postOnScreen = useOnScreen<HTMLDivElement | null>(postRef);
-
-  useEffect(() => {
-    if (post && postOnScreen)
-      (async () => {
-        const titleAnalysisResponse = await getNlp(post.data.title);
-        setTitleNlp(titleAnalysisResponse.data);
-      })();
-  }, [post, openModal, postOnScreen]);
+  const { data: titleNlp } = useSWR<Analysis>(
+    post ? JSON.stringify({ post: post.data.id }) : null,
+    async () => {
+      const response = await axios.post("/api/nlp", {
+        text: post?.data.title,
+      });
+      return response.data as Analysis;
+    }
+  );
 
   if (!post) {
     return <PostSkeleton />;
@@ -62,7 +59,7 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
 
   return (
     <>
-      <Box ref={postRef}>
+      <Box>
         <Flex>
           <Box bgColor="red.100" w="18" p="4">
             <VStack w="18" alignItems="start">
@@ -71,7 +68,7 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
                 <Text>{`${Math.round(post.data.upvote_ratio * 100)}%`}</Text>
                 <Text>upvote</Text>
               </Box>
-              {titleNlp !== null && (
+              {titleNlp && (
                 <Box>
                   <Text>{`${titleNlp.sentiment}`}</Text>
                   <Text>title</Text>

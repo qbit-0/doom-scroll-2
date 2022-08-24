@@ -10,12 +10,12 @@ import {
 } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { RedditRule } from "../lib/reddit/redditDataStructs";
+import { RedditRules } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  rules?: RedditRule;
+  rules?: RedditRules;
 };
 
 const SubredditRules: FC<Props> = ({ rules }) => {
@@ -40,21 +40,23 @@ const SubredditRules: FC<Props> = ({ rules }) => {
         <Heading>Rules</Heading>
         <Accordion allowMultiple>
           {rules
-            ? rules.rules.map((rule: RedditRule["rules"][0], index: number) => {
-                return (
-                  <AccordionItem overflowWrap="anywhere" key={index}>
-                    <AccordionButton>
-                      <Heading flex="1" size="md">
-                        {rule.short_name}
-                      </Heading>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel>
-                      <SanitizeHTML dirty={rule.description_html} />;
-                    </AccordionPanel>
-                  </AccordionItem>
-                );
-              })
+            ? rules.rules.map(
+                (rule: RedditRules["rules"][0], index: number) => {
+                  return (
+                    <AccordionItem overflowWrap="anywhere" key={index}>
+                      <AccordionButton>
+                        <Heading flex="1" size="md">
+                          {rule.short_name}
+                        </Heading>
+                        <AccordionIcon />
+                      </AccordionButton>
+                      <AccordionPanel>
+                        <SanitizeHTML dirty={rule.description_html} />;
+                      </AccordionPanel>
+                    </AccordionItem>
+                  );
+                }
+              )
             : rulesPlaceholder}
         </Accordion>
       </Box>

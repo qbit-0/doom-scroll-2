@@ -8,7 +8,7 @@ import PageFrame from "../components/PageFrame";
 import { MeContext } from "../lib/context/MeProvider";
 import { RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
-import { redditApi } from "../lib/reddit/redditServerApi";
+import { requestReddit } from "../lib/reddit/redditServerApi";
 import { withSessionSsr } from "../lib/session/withSession";
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     const userRefreshToken = accessTokenResponse.data["refresh_token"];
     const expiresIn = accessTokenResponse.data["expires_in"];
 
-    const meResponse = await redditApi(req, {
+    const meResponse = await requestReddit(req, {
       method: "GET",
       path: "/api/v1/me",
       accessToken: userAccessToken,
@@ -51,13 +51,12 @@ type Props = {
 
 const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
   const router = useRouter();
-  const { setMe } = useContext(MeContext);
 
   useEffect(() => {
     localStorage.setItem("me", JSON.stringify(me));
-    setMe(me);
+    mutate("me");
     router.replace("/");
-  }, [me, setMe, router]);
+  }, [me, router]);
 
   return (
     <PageFrame top={null} left={null} right={null} showExplanation={false} />

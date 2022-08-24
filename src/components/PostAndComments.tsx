@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
 
-import { getComments } from "../lib/api/redditApi";
+import useReddit from "../lib/hooks/useReddit";
 import {
   RedditComment,
   RedditLink,
   RedditListing,
   RedditMore,
 } from "../lib/reddit/redditDataStructs";
+import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
@@ -31,28 +32,26 @@ const PostAndComments: FC<Props> = ({
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
 
-  useEffect(() => {
-    (async () => {
-      const commentsResponse = await getComments(subreddit, article, commentId);
-      const commentsResponseData: [
-        RedditListing<RedditLink>,
-        RedditListing<RedditComment | RedditMore>
-      ] = commentsResponse.data;
-      setPost(commentsResponseData[0].data.children[0]);
-      setComments(commentsResponseData[1]);
+  const { path, query } = getCommentsPath(subreddit, article, commentId);
+  const postAndComments = useReddit<any>({ method: "GET", path, query });
 
-      // if (location.pathname === pathname) {
-      //   history.replaceState(
-      //     null,
-      //     "",
-      //     getPathname(
-      //       postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
-      //       query
-      //     )
-      //   );
-      // }
-    })();
-  }, [article]);
+  useEffect(() => {
+    if (postAndComments) {
+      setPost(postAndComments[0].data.children[0]);
+      setComments(postAndComments[1]);
+    }
+  }, [postAndComments]);
+
+  // if (location.pathname === pathname) {
+  //   history.replaceState(
+  //     null,
+  //     "",
+  //     getPathname(
+  //       postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
+  //       query
+  //     )
+  //   );
+  // }
 
   return (
     <>

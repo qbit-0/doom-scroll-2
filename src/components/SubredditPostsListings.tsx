@@ -1,9 +1,8 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { getSubredditPosts } from "../lib/api/redditApi";
-import { MeContext } from "../lib/context/MeProvider";
 import useAtBottom from "../lib/hooks/useAtBottom";
-import Posts from "./Posts";
+import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
+import PostListing from "./PostListing";
 
 type Props = {
   subreddit: string;
@@ -12,37 +11,42 @@ type Props = {
 };
 
 const SubredditPostsListings: FC<Props> = ({ subreddit, sort, time }) => {
-  const [postListings, setPostListings] = useState<any[] | null>(null);
-  const [after, setAfter] = useState<string | null>(null);
-  const { me } = useContext(MeContext);
+  const [pageCount, setPageCount] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
   const atBottom = useAtBottom(0);
 
   useEffect(() => {
-    (async () => {
-      setPostListings(null);
-      setAfter(null);
-      const postsResponse = await getSubredditPosts(subreddit, sort, time);
-      setPostListings([postsResponse.data]);
-      setAfter(postsResponse.data.data.after);
-    })();
-  }, [me, subreddit, sort, time]);
+    if (atBottom && !isLoading) {
+      setPageCount(pageCount + 1);
+      setIsLoading(true);
+    }
+  }, [atBottom, pageCount, isLoading]);
 
   useEffect(() => {
-    if (postListings && after && atBottom) {
-      (async () => {
-        const postsResponse = await getSubredditPosts(
-          subreddit,
-          sort,
-          time,
-          after
-        );
-        setPostListings([...postListings, postsResponse.data]);
-        setAfter(postsResponse.data.data.after);
-      })();
-    }
-  }, [subreddit, sort, time, postListings, after, atBottom]);
+    setIsLoading(false);
+  }, [afters]);
 
-  return <Posts postListings={postListings} />;
+  const genUpdateAfter = (page: number) => {
+    return (after: string) => {
+      setAfters({ ...afters, [page + 1]: after });
+    };
+  };
+
+  const pages: JSX.Element[] = [];
+  for (let i = 0; i < pageCount; i++) {
+    const { path, query } = getSubredditPath(subreddit, sort, time, afters[i]);
+    pages.push(
+      <PostListing
+        path={path}
+        query={query}
+        updateAfter={genUpdateAfter(i)}
+        key={i}
+      />
+    );
+  }
+
+  return <>{pages}</>;
 };
 
 export default SubredditPostsListings;

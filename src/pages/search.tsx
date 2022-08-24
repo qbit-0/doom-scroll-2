@@ -10,7 +10,7 @@ import SearchPostsListings from "../components/SearchPostsListings";
 import SubredditListings from "../components/SubredditListings";
 import UserListings from "../components/UsersListings";
 import useAtBottom from "../lib/hooks/useAtBottom";
-import { getSearchPath } from "../lib/reddit/redditUrlUtils";
+import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -47,14 +47,13 @@ const SearchPage: FC<Props> = ({
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
   const [type, setType] = useState<string>(initialType);
-  const atBottom = useAtBottom();
 
   useEffect(() => {
     if (!searchQuery || !sort || !time || !type) return;
     history.replaceState(
       null,
       "",
-      getSearchPath(searchQuery, sort, time, type).pathname
+      getSearchPostsPath(searchQuery, sort, time, type).pathname
     );
   }, [searchQuery, sort, time, type]);
 
@@ -94,7 +93,6 @@ const SearchPage: FC<Props> = ({
               searchQuery={searchQuery}
               sort={sort}
               time={time}
-              loadNext={atBottom}
             />
           </>
         );
@@ -102,14 +100,10 @@ const SearchPage: FC<Props> = ({
       case "comment":
         break;
       case "sr":
-        content = (
-          <SubredditListings searchQuery={searchQuery} loadNext={atBottom} />
-        );
+        content = <SubredditListings searchQuery={searchQuery} />;
         break;
       case "user":
-        content = (
-          <UserListings searchQuery={searchQuery} loadNext={atBottom} />
-        );
+        content = <UserListings searchQuery={searchQuery} />;
         break;
     }
   }

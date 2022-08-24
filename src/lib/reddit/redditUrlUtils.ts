@@ -22,7 +22,7 @@ export const getSubredditPath = (
   return { path, query, pathname };
 };
 
-export const getSearchPath = (
+export const getSearchPostsPath = (
   searchQuery: string,
   sort: string,
   time: string,

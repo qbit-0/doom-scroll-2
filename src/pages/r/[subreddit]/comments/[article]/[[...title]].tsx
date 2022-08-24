@@ -7,6 +7,11 @@ import PostAndComments from "../../../../../components/PostAndComments";
 import SubredditAbout from "../../../../../components/SubredditAbout";
 import SubredditBanner from "../../../../../components/SubredditBanner";
 import SubredditRules from "../../../../../components/SubredditRules";
+import useReddit from "../../../../../lib/hooks/useReddit";
+import {
+  RedditRules,
+  RedditSubreddit,
+} from "../../../../../lib/reddit/redditDataStructs";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const subreddit = context.query["subreddit"] || "";
@@ -26,15 +31,30 @@ type Props = {
 };
 
 const CommentsPage: FC<Props> = ({ article, subreddit }) => {
+  const about = useReddit<RedditSubreddit>({
+    method: "GET",
+    path: `/r/${subreddit}/about`,
+  });
+  const rules = useReddit<RedditRules>({
+    method: "GET",
+    path: `/r/${subreddit}/about/rules`,
+  });
+
   return (
     <NavBarFrame subreddit={subreddit}>
       <PageFrame
-        top={<SubredditBanner showTitle={true} subreddit={subreddit} />}
+        top={
+          <SubredditBanner
+            showTitle={true}
+            subreddit={subreddit}
+            about={about}
+          />
+        }
         left={<PostAndComments subreddit={subreddit} article={article} />}
         right={
           <>
-            <SubredditAbout subreddit={subreddit} />
-            <SubredditRules subreddit={subreddit} />
+            <SubredditAbout about={about} />
+            <SubredditRules rules={rules} />
           </>
         }
       />

@@ -14,15 +14,9 @@ import {
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import {
-  ChangeEventHandler,
-  FC,
-  FormEventHandler,
-  useContext,
-  useState,
-} from "react";
+import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
+import useSWR, { mutate } from "swr";
 
-import { MeContext } from "../lib/context/MeProvider";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
@@ -33,7 +27,10 @@ type Props = {
 const NavBar: FC<Props> = ({ subreddit }) => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
-  const { me, setMe } = useContext(MeContext);
+  const { data: me } = useSWR("me", () => {
+    const value = localStorage.getItem("me");
+    return !!value ? JSON.parse(value) : undefined;
+  });
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""
@@ -103,7 +100,7 @@ const NavBar: FC<Props> = ({ subreddit }) => {
             onClick={async () => {
               await axios.post("/api/logout");
               localStorage.removeItem("me");
-              setMe(undefined);
+              mutate("me");
             }}
           >
             Log Out

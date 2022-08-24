@@ -2,20 +2,42 @@ import { Box, Button } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FC, MouseEventHandler, useState } from "react";
 
-import { RedditMore } from "../lib/reddit/redditDataStructs";
+import useReddit from "../lib/hooks/useReddit";
+import { RedditComment, RedditMore } from "../lib/reddit/redditDataStructs";
 
 type Props = {
   subreddit: string;
   article: string;
   more: RedditMore;
-  loadMore: MouseEventHandler<HTMLButtonElement>;
+  updateReplies: (replies: (RedditComment | RedditMore)[]) => void;
 };
 
-const More: FC<Props> = ({ more, loadMore, subreddit, article }) => {
+const More: FC<Props> = ({ more, updateReplies, subreddit, article }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const handleClickMore: MouseEventHandler<HTMLButtonElement> = (event) => {
+  const moreChildren = useReddit<any>(
+    isLoading
+      ? {
+          method: "POST",
+          path: "/api/morechildren",
+          query: {
+            api_type: "json",
+            id: more.data.id,
+            link_id: `t3_${article}`,
+          },
+          data: new URLSearchParams({
+            children: more.data.children.join(","),
+          }).toString(),
+        }
+      : null
+  );
+
+  const handleClickMore: MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
-    loadMore(event);
+    // await new Promise((resolve, reject) => {
+    //   while (!moreChildren);
+    //   resolve(true);
+    // });
+    updateReplies(moreChildren["json"]["data"]["things"]);
   };
 
   return (

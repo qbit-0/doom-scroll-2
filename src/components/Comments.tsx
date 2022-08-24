@@ -1,7 +1,6 @@
 import { VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-import { getMore } from "../lib/api/redditApi";
 import {
   RedditComment,
   RedditListing,
@@ -24,15 +23,9 @@ const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
     setComments(initialComments);
   }, [initialComments]);
 
-  const genLoadMore = (more: any) => {
-    return async () => {
-      if (!comments || !article) return;
-
-      const moreResponse = await getMore(
-        more.data.id,
-        article,
-        more.data.children
-      );
+  const genUpdateReplies = (more: RedditMore) => {
+    return async (replies: (RedditComment | RedditMore)[]) => {
+      if (!comments) return;
 
       const newComments = {
         ...comments,
@@ -42,7 +35,7 @@ const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
             ...comments.data.children.filter(
               (comment: any) => comment !== more
             ),
-            ...genCommentTrees(moreResponse.data["json"]["data"]["things"]),
+            ...genCommentTrees(replies),
           ],
         },
       };
@@ -67,7 +60,7 @@ const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
             return (
               <More
                 more={comment}
-                loadMore={genLoadMore(comment)}
+                updateReplies={genUpdateReplies(comment)}
                 subreddit={subreddit}
                 article={article}
                 key={index}
