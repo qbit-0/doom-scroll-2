@@ -1,7 +1,7 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
+import useReddit from "../lib/hooks/useReddit";
 import {
   RedditLink,
   RedditRules,
@@ -21,31 +21,16 @@ type Props = {
 };
 
 const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
-  const [about, setAbout] = useState<RedditSubreddit | undefined>(undefined);
-  const [rules, setRules] = useState<RedditRules | undefined>(undefined);
   const subreddit = post.data.subreddit;
 
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const aboutResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about`,
-        });
-        setAbout(aboutResponse.data);
-      })();
-  }, [subreddit]);
-
-  useEffect(() => {
-    if (subreddit)
-      (async () => {
-        const rulesResponse = await axios.post("/api/reddit", {
-          method: "GET",
-          path: `/r/${subreddit}/about/rules`,
-        });
-        setRules(rulesResponse.data);
-      })();
-  }, [subreddit]);
+  const about = useReddit<RedditSubreddit>({
+    method: "GET",
+    path: `/r/${subreddit}/about`,
+  });
+  const rules = useReddit<RedditRules>({
+    method: "GET",
+    path: `/r/${subreddit}/about/rules`,
+  });
 
   return (
     <Modal

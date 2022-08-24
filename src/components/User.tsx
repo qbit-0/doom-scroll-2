@@ -14,10 +14,7 @@ const User: FC<Props> = ({ user }) => {
 
   return (
     <Box p="4">
-      <RedditAvatar
-        username={user.data.name}
-        initialIconImg={user.data.icon_img}
-      />
+      <RedditAvatar username={user.data.name} />
       <Heading>{user.data.name}</Heading>
     </Box>
   );
