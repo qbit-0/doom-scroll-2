@@ -29,7 +29,7 @@ const More: FC<Props> = ({ more, updateReplies, subreddit, article }) => {
       children: more.data.children.join(","),
     }).toString(),
   };
-  const { data: moreChildren } = useSWR(JSON.stringify(params));
+  const { data: moreChildren } = useSWR(params);
 
   const handleClickMore: MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
@@ -42,7 +42,7 @@ const More: FC<Props> = ({ more, updateReplies, subreddit, article }) => {
         query: params.query,
         data: params.data,
       });
-      mutate(JSON.stringify(params), response.data);
+      mutate(params, response.data);
       updateReplies(response.data["json"]["data"]["things"]);
     }
   };

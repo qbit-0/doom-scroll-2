@@ -7,12 +7,10 @@ const useReddit = <T>(
     path: string;
     query?: Record<string, string>;
     data?: any;
-  } | null,
-  result?: any
+  } | null
 ) => {
-  return useSWR<T>(JSON.stringify(params), async () => {
+  return useSWR<T>(params, async () => {
     if (!params) return null;
-    if (result !== undefined) return result;
     const response = await axios.post("/api/reddit", {
       method: params.method,
       path: params.path,
