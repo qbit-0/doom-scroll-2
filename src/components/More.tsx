@@ -1,6 +1,8 @@
 import { Box, Button } from "@chakra-ui/react";
+import axios from "axios";
 import NextLink from "next/link";
 import { FC, MouseEventHandler, useState } from "react";
+import useSWR, { mutate } from "swr";
 
 import useReddit from "../lib/hooks/useReddit";
 import { RedditComment, RedditMore } from "../lib/reddit/redditDataStructs";
@@ -14,30 +16,35 @@ type Props = {
 
 const More: FC<Props> = ({ more, updateReplies, subreddit, article }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { data: moreChildren } = useReddit<any>(
-    isLoading
-      ? {
-          method: "POST",
-          path: "/api/morechildren",
-          query: {
-            api_type: "json",
-            id: more.data.id,
-            link_id: `t3_${article}`,
-          },
-          data: new URLSearchParams({
-            children: more.data.children.join(","),
-          }).toString(),
-        }
-      : null
-  );
+
+  const params = {
+    method: "POST",
+    path: "/api/morechildren",
+    query: {
+      api_type: "json",
+      id: more.data.id,
+      link_id: `t3_${article}`,
+    },
+    data: new URLSearchParams({
+      children: more.data.children.join(","),
+    }).toString(),
+  };
+  const { data: moreChildren } = useSWR(JSON.stringify(params));
 
   const handleClickMore: MouseEventHandler<HTMLButtonElement> = async () => {
     setIsLoading(true);
-    // await new Promise((resolve, reject) => {
-    //   while (!moreChildren);
-    //   resolve(true);
-    // });
-    updateReplies(moreChildren["json"]["data"]["things"]);
+    if (moreChildren) {
+      updateReplies(moreChildren["json"]["data"]["things"]);
+    } else {
+      const response = await axios.post("/api/reddit", {
+        method: params.method,
+        path: params.path,
+        query: params.query,
+        data: params.data,
+      });
+      mutate(JSON.stringify(params), response.data);
+      updateReplies(response.data["json"]["data"]["things"]);
+    }
   };
 
   return (

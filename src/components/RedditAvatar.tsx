@@ -1,7 +1,6 @@
 import { Avatar } from "@chakra-ui/react";
 import { FC, useRef } from "react";
 
-import useOnScreen from "../lib/hooks/useOnScreen";
 import useReddit from "../lib/hooks/useReddit";
 import { RedditAccount } from "../lib/reddit/redditDataStructs";
 
@@ -12,10 +11,8 @@ type Props = {
 const RedditAvatar: FC<Props> = ({ username }) => {
   const avatarRef = useRef<HTMLDivElement | null>(null);
 
-  const avatarOnScreen = useOnScreen<HTMLDivElement | null>(avatarRef);
-
   const { data: user } = useReddit<RedditAccount>(
-    username !== "[deleted]" && avatarOnScreen
+    username !== "[deleted]"
       ? { method: "GET", path: `/user/${username}/about` }
       : null
   );

@@ -29,7 +29,7 @@ const NavBar: FC<Props> = ({ subreddit }) => {
   const router = useRouter();
   const { data: me } = useSWR("me", () => {
     const value = localStorage.getItem("me");
-    return !!value ? JSON.parse(value) : undefined;
+    return !!value ? JSON.parse(value) : null;
   });
 
   const [search, setSearch] = useState<string>(
@@ -100,7 +100,7 @@ const NavBar: FC<Props> = ({ subreddit }) => {
             onClick={async () => {
               await axios.post("/api/logout");
               localStorage.removeItem("me");
-              mutate("me");
+              mutate("me", null);
             }}
           >
             Log Out

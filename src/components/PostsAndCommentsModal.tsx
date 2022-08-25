@@ -37,7 +37,6 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       isOpen={isOpen}
       onClose={onClose}
       size="5xl"
-      motionPreset="slideInBottom"
       scrollBehavior="outside"
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
