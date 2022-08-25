@@ -12,17 +12,21 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
-import useSWR from "swr";
 
-import { RedditLink } from "../lib/reddit/redditDataStructs";
+import useNlp from "../lib/hooks/useNlp";
+import useReddit from "../lib/hooks/useReddit";
+import getRedditCommentsText from "../lib/reddit/getRedditCommentsText";
+import {
+  RedditLink,
+  RedditPostAndComments,
+} from "../lib/reddit/redditDataStructs";
+import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import { Analysis } from "../pages/api/nlp";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -37,15 +41,19 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
   const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { data: titleNlp } = useSWR<Analysis>(
-    post ? JSON.stringify({ post: post.data.id }) : null,
-    async () => {
-      const response = await axios.post("/api/nlp", {
-        text: post?.data.title,
-      });
-      return response.data as Analysis;
-    }
+  const { data: titleNlp } = useNlp(post?.data.title);
+
+  const { path, query } = post
+    ? getCommentsPath(post?.data.subreddit, post?.data.id)
+    : { path: undefined, query: undefined };
+
+  const { data: postAndComments } = useReddit<RedditPostAndComments>(
+    path && query ? { method: "GET", path, query } : null
   );
+  const comments = postAndComments ? postAndComments[1] : undefined;
+
+  const commentsText = comments ? getRedditCommentsText(comments) : null;
+  const { data: commentsNlp } = useNlp(commentsText);
 
   if (!post) {
     return <PostSkeleton />;
@@ -72,6 +80,12 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
                 <Box>
                   <Text>{`${titleNlp.sentiment}`}</Text>
                   <Text>title</Text>
+                </Box>
+              )}
+              {commentsNlp && (
+                <Box>
+                  <Text>{`${commentsNlp.sentiment}`}</Text>
+                  <Text>comments</Text>
                 </Box>
               )}
             </VStack>

@@ -4,7 +4,6 @@ import NextLink from "next/link";
 import { FC, MouseEventHandler, useState } from "react";
 import useSWR, { mutate } from "swr";
 
-import useReddit from "../lib/hooks/useReddit";
 import { RedditComment, RedditMore } from "../lib/reddit/redditDataStructs";
 
 type Props = {

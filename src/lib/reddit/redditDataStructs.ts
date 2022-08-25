@@ -30,6 +30,7 @@ export type RedditComment = {
   kind: "t1";
   data: {
     author: string;
+    body: string;
     body_html: string;
     created_utc: number;
     depth: number;
@@ -149,3 +150,8 @@ export type RedditRules = {
 export type RedditMe = {
   name: string;
 };
+
+export type RedditPostAndComments = [
+  RedditListing<RedditLink>,
+  RedditListing<RedditComment | RedditMore>
+];

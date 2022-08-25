@@ -6,6 +6,7 @@ import {
   RedditLink,
   RedditListing,
   RedditMore,
+  RedditPostAndComments,
 } from "../lib/reddit/redditDataStructs";
 import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import Card from "./Card";
@@ -33,7 +34,8 @@ const PostAndComments: FC<Props> = ({
   const [comments, setComments] = useState(initialComments);
 
   const { path, query } = getCommentsPath(subreddit, article, commentId);
-  const { data: postAndComments } = useReddit<any>({
+
+  const { data: postAndComments } = useReddit<RedditPostAndComments>({
     method: "GET",
     path,
     query,
