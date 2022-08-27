@@ -1,4 +1,10 @@
-import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  ModalProps,
+} from "@chakra-ui/react";
 import { FC } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -18,9 +24,14 @@ type Props = {
   post: RedditLink;
   isOpen: boolean;
   onClose: () => void;
-};
+} & Omit<ModalProps, "children">;
 
-const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
+const PostsAndCommentsModal: FC<Props> = ({
+  post,
+  isOpen,
+  onClose,
+  ...modalProps
+}) => {
   const subreddit = post.data.subreddit;
 
   const { data: about } = useReddit<RedditSubreddit>({
@@ -38,6 +49,7 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
       onClose={onClose}
       size="5xl"
       scrollBehavior="outside"
+      {...modalProps}
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent mt="0">
@@ -48,7 +60,7 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
                 <SubredditBanner
                   showTitle={false}
                   subreddit={subreddit}
-                  about={about}
+                  subredditAbout={about}
                 />
               }
               left={
@@ -61,8 +73,8 @@ const PostsAndCommentsModal: FC<Props> = ({ post, isOpen, onClose }) => {
               }
               right={
                 <>
-                  <SubredditAbout about={about} />
-                  <SubredditRules rules={rules} />
+                  <SubredditAbout subredditAbout={about} />
+                  <SubredditRules subredditRules={rules} />
                 </>
               }
               showExplanation={false}

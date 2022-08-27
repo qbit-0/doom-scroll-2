@@ -50,7 +50,7 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
           <SubredditBanner
             showTitle={true}
             subreddit={subreddit}
-            about={about}
+            subredditAbout={about}
           />
         }
         left={
@@ -62,8 +62,8 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
         }
         right={
           <>
-            <SubredditAbout about={about} />
-            <SubredditRules rules={rules} />
+            <SubredditAbout rules={about} />
+            <SubredditRules subredditRules={rules} />
           </>
         }
         showExplanation={false}

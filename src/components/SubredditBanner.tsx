@@ -1,35 +1,46 @@
-import { Avatar, Box, Flex, Heading } from "@chakra-ui/react";
+import { Avatar, Box, BoxProps, Flex, Heading } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
 
 type Props = {
   subreddit: string;
-  about?: RedditSubreddit;
+  subredditAbout?: RedditSubreddit;
   showTitle: boolean;
-};
+} & BoxProps;
 
-const SubredditBanner: FC<Props> = ({ subreddit, about, showTitle }) => {
+const SubredditBanner: FC<Props> = ({
+  subreddit,
+  subredditAbout,
+  showTitle,
+  ...innerProps
+}) => {
   let background;
-  if (about?.data?.banner_background_image) {
+  if (subredditAbout?.data?.banner_background_image) {
     background = (
       <Box
         w="full"
         h="36"
-        bgImage={about.data.banner_background_image}
-        bgColor={about.data.banner_background_color || about.data.primary_color}
+        bgImage={subredditAbout.data.banner_background_image}
+        bgColor={
+          subredditAbout.data.banner_background_color ||
+          subredditAbout.data.primary_color
+        }
         bgPos="center"
       />
     );
-  } else if (about?.data.header_img) {
+  } else if (subredditAbout?.data.header_img) {
     background = (
       <Flex
         justify="center"
         align="center"
-        bgColor={about.data.banner_background_color || about.data.primary_color}
+        bgColor={
+          subredditAbout.data.banner_background_color ||
+          subredditAbout.data.primary_color
+        }
         h="36"
       >
-        <Box bgImage={about.data.header_img} bgPos="center" />
+        <Box bgImage={subredditAbout.data.header_img} bgPos="center" />
       </Flex>
     );
   } else {
@@ -38,8 +49,8 @@ const SubredditBanner: FC<Props> = ({ subreddit, about, showTitle }) => {
         w="full"
         h="36"
         bgColor={
-          about?.data.banner_background_color ||
-          about?.data.primary_color ||
+          subredditAbout?.data.banner_background_color ||
+          subredditAbout?.data.primary_color ||
           "gray"
         }
       />
@@ -47,19 +58,22 @@ const SubredditBanner: FC<Props> = ({ subreddit, about, showTitle }) => {
   }
 
   return (
-    <Box>
+    <Box {...innerProps}>
       {background}
       {showTitle && (
         <Flex justify="center" position="relative" bgColor="darkgray">
           <Box p="4" w="5xl">
             <Avatar
               name="r /"
-              src={about?.data?.community_icon || about?.data?.icon_img}
+              src={
+                subredditAbout?.data?.community_icon ||
+                subredditAbout?.data?.icon_img
+              }
               size="xl"
               mt="-8"
             />
             <Box ml="2" display="inline-block">
-              <Heading> {about?.data?.title}</Heading>
+              <Heading> {subredditAbout?.data?.title}</Heading>
               <Heading size="md">{`r/${subreddit}`}</Heading>
             </Box>
           </Box>

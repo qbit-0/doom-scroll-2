@@ -1,14 +1,19 @@
-import { Box } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Box, BoxProps } from "@chakra-ui/react";
+import { FC } from "react";
 
-type Props = {
-  children: React.ReactNode;
-};
+type Props = BoxProps;
 
-const Card: FC<Props> = ({ children }) => {
+const Card: FC<Props> = (props) => {
   return (
-    <Box borderWidth={1} borderColor="red" w="full" rounded="md">
-      {children}
+    <Box
+      borderWidth={1}
+      borderColor="red"
+      w="full"
+      rounded="md"
+      p="4"
+      {...props}
+    >
+      {props.children}
     </Box>
   );
 };

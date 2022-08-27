@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { StackProps, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import {
@@ -14,9 +14,14 @@ type Props = {
   subreddit: string;
   article: string;
   initialComments?: RedditListing<RedditComment | RedditMore>;
-};
+} & StackProps;
 
-const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
+const Comments: FC<Props> = ({
+  initialComments,
+  subreddit,
+  article,
+  ...innerProps
+}) => {
   const [comments, setComments] = useState(initialComments);
 
   useEffect(() => {
@@ -49,11 +54,11 @@ const Comments: FC<Props> = ({ initialComments, subreddit, article }) => {
     for (let i = 0; i < 10; i++) {
       commentsPlaceholder.push(<Comment article={article} key={i} />);
     }
-    return <>{commentsPlaceholder}</>;
+    return <VStack {...innerProps}>{commentsPlaceholder}</VStack>;
   }
 
   return (
-    <VStack>
+    <VStack {...innerProps}>
       {comments.data.children.map(
         (comment: RedditComment | RedditMore, index: number) => {
           if (comment.kind === "more") {

@@ -5,7 +5,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Button, ButtonGroup, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -56,8 +56,8 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
         top={null}
         left={
           <>
-            <Card>
-              <HStack p="2">
+            <Card p="0">
+              <ButtonGroup w="full" variant="outline" p="2">
                 <Button
                   value="best"
                   leftIcon={<BellIcon />}
@@ -103,7 +103,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 >
                   Rising
                 </Button>
-              </HStack>
+              </ButtonGroup>
             </Card>
             <SubredditPostsListings subreddit={""} sort={sort} time={time} />
           </>

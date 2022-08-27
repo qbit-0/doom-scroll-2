@@ -1,23 +1,15 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { Box, BoxProps } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
 
-import { getSearchSubreddits } from "../lib/api/redditApi";
-import { MeContext } from "../lib/context/MeProvider";
 import useAtBottom from "../lib/hooks/useAtBottom";
-import {
-  RedditListing,
-  RedditSubreddit,
-} from "../lib/reddit/redditDataStructs";
 import { getSearchSubredditsPath } from "../lib/reddit/redditUrlUtils";
-import Card from "./Card";
-import PostSkeleton from "./PostSkeleton";
-import Subreddit from "./Subreddit";
 import SubredditListing from "./SubredditListing";
 
 type Props = {
   searchQuery: string;
-};
+} & BoxProps;
 
-const SubredditListings: FC<Props> = ({ searchQuery }) => {
+const SubredditListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   const [pageCount, setPageCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
@@ -53,7 +45,11 @@ const SubredditListings: FC<Props> = ({ searchQuery }) => {
     );
   }
 
-  return <>{pages}</>;
+  return (
+    <Box w="full" {...innerProps}>
+      {pages}
+    </Box>
+  );
 };
 
 export default SubredditListings;

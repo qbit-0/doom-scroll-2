@@ -1,17 +1,22 @@
+import { Box, BoxProps } from "@chakra-ui/react";
 import { FC, useEffect } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
 import { RedditLink, RedditListing } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
 import Post from "./Post";
 
 type Props = {
   path: string;
   query: Record<string, string>;
   updateAfter: (after: string) => void;
-};
+} & BoxProps;
 
-const PostListing: FC<Props> = ({ path, query, updateAfter }) => {
+const PostListing: FC<Props> = ({
+  path,
+  query,
+  updateAfter,
+  ...innerProps
+}) => {
   const { data: postListing } = useReddit<RedditListing<RedditLink>>({
     method: "GET",
     path,
@@ -24,25 +29,19 @@ const PostListing: FC<Props> = ({ path, query, updateAfter }) => {
 
   if (!postListing) {
     return (
-      <>
+      <Box {...innerProps}>
         {new Array(4).fill(null).map((_, index: number) => {
-          return (
-            <Card key={index}>
-              <Post />
-            </Card>
-          );
+          return <Post key={index} />;
         })}
-      </>
+      </Box>
     );
   }
   return (
-    <>
+    <Box {...innerProps}>
       {postListing.data.children.map((post: RedditLink, index: number) => (
-        <Card key={index}>
-          <Post post={post} />
-        </Card>
+        <Post post={post} key={index} />
       ))}
-    </>
+    </Box>
   );
 };
 

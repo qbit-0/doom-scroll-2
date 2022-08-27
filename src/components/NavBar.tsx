@@ -1,12 +1,12 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
+  BoxProps,
   Button,
   HStack,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  Link,
   Text,
   chakra,
   useBreakpointValue,
@@ -15,22 +15,19 @@ import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
-import useSWR, { mutate } from "swr";
 
+import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
 import RedditAvatar from "./RedditAvatar";
 
 type Props = {
   subreddit?: string;
-};
+} & BoxProps;
 
-const NavBar: FC<Props> = ({ subreddit }) => {
+const NavBar: FC<Props> = ({ subreddit, ...innerProps }) => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const router = useRouter();
-  const { data: me } = useSWR("me", () => {
-    const value = localStorage.getItem("me");
-    return !!value ? JSON.parse(value) : null;
-  });
+  const [me, setMe] = useLocalStorage("me");
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""
@@ -54,9 +51,9 @@ const NavBar: FC<Props> = ({ subreddit }) => {
   };
 
   return (
-    <HStack w="full" p="2" bg="lightblue">
+    <HStack w="full" p="2" bg="lightblue" {...innerProps}>
       <NextLink href={"/"}>
-        <Link>DoomScroll</Link>
+        <Button variant="link">DoomScroll</Button>
       </NextLink>
       <Button onClick={handleSubredditButtonClick} display="inline">
         {subreddit ? `r/${subreddit}` : "Home"}
@@ -98,9 +95,8 @@ const NavBar: FC<Props> = ({ subreddit }) => {
           <Text>{me.name}</Text>
           <Button
             onClick={async () => {
-              await axios.post("/api/logout");
-              localStorage.removeItem("me");
-              mutate("me", null);
+              setMe(null);
+              axios.post("/api/logout");
             }}
           >
             Log Out

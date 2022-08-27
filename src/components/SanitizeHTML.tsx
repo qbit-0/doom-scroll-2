@@ -1,12 +1,12 @@
-import { Box } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import { FC } from "react";
 import sanitizeHtml from "sanitize-html";
 
 type Props = {
   dirty: string;
-};
+} & BoxProps;
 
-const SanitizeHTML: FC<Props> = ({ dirty }) => {
+const SanitizeHTML: FC<Props> = ({ dirty, ...boxProps }) => {
   return (
     <Box
       wordBreak="break-word"
@@ -20,6 +20,7 @@ const SanitizeHTML: FC<Props> = ({ dirty }) => {
           },
         }),
       }}
+      {...boxProps}
     />
   );
 };

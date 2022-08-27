@@ -4,8 +4,8 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Heading,
+  PropsOf,
   SkeletonText,
 } from "@chakra-ui/react";
 import { FC } from "react";
@@ -15,10 +15,10 @@ import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
-  rules?: RedditRules;
-};
+  subredditRules?: RedditRules;
+} & PropsOf<typeof Card>;
 
-const SubredditRules: FC<Props> = ({ rules }) => {
+const SubredditRules: FC<Props> = ({ subredditRules, ...innerProps }) => {
   const rulesPlaceholder = [];
   for (let i = 0; i < 4; i++) {
     rulesPlaceholder.push(
@@ -35,31 +35,29 @@ const SubredditRules: FC<Props> = ({ rules }) => {
   }
 
   return (
-    <Card>
-      <Box p="4">
-        <Heading>Rules</Heading>
-        <Accordion allowMultiple>
-          {rules
-            ? rules.rules.map(
-                (rule: RedditRules["rules"][0], index: number) => {
-                  return (
-                    <AccordionItem overflowWrap="anywhere" key={index}>
-                      <AccordionButton>
-                        <Heading flex="1" size="md">
-                          {rule.short_name}
-                        </Heading>
-                        <AccordionIcon />
-                      </AccordionButton>
-                      <AccordionPanel>
-                        <SanitizeHTML dirty={rule.description_html} />;
-                      </AccordionPanel>
-                    </AccordionItem>
-                  );
-                }
-              )
-            : rulesPlaceholder}
-        </Accordion>
-      </Box>
+    <Card {...innerProps}>
+      <Heading>Rules</Heading>
+      <Accordion allowMultiple>
+        {subredditRules
+          ? subredditRules.rules.map(
+              (rule: RedditRules["rules"][0], index: number) => {
+                return (
+                  <AccordionItem overflowWrap="anywhere" key={index}>
+                    <AccordionButton>
+                      <Heading flex="1" size="md">
+                        {rule.short_name}
+                      </Heading>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel>
+                      <SanitizeHTML dirty={rule.description_html} />;
+                    </AccordionPanel>
+                  </AccordionItem>
+                );
+              }
+            )
+          : rulesPlaceholder}
+      </Accordion>
     </Card>
   );
 };

@@ -1,4 +1,12 @@
-import { Box, HStack, Heading, Icon, IconButton, Text } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  HStack,
+  Heading,
+  Icon,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import { FC } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 
@@ -12,19 +20,21 @@ import SanitizeHTML from "./SanitizeHTML";
 type Props = {
   article: string;
   comment?: RedditComment;
-};
+} & BoxProps;
 
-const Comment: FC<Props> = ({ article, comment }) => {
+const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
   if (!comment) {
-    return (
-      <Box w="full">
-        <CommentSkeleton />
-      </Box>
-    );
+    return <CommentSkeleton />;
   }
 
   return (
-    <Box borderTopWidth={1} borderLeftWidth={1} borderColor="blue" w="full">
+    <Box
+      borderTopWidth={1}
+      borderLeftWidth={1}
+      borderColor="blue"
+      w="full"
+      {...innerProps}
+    >
       <Box pt="2" pl="2">
         <HStack>
           <RedditAvatar username={comment.data.author} />

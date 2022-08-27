@@ -4,7 +4,7 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Button, ButtonGroup, HStack, Select } from "@chakra-ui/react";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -74,18 +74,22 @@ const SubredditPage: FC<Props> = ({
     setTime(initialTime);
   }, [router, initialSubreddit, initialSort, initialTime]);
 
-  const { data: about } = useReddit<RedditSubreddit>({
+  const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const { data: rules } = useReddit<RedditRules>({
+  const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
-      <SubredditBanner showTitle={true} subreddit={subreddit} about={about} />
+      <SubredditBanner
+        showTitle={true}
+        subreddit={subreddit}
+        subredditAbout={subredditAbout}
+      />
     );
 
   let aboutDisplay;
@@ -102,8 +106,8 @@ const SubredditPage: FC<Props> = ({
     default:
       aboutDisplay = (
         <>
-          <SubredditAbout about={about} />
-          <SubredditRules rules={rules} />
+          <SubredditAbout subredditAbout={subredditAbout} />
+          <SubredditRules subredditRules={subredditRules} />
         </>
       );
       break;
@@ -115,8 +119,8 @@ const SubredditPage: FC<Props> = ({
         top={top}
         left={
           <>
-            <Card>
-              <HStack p="2">
+            <Card p="0">
+              <ButtonGroup w="full" variant="outline" p="2">
                 <Button
                   value="hot"
                   leftIcon={<CalendarIcon />}
@@ -155,7 +159,7 @@ const SubredditPage: FC<Props> = ({
                 >
                   Rising
                 </Button>
-              </HStack>
+              </ButtonGroup>
             </Card>
             <SubredditPostsListings
               subreddit={subreddit}

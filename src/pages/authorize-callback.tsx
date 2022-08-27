@@ -4,8 +4,11 @@ import { useRouter } from "next/router";
 import { FC, useContext, useEffect } from "react";
 import { mutate } from "swr";
 
+import DoomScrollFilters from "../components/DoomScrollFilters";
+import HomeAbout from "../components/HomeAbout";
 import PageFrame from "../components/PageFrame";
 import { MeContext } from "../lib/context/MeProvider";
+import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { requestReddit } from "../lib/reddit/redditServerApi";
@@ -50,16 +53,22 @@ type Props = {
 };
 
 const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
+  const [_, setMe] = useLocalStorage("me");
+
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.setItem("me", JSON.stringify(me));
-    mutate("me");
+    setMe(me);
     router.replace("/");
-  }, [me, router]);
+  }, [me, setMe, router]);
 
   return (
-    <PageFrame top={null} left={null} right={null} showExplanation={false} />
+    <PageFrame
+      top={null}
+      left={null}
+      right={<HomeAbout />}
+      showExplanation={true}
+    />
   );
 };
 

@@ -1,13 +1,13 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { BoxProps, Heading, PropsOf, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import Card from "./Card";
 
-type Props = {};
+type Props = PropsOf<typeof Card>;
 
-const PopularAbout: FC<Props> = () => {
+const PopularAbout: FC<Props> = (props) => {
   return (
-    <Card>
+    <Card {...props}>
       <Heading>r/popular</Heading>
       <Text>
         The best posts on Reddit for you, pulled from the most active

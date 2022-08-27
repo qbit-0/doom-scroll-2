@@ -1,3 +1,4 @@
+import { Box, BoxProps } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
@@ -8,9 +9,14 @@ type Props = {
   searchQuery: string;
   sort: string;
   time: string;
-};
+} & BoxProps;
 
-const SearchPostsListings: FC<Props> = ({ searchQuery, sort, time }) => {
+const SearchPostsListings: FC<Props> = ({
+  searchQuery,
+  sort,
+  time,
+  ...innerProps
+}) => {
   const [pageCount, setPageCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
@@ -52,7 +58,11 @@ const SearchPostsListings: FC<Props> = ({ searchQuery, sort, time }) => {
     );
   }
 
-  return <>{pages}</>;
+  return (
+    <Box w="full" {...innerProps}>
+      {pages}
+    </Box>
+  );
 };
 
 export default SearchPostsListings;

@@ -31,11 +31,11 @@ type Props = {
 };
 
 const CommentsPage: FC<Props> = ({ article, subreddit }) => {
-  const { data: about } = useReddit<RedditSubreddit>({
+  const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const { data: rules } = useReddit<RedditRules>({
+  const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });
@@ -47,14 +47,14 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
           <SubredditBanner
             showTitle={true}
             subreddit={subreddit}
-            about={about}
+            subredditAbout={subredditAbout}
           />
         }
         left={<PostAndComments subreddit={subreddit} article={article} />}
         right={
           <>
-            <SubredditAbout about={about} />
-            <SubredditRules rules={rules} />
+            <SubredditAbout subredditAbout={subredditAbout} />
+            <SubredditRules subredditRules={subredditRules} />
           </>
         }
       />

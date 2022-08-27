@@ -1,4 +1,4 @@
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Button, ButtonGroup, HStack, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -70,8 +70,8 @@ const SearchPage: FC<Props> = ({
       case "link":
         content = (
           <>
-            <Card>
-              <HStack p="2">
+            <Card p="0">
+              <ButtonGroup w="full" variant="outline" p="2">
                 <Select value={sort} w="32" onChange={setValue(setSort)}>
                   <option value="relevance">Relevance</option>
                   <option value="hot">Hot</option>
@@ -87,7 +87,7 @@ const SearchPage: FC<Props> = ({
                   <option value="day">Past 24 Hours</option>
                   <option value="hour">Past Hour</option>
                 </Select>
-              </HStack>
+              </ButtonGroup>
             </Card>
             <SearchPostsListings
               searchQuery={searchQuery}
@@ -113,8 +113,8 @@ const SearchPage: FC<Props> = ({
       <PageFrame
         left={
           <>
-            <Card>
-              <HStack p="2">
+            <Card p="0">
+              <ButtonGroup w="full" variant="ghost" p="2">
                 <Button value="link" onClick={setValue(setType)}>
                   Posts
                 </Button>
@@ -127,7 +127,7 @@ const SearchPage: FC<Props> = ({
                 <Button value="user" onClick={setValue(setType)}>
                   People
                 </Button>
-              </HStack>
+              </ButtonGroup>
             </Card>
             {content}
           </>

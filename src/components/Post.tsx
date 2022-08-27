@@ -1,12 +1,14 @@
 import {
   Avatar,
   Box,
+  BoxProps,
   Flex,
   HStack,
   Heading,
   Icon,
   IconButton,
   Link,
+  PropsOf,
   StackDivider,
   Text,
   VStack,
@@ -27,6 +29,7 @@ import {
 } from "../lib/reddit/redditDataStructs";
 import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import Card from "./Card";
 import PostBody from "./PostBody";
 import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -34,9 +37,9 @@ import PostsAndCommentsModal from "./PostsAndCommentsModal";
 type Props = {
   post?: RedditLink;
   openModal?: boolean;
-};
+} & PropsOf<typeof Card>;
 
-const Post: FC<Props> = ({ post, openModal = true }) => {
+const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
   const router = useRouter();
   const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,7 +69,7 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
   };
 
   return (
-    <>
+    <Card {...innerProps}>
       <Box>
         <Flex>
           <Box bgColor="red.100" w="18" p="4">
@@ -167,7 +170,7 @@ const Post: FC<Props> = ({ post, openModal = true }) => {
           onClose();
         }}
       />
-    </>
+    </Card>
   );
 };
 

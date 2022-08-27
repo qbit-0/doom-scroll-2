@@ -1,20 +1,21 @@
-import { Avatar, Box, Heading, Link } from "@chakra-ui/react";
+import { Avatar, Box, BoxProps, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FC } from "react";
 
 import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
+import Card from "./Card";
 import PostSkeleton from "./PostSkeleton";
 import SanitizeHTML from "./SanitizeHTML";
 
-type Props = { subreddit?: RedditSubreddit };
+type Props = { subreddit?: RedditSubreddit } & BoxProps;
 
-const Subreddit: FC<Props> = ({ subreddit }) => {
+const Subreddit: FC<Props> = ({ subreddit, ...boxProps }) => {
   if (!subreddit) {
     return <PostSkeleton />;
   }
 
   return (
-    <Box p="4">
+    <Card {...boxProps}>
       <NextLink href={`/r/${subreddit.data.display_name}`}>
         <Link>
           <Avatar
@@ -28,7 +29,7 @@ const Subreddit: FC<Props> = ({ subreddit }) => {
       <Box>
         <SanitizeHTML dirty={subreddit.data.public_description_html} />
       </Box>
-    </Box>
+    </Card>
   );
 };
 

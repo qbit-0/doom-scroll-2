@@ -1,3 +1,4 @@
+import { Box, BoxProps } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
@@ -8,9 +9,14 @@ type Props = {
   subreddit: string;
   sort: string;
   time: string;
-};
+} & BoxProps;
 
-const SubredditPostsListings: FC<Props> = ({ subreddit, sort, time }) => {
+const SubredditPostsListings: FC<Props> = ({
+  subreddit,
+  sort,
+  time,
+  ...innerProps
+}) => {
   const [pageCount, setPageCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [afters, setAfters] = useState<Record<string, string>>({ "0": "" });
@@ -46,7 +52,11 @@ const SubredditPostsListings: FC<Props> = ({ subreddit, sort, time }) => {
     );
   }
 
-  return <>{pages}</>;
+  return (
+    <Box w="full" {...innerProps}>
+      {pages}
+    </Box>
+  );
 };
 
 export default SubredditPostsListings;

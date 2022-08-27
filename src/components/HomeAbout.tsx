@@ -1,20 +1,18 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Heading, PropsOf, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import Card from "./Card";
 
-type Props = {};
+type Props = PropsOf<typeof Card>;
 
-const HomeAbout: FC<Props> = () => {
+const HomeAbout: FC<Props> = (props) => {
   return (
-    <Card>
-      <Box p="4">
-        <Heading>Home</Heading>
-        <Text>
-          Your personal Reddit frontpage. Come here to check in with your
-          favorite communities
-        </Text>
-      </Box>
+    <Card {...props}>
+      <Heading>Home</Heading>
+      <Text>
+        Your personal Reddit frontpage. Come here to check in with your favorite
+        communities
+      </Text>
     </Card>
   );
 };
