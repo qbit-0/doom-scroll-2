@@ -28,7 +28,7 @@ type Props = {
   onChangeEnd: RangeSliderProps["onChangeEnd"];
 } & Omit<FlexProps, "onChange">;
 
-const PrecisionRangeSlider: FC<Props> = ({
+const InputRangeSlider: FC<Props> = ({
   size,
   value,
   min,
@@ -90,4 +90,4 @@ const PrecisionRangeSlider: FC<Props> = ({
   );
 };
 
-export default PrecisionRangeSlider;
+export default InputRangeSlider;

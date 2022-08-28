@@ -27,7 +27,7 @@ import {
   positivePostsPreset,
 } from "../lib/context/PostsFilterProvider";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
-import PrecisionRangeSlider from "./PrecisionRangeSlider";
+import InputRangeSlider from "./InputRangeSlider";
 
 type Props = BoxProps;
 
@@ -92,7 +92,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
       </ButtonGroup>
 
       <Text>By Upvote Ratio</Text>
-      <PrecisionRangeSlider
+      <InputRangeSlider
         value={[postsFilter.minUpvoteRatio, postsFilter.maxUpvoteRatio]}
         min={0}
         max={1}
@@ -115,7 +115,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
       />
 
       <Text>By Title Sentiment</Text>
-      <PrecisionRangeSlider
+      <InputRangeSlider
         value={[postsFilter.minTitleSentiment, postsFilter.maxTitleSentiment]}
         min={-5}
         max={5}
@@ -146,7 +146,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
       />
 
       <Text>By Comments Sentiment</Text>
-      <PrecisionRangeSlider
+      <InputRangeSlider
         value={[
           postsFilter.minCommentsSentiment,
           postsFilter.maxCommentsSentiment,
@@ -180,7 +180,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
       />
 
       <Text>By Aggregate Sentiment</Text>
-      <PrecisionRangeSlider
+      <InputRangeSlider
         value={[
           postsFilter.minAggregateSentiment,
           postsFilter.maxAggregateSentiment,
