@@ -6,6 +6,7 @@ import {
   RedditListing,
   RedditSubreddit,
 } from "../lib/reddit/redditDataStructs";
+import PostSkeleton from "./PostSkeleton";
 import Subreddit from "./Subreddit";
 
 type Props = {
@@ -34,7 +35,7 @@ const SubredditListing: FC<Props> = ({
     return (
       <Box {...innerProps}>
         {new Array(4).fill(null).map((_, index: number) => {
-          return <Subreddit key={index} />;
+          return <PostSkeleton key={index} />;
         })}
       </Box>
     );

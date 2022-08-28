@@ -8,6 +8,7 @@ import {
   genCommentTrees,
 } from "../lib/reddit/redditDataStructs";
 import Comment from "./Comment";
+import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
 
 type Props = {
@@ -52,7 +53,7 @@ const Comments: FC<Props> = ({
   if (!comments) {
     const commentsPlaceholder = [];
     for (let i = 0; i < 10; i++) {
-      commentsPlaceholder.push(<Comment article={article} key={i} />);
+      commentsPlaceholder.push(<CommentSkeleton key={i} />);
     }
     return <VStack {...innerProps}>{commentsPlaceholder}</VStack>;
   }

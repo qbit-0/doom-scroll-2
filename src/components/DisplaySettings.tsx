@@ -5,7 +5,7 @@ import Card from "./Card";
 
 type Props = PropsOf<typeof Card>;
 
-const DoomScrollDisplaySettings: FC<Props> = (props) => {
+const DisplaySettings: FC<Props> = (props) => {
   return (
     <Card {...props}>
       <Heading>DoomScroll Display Settings</Heading>
@@ -22,4 +22,4 @@ const DoomScrollDisplaySettings: FC<Props> = (props) => {
   );
 };
 
-export default DoomScrollDisplaySettings;
+export default DisplaySettings;

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FC, useContext, useEffect } from "react";
 import { mutate } from "swr";
 
-import DoomScrollFilters from "../components/DoomScrollFilters";
+import DoomScrollFilters from "../components/Filters";
 import HomeAbout from "../components/HomeAbout";
 import PageFrame from "../components/PageFrame";
 import { MeContext } from "../lib/context/MeProvider";

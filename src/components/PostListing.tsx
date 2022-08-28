@@ -4,6 +4,7 @@ import { FC, useEffect } from "react";
 import useReddit from "../lib/hooks/useReddit";
 import { RedditLink, RedditListing } from "../lib/reddit/redditDataStructs";
 import Post from "./Post";
+import PostSkeleton from "./PostSkeleton";
 
 type Props = {
   path: string;
@@ -31,7 +32,7 @@ const PostListing: FC<Props> = ({
     return (
       <Box {...innerProps}>
         {new Array(4).fill(null).map((_, index: number) => {
-          return <Post key={index} />;
+          return <PostSkeleton key={index} />;
         })}
       </Box>
     );

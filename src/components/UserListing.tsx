@@ -4,6 +4,7 @@ import { FC, useEffect } from "react";
 import useReddit from "../lib/hooks/useReddit";
 import { RedditAccount, RedditListing } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
+import PostSkeleton from "./PostSkeleton";
 import User from "./User";
 
 type Props = {
@@ -32,7 +33,7 @@ const UserListing: FC<Props> = ({
     return (
       <Box {...innerProps}>
         {new Array(4).fill(null).map((_, index: number) => {
-          return <User key={index} />;
+          return <PostSkeleton key={index} />;
         })}
       </Box>
     );

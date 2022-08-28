@@ -19,14 +19,10 @@ import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {
   article: string;
-  comment?: RedditComment;
+  comment: RedditComment;
 } & BoxProps;
 
 const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
-  if (!comment) {
-    return <CommentSkeleton />;
-  }
-
   return (
     <Box
       borderTopWidth={1}

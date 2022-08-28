@@ -13,6 +13,7 @@ import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import Card from "./Card";
 import Comments from "./Comments";
 import Post from "./Post";
+import PostSkeleton from "./PostSkeleton";
 
 type Props = {
   subreddit: string;
@@ -63,7 +64,7 @@ const PostAndComments: FC<Props> = ({
 
   return (
     <Box w="full" {...innerProps}>
-      <Post post={post} openModal={openModal} />
+      {post ? <Post post={post} openModal={openModal} /> : <PostSkeleton />}
       <Card>
         <Comments
           initialComments={comments}

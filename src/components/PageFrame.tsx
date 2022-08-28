@@ -2,9 +2,9 @@ import { Box, BoxProps, Flex, VStack } from "@chakra-ui/react";
 import React, { FC, useRef } from "react";
 
 import BackToTop from "./BackToTop";
-import DoomScrollDisplaySettings from "./DoomScrollDisplaySettings";
+import DisplaySettings from "./DisplaySettings";
 import DoomScrollExplanation from "./DoomScrollExplanation";
-import DoomScrollFilters from "./DoomScrollFilters";
+import DoomScrollFilters from "./Filters";
 
 type Props = {
   top?: React.ReactNode;
@@ -29,11 +29,11 @@ const PageFrame: FC<Props> = ({
           <Box w="xl">
             <VStack h="full">{left}</VStack>
           </Box>
-          <Box w="sm">
+          <Box w="lg">
             <VStack h="full">
               {showExplanation && <DoomScrollExplanation />}
               <DoomScrollFilters />
-              <DoomScrollDisplaySettings />
+              <DisplaySettings />
               {right}
               <Flex
                 justify="center"

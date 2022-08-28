@@ -3,7 +3,13 @@ import {
   BoxProps,
   Button,
   ButtonGroup,
+  HStack,
   Heading,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderThumb,
@@ -21,13 +27,13 @@ import {
   positivePostsPreset,
 } from "../lib/context/PostsFilterProvider";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
+import PrecisionRangeSlider from "./PrecisionRangeSlider";
 
 type Props = BoxProps;
 
 const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
   const [savedPostsFilter, setSavedPostsFilter] =
     useLocalStorage("postsFilter");
-
   const [postsFilter, setPostsFilter] = useContext(PostsFilterContext);
 
   useEffect(() => {
@@ -84,13 +90,20 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           Default
         </Button>
       </ButtonGroup>
+
       <Text>By Upvote Ratio</Text>
-      <RangeSlider
+      <PrecisionRangeSlider
         value={[postsFilter.minUpvoteRatio, postsFilter.maxUpvoteRatio]}
         min={0}
         max={1}
         step={0.01}
-        onChange={(value: [number, number]) => {
+        onMinChange={(_, value) => {
+          setPostsFilter({ ...postsFilter, id: null, minUpvoteRatio: value });
+        }}
+        onMaxChange={(_, value) => {
+          setPostsFilter({ ...postsFilter, id: null, maxUpvoteRatio: value });
+        }}
+        onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
@@ -99,25 +112,29 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           });
         }}
         onChangeEnd={saveCurrentSettings}
-      >
-        <RangeSliderTrack>
-          <RangeSliderFilledTrack />
-        </RangeSliderTrack>
-        <Tooltip hasArrow label={`${postsFilter.minUpvoteRatio}`}>
-          <RangeSliderThumb index={0} />
-        </Tooltip>
-        <Tooltip hasArrow label={`${postsFilter.maxUpvoteRatio}`}>
-          <RangeSliderThumb index={1} />
-        </Tooltip>
-      </RangeSlider>
+      />
 
       <Text>By Title Sentiment</Text>
-      <RangeSlider
+      <PrecisionRangeSlider
         value={[postsFilter.minTitleSentiment, postsFilter.maxTitleSentiment]}
-        min={0}
-        max={1}
+        min={-5}
+        max={5}
         step={0.01}
-        onChange={(value: [number, number]) => {
+        onMinChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            minTitleSentiment: value,
+          });
+        }}
+        onMaxChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            maxTitleSentiment: value,
+          });
+        }}
+        onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
@@ -126,28 +143,32 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           });
         }}
         onChangeEnd={saveCurrentSettings}
-      >
-        <RangeSliderTrack>
-          <RangeSliderFilledTrack />
-        </RangeSliderTrack>
-        <Tooltip hasArrow label={`${postsFilter.minTitleSentiment}`}>
-          <RangeSliderThumb index={0} />
-        </Tooltip>
-        <Tooltip hasArrow label={`${postsFilter.maxTitleSentiment}`}>
-          <RangeSliderThumb index={1} />
-        </Tooltip>
-      </RangeSlider>
+      />
 
       <Text>By Comments Sentiment</Text>
-      <RangeSlider
+      <PrecisionRangeSlider
         value={[
           postsFilter.minCommentsSentiment,
           postsFilter.maxCommentsSentiment,
         ]}
-        min={0}
-        max={1}
+        min={-5}
+        max={5}
         step={0.01}
-        onChange={(value: [number, number]) => {
+        onMinChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            minCommentsSentiment: value,
+          });
+        }}
+        onMaxChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            maxCommentsSentiment: value,
+          });
+        }}
+        onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
@@ -156,28 +177,32 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           });
         }}
         onChangeEnd={saveCurrentSettings}
-      >
-        <RangeSliderTrack>
-          <RangeSliderFilledTrack />
-        </RangeSliderTrack>
-        <Tooltip hasArrow label={`${postsFilter.minCommentsSentiment}`}>
-          <RangeSliderThumb index={0} />
-        </Tooltip>
-        <Tooltip hasArrow label={`${postsFilter.maxCommentsSentiment}`}>
-          <RangeSliderThumb index={1} />
-        </Tooltip>
-      </RangeSlider>
+      />
 
       <Text>By Aggregate Sentiment</Text>
-      <RangeSlider
+      <PrecisionRangeSlider
         value={[
           postsFilter.minAggregateSentiment,
           postsFilter.maxAggregateSentiment,
         ]}
-        min={0}
-        max={1}
+        min={-5}
+        max={5}
         step={0.01}
-        onChange={(value: [number, number]) => {
+        onMinChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            minAggregateSentiment: value,
+          });
+        }}
+        onMaxChange={(_, value) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            maxAggregateSentiment: value,
+          });
+        }}
+        onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
@@ -186,17 +211,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           });
         }}
         onChangeEnd={saveCurrentSettings}
-      >
-        <RangeSliderTrack>
-          <RangeSliderFilledTrack />
-        </RangeSliderTrack>
-        <Tooltip hasArrow label={`${postsFilter.minAggregateSentiment}`}>
-          <RangeSliderThumb index={0} />
-        </Tooltip>
-        <Tooltip hasArrow label={`${postsFilter.maxAggregateSentiment}`}>
-          <RangeSliderThumb index={1} />
-        </Tooltip>
-      </RangeSlider>
+      />
     </Box>
   );
 };

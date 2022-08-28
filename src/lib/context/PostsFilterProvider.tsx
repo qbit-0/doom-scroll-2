@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, createContext, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  createContext,
+  useMemo,
+  useState,
+} from "react";
 import React from "react";
 
 export type PostsFilter = {
@@ -69,8 +76,13 @@ type Props = {
 };
 
 const PostsFilterProvider: FC<Props> = ({ children }) => {
-  const [postsFilter, setPostsFilter] =
+  const [postsFilterState, setPostsFilterState] =
     useState<PostsFilter>(defaultPostsPreset);
+
+  const [postsFilter, setPostsFilter] = useMemo(() => {
+    return [postsFilterState, setPostsFilterState];
+  }, [postsFilterState]);
+
   return (
     <PostsFilterContext.Provider value={[postsFilter, setPostsFilter]}>
       {children}
