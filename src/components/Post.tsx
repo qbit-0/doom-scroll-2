@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  BoxProps,
   Flex,
   HStack,
   Heading,
