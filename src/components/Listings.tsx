@@ -5,6 +5,7 @@ import useAtBottom from "../lib/hooks/useAtBottom";
 
 type Props = {
   createListing: (
+    after: string,
     updateAfter: (after: string) => void,
     index: number
   ) => React.ReactNode;
@@ -34,8 +35,10 @@ const Listings: FC<Props> = ({ createListing, ...innerProps }) => {
   };
 
   const pages: React.ReactNode[] = [];
-  for (let i = 0; i < pageCount; i++) {
-    pages.push(createListing(genUpdateAfter(i), i));
+  for (let index = 0; index < pageCount; index++) {
+    pages.push(
+      createListing(afters[index] as string, genUpdateAfter(index), index)
+    );
   }
 
   return (
