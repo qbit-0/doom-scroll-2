@@ -1,8 +1,9 @@
-import { Box, BoxProps } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { StackProps } from "@chakra-ui/react";
+import { FC } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
 import { RedditLink, RedditListing } from "../lib/reddit/redditDataStructs";
+import Listing from "./Listing";
 import Post from "./Post";
 import PostSkeleton from "./PostSkeleton";
 
@@ -10,7 +11,7 @@ type Props = {
   path: string;
   query: Record<string, string>;
   updateAfter: (after: string) => void;
-} & BoxProps;
+} & StackProps;
 
 const PostListing: FC<Props> = ({
   path,
@@ -24,25 +25,16 @@ const PostListing: FC<Props> = ({
     query,
   });
 
-  useEffect(() => {
-    if (postListing) updateAfter(postListing.data.after);
-  }, [postListing]);
-
-  if (!postListing) {
-    return (
-      <Box {...innerProps}>
-        {new Array(4).fill(null).map((_, index: number) => {
-          return <PostSkeleton key={index} />;
-        })}
-      </Box>
-    );
-  }
   return (
-    <Box {...innerProps}>
-      {postListing.data.children.map((post: RedditLink, index: number) => (
-        <Post post={post} key={index} />
-      ))}
-    </Box>
+    <Listing
+      listing={postListing}
+      createItem={(item: RedditLink, index: number) => (
+        <Post post={item} key={index} />
+      )}
+      createSkeleton={(index: number) => <PostSkeleton key={index} />}
+      updateAfter={updateAfter}
+      {...innerProps}
+    />
   );
 };
 

@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useContext, useMemo } from "react";
+import { FC, useContext, useMemo, useRef } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
 
@@ -31,7 +31,6 @@ import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
 import PostBody from "./PostBody";
-import PostSkeleton from "./PostSkeleton";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
 
 type Props = {
@@ -80,26 +79,26 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
 
   const result = useMemo(() => {
     return (
-      <Card {...innerProps}>
+      <Card gray={!show} {...innerProps}>
         <Box>
           <Flex>
-            <Box bgColor={show ? "white.100" : "red.100"} w="18" p="4">
+            <Box w="18" p="4">
               <VStack w="18" alignItems="start">
                 <Text>Sentiment</Text>
                 <Box>
+                  <Text>Upvote Ratio:</Text>
                   <Text>{`${Math.round(post.data.upvote_ratio * 100)}%`}</Text>
-                  <Text>upvote</Text>
                 </Box>
                 {titleNlp && (
                   <Box>
+                    <Text>Title</Text>
                     <Text>{`${titleNlp.sentiment}`}</Text>
-                    <Text>title</Text>
                   </Box>
                 )}
                 {commentsNlp && (
                   <Box>
+                    <Text>Comments</Text>
                     <Text>{`${commentsNlp.sentiment}`}</Text>
-                    <Text>comments</Text>
                   </Box>
                 )}
               </VStack>
@@ -183,7 +182,7 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
         />
       </Card>
     );
-  }, [post, titleNlp, commentsNlp, show]);
+  }, [post, titleNlp, commentsNlp, show, isOpen]);
 
   return result;
 };

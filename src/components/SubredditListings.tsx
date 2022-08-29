@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, StackProps, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
@@ -7,7 +7,7 @@ import SubredditListing from "./SubredditListing";
 
 type Props = {
   searchQuery: string;
-} & BoxProps;
+} & StackProps;
 
 const SubredditListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   const [pageCount, setPageCount] = useState(1);
@@ -46,9 +46,9 @@ const SubredditListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   }
 
   return (
-    <Box w="full" {...innerProps}>
+    <VStack w="full" {...innerProps}>
       {pages}
-    </Box>
+    </VStack>
   );
 };
 

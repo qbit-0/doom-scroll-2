@@ -1,11 +1,12 @@
-import { Box, BoxProps } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { StackProps } from "@chakra-ui/react";
+import { FC } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
 import {
   RedditListing,
   RedditSubreddit,
 } from "../lib/reddit/redditDataStructs";
+import Listing from "./Listing";
 import PostSkeleton from "./PostSkeleton";
 import Subreddit from "./Subreddit";
 
@@ -13,7 +14,7 @@ type Props = {
   path: string;
   query: Record<string, string>;
   updateAfter: (after: string) => void;
-} & BoxProps;
+} & StackProps;
 
 const SubredditListing: FC<Props> = ({
   path,
@@ -27,28 +28,16 @@ const SubredditListing: FC<Props> = ({
     query,
   });
 
-  useEffect(() => {
-    if (subredditListing) updateAfter(subredditListing.data.after);
-  }, [subredditListing]);
-
-  if (!subredditListing) {
-    return (
-      <Box {...innerProps}>
-        {new Array(4).fill(null).map((_, index: number) => {
-          return <PostSkeleton key={index} />;
-        })}
-      </Box>
-    );
-  }
-
   return (
-    <Box {...innerProps}>
-      {subredditListing.data.children.map(
-        (subreddit: RedditSubreddit, index: number) => (
-          <Subreddit subreddit={subreddit} key={index} />
-        )
+    <Listing
+      listing={subredditListing}
+      createItem={(item: RedditSubreddit, index: number) => (
+        <Subreddit subreddit={item} key={index} />
       )}
-    </Box>
+      createSkeleton={(index: number) => <PostSkeleton key={index} />}
+      updateAfter={updateAfter}
+      {...innerProps}
+    />
   );
 };
 

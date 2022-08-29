@@ -4,6 +4,7 @@ import { FC, useEffect } from "react";
 import useReddit from "../lib/hooks/useReddit";
 import { RedditAccount, RedditListing } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
+import Listing from "./Listing";
 import PostSkeleton from "./PostSkeleton";
 import User from "./User";
 
@@ -25,26 +26,16 @@ const UserListing: FC<Props> = ({
     query,
   });
 
-  useEffect(() => {
-    if (userListing) updateAfter(userListing.data.after);
-  }, [userListing]);
-
-  if (!userListing) {
-    return (
-      <Box {...innerProps}>
-        {new Array(4).fill(null).map((_, index: number) => {
-          return <PostSkeleton key={index} />;
-        })}
-      </Box>
-    );
-  }
-
   return (
-    <Box {...innerProps}>
-      {userListing.data.children.map((user: RedditAccount, index: number) => (
-        <User user={user} key={index} />
-      ))}
-    </Box>
+    <Listing
+      listing={userListing}
+      createItem={(item: RedditAccount, index: number) => (
+        <User user={item} key={index} />
+      )}
+      createSkeleton={(index: number) => <PostSkeleton key={index} />}
+      updateAfter={updateAfter}
+      {...innerProps}
+    />
   );
 };
 

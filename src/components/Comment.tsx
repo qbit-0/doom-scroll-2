@@ -12,7 +12,6 @@ import { BiDownvote, BiUpvote } from "react-icons/bi";
 
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import CommentSkeleton from "./CommentSkeleton";
 import Comments from "./Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";

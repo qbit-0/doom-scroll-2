@@ -35,15 +35,14 @@ const ImagePreview: React.FC<Props> = ({ src, href, ...innerProps }) => {
         <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
         <ModalContent>
           <ModalBody>
-            <Image
-              display="flex"
-              maxW="75vw"
-              maxH="75vh"
-              src={src}
-              alt="post image"
-              objectFit="contain"
-              dropShadow="lg"
-            />
+            <Flex maxW="75vw" maxH="75vh">
+              <Image
+                src={src}
+                alt="post image"
+                objectFit="contain"
+                dropShadow="lg"
+              />
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>

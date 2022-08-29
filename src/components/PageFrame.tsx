@@ -26,7 +26,7 @@ const PageFrame: FC<Props> = ({
       <Box>
         {top}
         <Flex py="4" justify="center" columnGap={4}>
-          <Box w="xl">
+          <Box w="2xl">
             <VStack h="full">{left}</VStack>
           </Box>
           <Box w="lg">
