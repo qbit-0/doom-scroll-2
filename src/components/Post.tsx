@@ -64,22 +64,22 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
     onOpen();
   };
 
-  let show: any = false;
+  let filtered: any = false;
   if (post) {
-    show =
-      post.data.upvote_ratio >= postsFilter.minUpvoteRatio &&
-      post.data.upvote_ratio <= postsFilter.maxUpvoteRatio &&
-      titleNlp &&
-      titleNlp.sentiment >= postsFilter.minTitleSentiment &&
-      titleNlp.sentiment <= postsFilter.maxTitleSentiment &&
-      commentsNlp &&
-      commentsNlp.sentiment >= postsFilter.minCommentsSentiment &&
-      commentsNlp.sentiment <= postsFilter.maxCommentsSentiment;
+    filtered =
+      post.data.upvote_ratio < postsFilter.minUpvoteRatio ||
+      post.data.upvote_ratio > postsFilter.maxUpvoteRatio ||
+      (titleNlp &&
+        (titleNlp.sentiment < postsFilter.minTitleSentiment ||
+          titleNlp.sentiment > postsFilter.maxTitleSentiment)) ||
+      (commentsNlp &&
+        (commentsNlp.sentiment < postsFilter.minCommentsSentiment ||
+          commentsNlp.sentiment > postsFilter.maxCommentsSentiment));
   }
 
   const result = useMemo(() => {
     return (
-      <Card gray={!show} {...innerProps}>
+      <Card gray={filtered} {...innerProps}>
         <Box>
           <Flex>
             <Box w="18" p="4">
@@ -87,18 +87,18 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
                 <Text>Sentiment</Text>
                 <Box>
                   <Text>Upvote Ratio:</Text>
-                  <Text>{`${Math.round(post.data.upvote_ratio * 100)}%`}</Text>
+                  <Text>{`${(post.data.upvote_ratio * 100).toFixed(0)}%`}</Text>
                 </Box>
                 {titleNlp && (
                   <Box>
                     <Text>Title</Text>
-                    <Text>{`${titleNlp.sentiment}`}</Text>
+                    <Text>{`${titleNlp.sentiment.toFixed(2)}`}</Text>
                   </Box>
                 )}
                 {commentsNlp && (
                   <Box>
                     <Text>Comments</Text>
-                    <Text>{`${commentsNlp.sentiment}`}</Text>
+                    <Text>{`${commentsNlp.sentiment.toFixed(2)}`}</Text>
                   </Box>
                 )}
               </VStack>
@@ -182,7 +182,7 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
         />
       </Card>
     );
-  }, [post, titleNlp, commentsNlp, show, isOpen]);
+  }, [post, titleNlp, commentsNlp, filtered, isOpen]);
 
   return result;
 };
