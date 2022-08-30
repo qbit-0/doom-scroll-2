@@ -23,7 +23,7 @@ const Listing: FC<Props> = ({
 
   if (!listing) {
     return (
-      <VStack {...innerProps}>
+      <VStack w="full" {...innerProps}>
         {new Array(4)
           .fill(null)
           .map((_, index: number) => createSkeleton(index))}
@@ -32,7 +32,7 @@ const Listing: FC<Props> = ({
   }
 
   return (
-    <VStack {...innerProps}>
+    <VStack w="full" {...innerProps}>
       {listing.data.children.map((item: any, index: number) =>
         createItem(item, index)
       )}

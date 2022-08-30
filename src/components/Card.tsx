@@ -1,41 +1,26 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import React, { FC, useRef } from "react";
+import React, { FC } from "react";
 
 type Props = {
-  gray?: boolean;
+  disabled?: boolean | null;
   children?: React.ReactNode;
 } & BoxProps;
 
-const Card: FC<Props> = ({ gray = false, children, ...innerProps }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
+const Card: FC<Props> = ({ disabled = false, children, ...innerProps }) => {
   return (
-    <Box>
-      <Box
-        ref={ref}
-        borderWidth={1}
-        borderColor="red"
-        w="full"
-        rounded="md"
-        p="4"
-        {...innerProps}
-      >
-        {children}
-      </Box>
-      {gray && (
-        <Box
-          pointerEvents="none"
-          position="absolute"
-          zIndex={5}
-          left={ref.current?.offsetLeft}
-          top={ref.current?.offsetTop}
-          w={ref.current?.offsetWidth}
-          h={ref.current?.offsetHeight}
-          bgColor="black"
-          opacity="0.5"
-          {...innerProps}
-        />
-      )}
+    <Box
+      bgColor={"white"}
+      borderWidth={1}
+      borderColor="red"
+      rounded="md"
+      w="full"
+      p="4"
+      boxShadow={disabled ? "none" : "md"}
+      filter={disabled ? "auto" : "none"}
+      brightness={disabled ? "50%" : "none"}
+      {...innerProps}
+    >
+      {children}
     </Box>
   );
 };

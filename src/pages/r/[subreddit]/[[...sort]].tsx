@@ -74,14 +74,22 @@ const SubredditPage: FC<Props> = ({
     setTime(initialTime);
   }, [router, initialSubreddit, initialSort, initialTime]);
 
-  const { data: subredditAbout } = useReddit<RedditSubreddit>({
-    method: "GET",
-    path: `/r/${subreddit}/about`,
-  });
-  const { data: subredditRules } = useReddit<RedditRules>({
-    method: "GET",
-    path: `/r/${subreddit}/about/rules`,
-  });
+  const { data: subredditAbout } = useReddit<RedditSubreddit>(
+    subreddit === "popular" || subreddit === "all"
+      ? null
+      : {
+          method: "GET",
+          path: `/r/${subreddit}/about`,
+        }
+  );
+  const { data: subredditRules } = useReddit<RedditRules>(
+    subreddit === "popular" || subreddit === "all"
+      ? null
+      : {
+          method: "GET",
+          path: `/r/${subreddit}/about/rules`,
+        }
+  );
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
@@ -143,7 +151,11 @@ const SubredditPage: FC<Props> = ({
                   Top
                 </Button>
                 {sort === "top" && (
-                  <Select value={time || "day"} onChange={setValue(setTime)}>
+                  <Select
+                    value={time || "day"}
+                    w={32}
+                    onChange={setValue(setTime)}
+                  >
                     <option value="hour">Now</option>
                     <option value="day">Today</option>
                     <option value="week">This Week</option>

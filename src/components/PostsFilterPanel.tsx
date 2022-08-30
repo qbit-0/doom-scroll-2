@@ -3,19 +3,8 @@ import {
   BoxProps,
   Button,
   ButtonGroup,
-  HStack,
   Heading,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  RangeSlider,
-  RangeSliderFilledTrack,
-  RangeSliderThumb,
-  RangeSliderTrack,
   Text,
-  Tooltip,
 } from "@chakra-ui/react";
 import { FC, useContext, useEffect } from "react";
 
@@ -31,7 +20,7 @@ import InputRangeSlider from "./InputRangeSlider";
 
 type Props = BoxProps;
 
-const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
+const PostsFilterPanel: FC<Props> = (props) => {
   const [savedPostsFilter, setSavedPostsFilter] =
     useLocalStorage("postsFilter");
   const [postsFilter, setPostsFilter] = useContext(PostsFilterContext);
@@ -54,6 +43,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
       <Heading size="md">Filter Posts</Heading>
       <ButtonGroup w="full">
         <Button
+          w="full"
           colorScheme="blue"
           variant={
             postsFilter.id === positivePostsPreset.id ? "solid" : "outline"
@@ -66,6 +56,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           Positive
         </Button>
         <Button
+          w="full"
           colorScheme="red"
           variant={
             postsFilter.id === negativePostsPreset.id ? "solid" : "outline"
@@ -78,6 +69,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
           Negative
         </Button>
         <Button
+          w="full"
           colorScheme="blackAlpha"
           variant={
             postsFilter.id === defaultPostsPreset.id ? "solid" : "outline"
@@ -96,7 +88,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
         value={[postsFilter.minUpvoteRatio, postsFilter.maxUpvoteRatio]}
         min={0}
         max={1}
-        step={0.01}
+        step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({ ...postsFilter, id: null, minUpvoteRatio: value });
         }}
@@ -119,7 +111,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
         value={[postsFilter.minTitleSentiment, postsFilter.maxTitleSentiment]}
         min={-5}
         max={5}
-        step={0.01}
+        step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
@@ -153,7 +145,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
         ]}
         min={-5}
         max={5}
-        step={0.01}
+        step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
@@ -187,7 +179,7 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
         ]}
         min={-5}
         max={5}
-        step={0.01}
+        step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
@@ -216,4 +208,4 @@ const DoomScrollFilterPostsSettings: FC<Props> = (props) => {
   );
 };
 
-export default DoomScrollFilterPostsSettings;
+export default PostsFilterPanel;

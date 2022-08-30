@@ -5,7 +5,7 @@ import Card from "./Card";
 
 type Props = PropsOf<typeof Card>;
 
-const DisplaySettings: FC<Props> = (props) => {
+const DisplaySettingsPanel: FC<Props> = (props) => {
   return (
     <Card {...props}>
       <Heading>DoomScroll Display Settings</Heading>
@@ -15,11 +15,8 @@ const DisplaySettings: FC<Props> = (props) => {
       <Box>
         <Switch>Hide Filtered Content</Switch>
       </Box>
-      <Box>
-        <Switch>Grey-Out Filtered Content</Switch>
-      </Box>
     </Card>
   );
 };
 
-export default DisplaySettings;
+export default DisplaySettingsPanel;

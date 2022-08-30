@@ -36,9 +36,15 @@ import PostsAndCommentsModal from "./PostsAndCommentsModal";
 type Props = {
   post: RedditLink;
   openModal?: boolean;
+  disabledOverride?: boolean;
 } & PropsOf<typeof Card>;
 
-const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
+const Post: FC<Props> = ({
+  post,
+  openModal = true,
+  disabledOverride,
+  ...innerProps
+}) => {
   const router = useRouter();
   const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,16 +63,17 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
 
   const commentsText = comments ? getRedditCommentsText(comments) : null;
   const { data: commentsNlp } = useNlp(commentsText);
-
   const handleOpenModal = () => {
     const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
     history.replaceState(null, "", pathname);
     onOpen();
   };
 
-  let filtered: any = false;
-  if (post) {
-    filtered =
+  let disabled: any = false;
+  if (disabledOverride !== undefined) {
+    disabled = disabledOverride;
+  } else {
+    disabled =
       post.data.upvote_ratio < postsFilter.minUpvoteRatio ||
       post.data.upvote_ratio > postsFilter.maxUpvoteRatio ||
       (titleNlp &&
@@ -79,26 +86,26 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
 
   const result = useMemo(() => {
     return (
-      <Card gray={filtered} {...innerProps}>
+      <Card disabled={disabled} {...innerProps}>
         <Box>
           <Flex>
-            <Box w="18" p="4">
-              <VStack w="18" alignItems="start">
+            <Box w="18" p="4" overflowX="auto">
+              <VStack alignItems="start">
                 <Text>Sentiment</Text>
                 <Box>
-                  <Text>Upvote Ratio:</Text>
+                  <Text>Upvote</Text>
                   <Text>{`${(post.data.upvote_ratio * 100).toFixed(0)}%`}</Text>
                 </Box>
                 {titleNlp && (
                   <Box>
                     <Text>Title</Text>
-                    <Text>{`${titleNlp.sentiment.toFixed(2)}`}</Text>
+                    <Text>{`${titleNlp.sentiment.toFixed(3)}`}</Text>
                   </Box>
                 )}
                 {commentsNlp && (
                   <Box>
                     <Text>Comments</Text>
-                    <Text>{`${commentsNlp.sentiment.toFixed(2)}`}</Text>
+                    <Text>{`${commentsNlp.sentiment.toFixed(3)}`}</Text>
                   </Box>
                 )}
               </VStack>
@@ -182,7 +189,7 @@ const Post: FC<Props> = ({ post, openModal = true, ...innerProps }) => {
         />
       </Card>
     );
-  }, [post, titleNlp, commentsNlp, filtered, isOpen]);
+  }, [post, titleNlp, commentsNlp, disabled, isOpen]);
 
   return result;
 };

@@ -1,4 +1,3 @@
-import { Box, BoxProps } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -22,7 +21,7 @@ type Props = {
   initialPost?: RedditLink;
   initialComments?: RedditListing<RedditComment | RedditMore>;
   openModal?: boolean;
-} & BoxProps;
+};
 
 const PostAndComments: FC<Props> = ({
   subreddit,
@@ -31,7 +30,6 @@ const PostAndComments: FC<Props> = ({
   initialPost,
   initialComments,
   openModal = true,
-  ...innerProps
 }) => {
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
@@ -63,8 +61,12 @@ const PostAndComments: FC<Props> = ({
   // }
 
   return (
-    <Box w="full" {...innerProps}>
-      {post ? <Post post={post} openModal={openModal} /> : <PostSkeleton />}
+    <>
+      {post ? (
+        <Post post={post} openModal={openModal} disabledOverride={false} />
+      ) : (
+        <PostSkeleton />
+      )}
       <Card>
         <Comments
           initialComments={comments}
@@ -72,7 +74,7 @@ const PostAndComments: FC<Props> = ({
           article={article}
         />
       </Card>
-    </Box>
+    </>
   );
 };
 

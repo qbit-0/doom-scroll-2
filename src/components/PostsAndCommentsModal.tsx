@@ -1,7 +1,9 @@
 import {
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
+  ModalHeader,
   ModalOverlay,
   ModalProps,
 } from "@chakra-ui/react";
@@ -47,12 +49,15 @@ const PostsAndCommentsModal: FC<Props> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="5xl"
+      size="6xl"
       scrollBehavior="outside"
       {...modalProps}
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent mt="0">
+        <ModalHeader>
+          <ModalCloseButton />
+        </ModalHeader>
         <ModalBody p="2">
           <NavBarFrame subreddit={subreddit}>
             <PageFrame

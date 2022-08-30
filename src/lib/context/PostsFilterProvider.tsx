@@ -76,12 +76,8 @@ type Props = {
 };
 
 const PostsFilterProvider: FC<Props> = ({ children }) => {
-  const [postsFilterState, setPostsFilterState] =
+  const [postsFilter, setPostsFilter] =
     useState<PostsFilter>(defaultPostsPreset);
-
-  const [postsFilter, setPostsFilter] = useMemo(() => {
-    return [postsFilterState, setPostsFilterState];
-  }, [postsFilterState]);
 
   return (
     <PostsFilterContext.Provider value={[postsFilter, setPostsFilter]}>

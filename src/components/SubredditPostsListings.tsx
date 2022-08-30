@@ -1,4 +1,4 @@
-import { BoxProps } from "@chakra-ui/react";
+import { StackProps } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
@@ -9,7 +9,7 @@ type Props = {
   subreddit: string;
   sort: string;
   time: string;
-} & BoxProps;
+} & StackProps;
 
 const SubredditPostsListings: FC<Props> = ({
   subreddit,

@@ -1,13 +1,9 @@
-import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, useContext, useEffect } from "react";
-import { mutate } from "swr";
+import { FC, useEffect } from "react";
 
-import DoomScrollFilters from "../components/Filters";
 import HomeAbout from "../components/HomeAbout";
 import PageFrame from "../components/PageFrame";
-import { MeContext } from "../lib/context/MeProvider";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";

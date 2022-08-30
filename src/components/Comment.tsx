@@ -7,11 +7,14 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 
+import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
+import useNlp from "../lib/hooks/useNlp";
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import Card from "./Card";
 import Comments from "./Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
@@ -22,18 +25,28 @@ type Props = {
 } & BoxProps;
 
 const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
+  const [commentFilter] = useContext(CommentsFilterContext);
+  const { data: commentNlp } = useNlp(comment.data.body);
+
+  const disabled =
+    Math.tanh(comment.data.score) < commentFilter.minCommentScore ||
+    Math.tanh(comment.data.score) > commentFilter.maxCommentScore ||
+    (commentNlp &&
+      (commentNlp.sentiment < commentFilter.minCommentSentiment ||
+        commentNlp.sentiment > commentFilter.maxCommentSentiment));
+
   return (
-    <Box
-      borderTopWidth={1}
-      borderLeftWidth={1}
+    <Card
+      borderWidth={1}
       borderColor="blue"
-      w="full"
+      p="1"
+      disabled={disabled}
       {...innerProps}
     >
-      <Box pt="2" pl="2">
+      <Box>
         <HStack>
           <RedditAvatar username={comment.data.author} />
-          <HStack ml="1" display="inline" divider={<> &middot; </>}>
+          <HStack display="inline" divider={<> &middot; </>}>
             <Heading size="sm" display="inline">
               {comment.data.author}
             </Heading>
@@ -63,11 +76,16 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
               icon={<Icon as={BiDownvote} />}
               aria-label="downvote"
             />
+            {commentNlp && (
+              <Text display="inline">{`Comment Sentiment: ${commentNlp.sentiment.toFixed(
+                3
+              )}`}</Text>
+            )}
           </Box>
         </HStack>
       </Box>
       {comment.data.replies && (
-        <Box pl={2}>
+        <Box>
           <Comments
             initialComments={comment.data.replies}
             subreddit={comment.data.subreddit}
@@ -75,7 +93,7 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
           />
         </Box>
       )}
-    </Box>
+    </Card>
   );
 };
 

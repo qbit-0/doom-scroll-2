@@ -3,8 +3,8 @@ import { PropsOf } from "@emotion/react";
 import { FC } from "react";
 
 import Card from "./Card";
-import DoomScrollCommentsFilter from "./CommentsFilter";
-import DoomScrollPostsFilter from "./PostsFilter";
+import DoomScrollCommentsFilter from "./CommentsFilterPanel";
+import DoomScrollPostsFilter from "./PostsFilterPanel";
 
 type Props = PropsOf<typeof Card>;
 

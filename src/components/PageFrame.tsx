@@ -2,9 +2,9 @@ import { Box, BoxProps, Flex, VStack } from "@chakra-ui/react";
 import React, { FC, useRef } from "react";
 
 import BackToTop from "./BackToTop";
-import DisplaySettings from "./DisplaySettings";
+import DisplaySettingsPanel from "./DisplaySettingsPanel";
 import DoomScrollExplanation from "./DoomScrollExplanation";
-import DoomScrollFilters from "./Filters";
+import DoomScrollFilters from "./FiltersPanel";
 
 type Props = {
   top?: React.ReactNode;
@@ -26,24 +26,18 @@ const PageFrame: FC<Props> = ({
       <Box>
         {top}
         <Flex py="4" justify="center" columnGap={4}>
-          <Box w="2xl">
+          <Box maxW="xl">
             <VStack h="full">{left}</VStack>
           </Box>
-          <Box w="lg">
+          <Box maxW="lg">
             <VStack h="full">
               {showExplanation && <DoomScrollExplanation />}
-              <DoomScrollFilters />
-              <DisplaySettings />
               {right}
-              <Flex
-                justify="center"
-                position="sticky"
-                top="16"
-                mt="2"
-                mx="auto"
-              >
+              <DisplaySettingsPanel />
+              <VStack justify="center" position="sticky" top="16" mt="2">
+                <DoomScrollFilters />
                 <BackToTop topRef={topRef} />
-              </Flex>
+              </VStack>
             </VStack>
           </Box>
         </Flex>

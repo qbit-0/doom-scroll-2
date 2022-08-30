@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { StackProps, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
@@ -9,7 +9,7 @@ type Props = {
     updateAfter: (after: string) => void,
     index: number
   ) => React.ReactNode;
-} & BoxProps;
+} & StackProps;
 
 const Listings: FC<Props> = ({ createListing, ...innerProps }) => {
   const [pageCount, setPageCount] = useState(1);
@@ -42,9 +42,9 @@ const Listings: FC<Props> = ({ createListing, ...innerProps }) => {
   }
 
   return (
-    <Box w="full" {...innerProps}>
+    <VStack w="full" {...innerProps}>
       {pages}
-    </Box>
+    </VStack>
   );
 };
 

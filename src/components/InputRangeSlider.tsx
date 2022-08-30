@@ -8,13 +8,15 @@ import {
   NumberInputStepper,
   RangeSlider,
   RangeSliderFilledTrack,
+  RangeSliderMark,
   RangeSliderProps,
   RangeSliderThumb,
   RangeSliderTrack,
+  SliderMark,
   ThemingProps,
   UseCounterProps,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import React, { FC } from "react";
 
 type Props = {
   size?: ThemingProps["size"];
@@ -26,6 +28,7 @@ type Props = {
   onMaxChange: UseCounterProps["onChange"];
   onBothChange: RangeSliderProps["onChange"];
   onChangeEnd: RangeSliderProps["onChangeEnd"];
+  sliderMarks?: React.ReactNode;
 } & Omit<FlexProps, "onChange">;
 
 const InputRangeSlider: FC<Props> = ({
@@ -40,6 +43,11 @@ const InputRangeSlider: FC<Props> = ({
   onChangeEnd,
   ...innerProps
 }) => {
+  const sliderMarkStyles = {
+    mt: "3",
+    fontSize: "md",
+  };
+
   return (
     <>
       <Flex columnGap="4" {...innerProps}>
@@ -65,6 +73,15 @@ const InputRangeSlider: FC<Props> = ({
           onChange={onBothChange}
           onChangeEnd={onChangeEnd}
         >
+          <RangeSliderMark value={min} {...sliderMarkStyles}>
+            {min}
+          </RangeSliderMark>
+          <RangeSliderMark value={max} {...sliderMarkStyles}>
+            {max}
+          </RangeSliderMark>
+          <RangeSliderMark value={(min + max) / 2} {...sliderMarkStyles}>
+            {(min + max) / 2}
+          </RangeSliderMark>
           <RangeSliderTrack>
             <RangeSliderFilledTrack />
           </RangeSliderTrack>
