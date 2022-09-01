@@ -1,4 +1,5 @@
-import { Avatar, Box, BoxProps, Flex, Heading } from "@chakra-ui/react";
+import { Avatar, Box, BoxProps, Flex, Heading, Link } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { FC } from "react";
 
 import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
@@ -6,13 +7,13 @@ import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
 type Props = {
   subreddit: string;
   subredditAbout?: RedditSubreddit;
-  showTitle: boolean;
+  fullBanner: boolean;
 } & BoxProps;
 
 const SubredditBanner: FC<Props> = ({
   subreddit,
   subredditAbout,
-  showTitle,
+  fullBanner = false,
   ...innerProps
 }) => {
   let background;
@@ -58,28 +59,32 @@ const SubredditBanner: FC<Props> = ({
   }
 
   return (
-    <Box {...innerProps}>
-      {background}
-      {showTitle && (
-        <Flex justify="center" position="relative" bgColor="darkgray">
-          <Box p="4" w="5xl">
-            <Avatar
-              name="r /"
-              src={
-                subredditAbout?.data?.community_icon ||
-                subredditAbout?.data?.icon_img
-              }
-              size="xl"
-              mt="-8"
-            />
-            <Box ml="2" display="inline-block">
-              <Heading> {subredditAbout?.data?.title}</Heading>
-              <Heading size="md">{`r/${subreddit}`}</Heading>
-            </Box>
-          </Box>
-        </Flex>
-      )}
-    </Box>
+    <NextLink href={`/r/${subreddit}`}>
+      <Link>
+        <Box {...innerProps}>
+          {background}
+          {fullBanner && (
+            <Flex justify="center" position="relative" bgColor="darkgray">
+              <Box p="4" w="5xl">
+                <Avatar
+                  name="r /"
+                  src={
+                    subredditAbout?.data?.community_icon ||
+                    subredditAbout?.data?.icon_img
+                  }
+                  size="xl"
+                  mt="-8"
+                />
+                <Box ml="2" display="inline-block">
+                  <Heading> {subredditAbout?.data?.title}</Heading>
+                  <Heading size="md">{`r/${subreddit}`}</Heading>
+                </Box>
+              </Box>
+            </Flex>
+          )}
+        </Box>
+      </Link>
+    </NextLink>
   );
 };
 

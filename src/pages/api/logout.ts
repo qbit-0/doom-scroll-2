@@ -1,6 +1,6 @@
 import { NextApiHandler } from "next";
 
-import { withSessionRoute } from "../../lib/session/withSession";
+import { withSessionApiRoute } from "../../lib/session/withSession";
 
 const logoutRoute: NextApiHandler = async (req, res) => {
   switch (req.method) {
@@ -8,7 +8,8 @@ const logoutRoute: NextApiHandler = async (req, res) => {
       req.session.user = undefined;
       await req.session.save();
       res.send({ ok: true });
+      break;
   }
 };
 
-export default withSessionRoute(logoutRoute);
+export default withSessionApiRoute(logoutRoute);

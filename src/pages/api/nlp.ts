@@ -1,7 +1,8 @@
+import { NextApiHandler } from "next";
 import model from "wink-eng-lite-model";
 import winkNLP from "wink-nlp";
 
-import { withSessionRoute } from "../../lib/session/withSession";
+import { withSessionApiRoute } from "../../lib/session/withSession";
 
 const nlp = winkNLP(model, ["sbd", "negation", "sentiment"]);
 
@@ -9,7 +10,7 @@ export type Analysis = {
   sentiment: number;
 };
 
-const redditRoute = withSessionRoute(async (req, res) => {
+const nlpRoute: NextApiHandler = async (req, res) => {
   switch (req.method) {
     case "POST":
       const text = req.body.text;
@@ -19,6 +20,6 @@ const redditRoute = withSessionRoute(async (req, res) => {
         sentiment,
       });
   }
-});
+};
 
-export default redditRoute;
+export default withSessionApiRoute(nlpRoute);

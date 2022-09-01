@@ -63,7 +63,7 @@ const PostsAndCommentsModal: FC<Props> = ({
             <PageFrame
               top={
                 <SubredditBanner
-                  showTitle={false}
+                  fullBanner={false}
                   subreddit={subreddit}
                   subredditAbout={about}
                 />

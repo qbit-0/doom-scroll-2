@@ -6,6 +6,8 @@ import {
   NextApiHandler,
 } from "next";
 
+import { RedditAccount } from "../reddit/redditDataStructs";
+
 export const sessionOptions: IronSessionOptions = {
   cookieName: "doom_scroll_session_cookie",
   password: process.env["IRON_SESSION_PASSWORD"] as string,
@@ -27,6 +29,7 @@ export type SessionUserData = {
     userAccessTokenExpirationTime: number;
   };
   userRefreshToken: string;
+  me?: RedditAccount;
 };
 
 declare module "iron-session" {
@@ -36,7 +39,7 @@ declare module "iron-session" {
   }
 }
 
-export const withSessionRoute = (handler: NextApiHandler) => {
+export const withSessionApiRoute = (handler: NextApiHandler) => {
   return withIronSessionApiRoute(handler, sessionOptions);
 };
 

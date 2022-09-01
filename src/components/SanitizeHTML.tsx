@@ -1,10 +1,14 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, CSSObject } from "@chakra-ui/react";
 import { FC } from "react";
 import sanitizeHtml from "sanitize-html";
 
 type Props = {
   dirty: string;
 } & BoxProps;
+
+const innerHtmlStyle: CSSObject = {
+  a: { color: "cyan.500", _hover: { textDecoration: "underline" } },
+};
 
 const SanitizeHTML: FC<Props> = ({ dirty, ...boxProps }) => {
   return (
@@ -20,6 +24,7 @@ const SanitizeHTML: FC<Props> = ({ dirty, ...boxProps }) => {
           },
         }),
       }}
+      sx={innerHtmlStyle}
       {...boxProps}
     />
   );

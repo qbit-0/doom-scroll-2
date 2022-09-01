@@ -45,7 +45,7 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
       <PageFrame
         top={
           <SubredditBanner
-            showTitle={true}
+            fullBanner={false}
             subreddit={subreddit}
             subredditAbout={subredditAbout}
           />

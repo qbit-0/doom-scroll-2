@@ -1,4 +1,13 @@
-import { Box, BoxProps, Flex, FlexProps } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Flex,
+  FlexProps,
+  HStack,
+  Link,
+  chakra,
+} from "@chakra-ui/react";
+import NextLink from "next/link";
 import { FC } from "react";
 
 import { RedditLink } from "../lib/reddit/redditDataStructs";
@@ -89,16 +98,23 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
     );
   }
 
-  if (post.data?.preview?.images?.[0]?.source?.url) {
+  if (post.data?.post_hint === "link") {
     return (
-      <ImagePreview
-        display="flex"
-        justifyContent="center"
-        maxH="2xl"
-        src={post.data.preview.images[0].source.url}
-        href={post.data.url_overridden_by_dest}
-        {...innerProps}
-      />
+      <HStack>
+        <a href={post.data.url_overridden_by_dest}>
+          <Link>{post.data.url_overridden_by_dest}</Link>
+        </a>
+        {post.data?.preview?.images?.[0]?.source?.url && (
+          <ImagePreview
+            display="flex"
+            justifyContent="center"
+            maxH="2xl"
+            src={post.data.preview.images[0].source.url}
+            href={post.data.url_overridden_by_dest}
+            {...innerProps}
+          />
+        )}
+      </HStack>
     );
   }
 
