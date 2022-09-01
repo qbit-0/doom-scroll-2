@@ -1,3 +1,5 @@
+import { Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -31,6 +33,7 @@ const PostAndComments: FC<Props> = ({
   initialComments,
   openModal = true,
 }) => {
+  const router = useRouter();
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
 
@@ -49,17 +52,6 @@ const PostAndComments: FC<Props> = ({
     }
   }, [postAndComments]);
 
-  // if (location.pathname === pathname) {
-  //   history.replaceState(
-  //     null,
-  //     "",
-  //     getPathname(
-  //       postsResponse.data[0]["data"]["children"][0]["data"]["permalink"],
-  //       query
-  //     )
-  //   );
-  // }
-
   return (
     <>
       {post ? (
@@ -67,13 +59,22 @@ const PostAndComments: FC<Props> = ({
       ) : (
         <PostSkeleton />
       )}
-      <Card>
-        <Comments
-          initialComments={comments}
-          subreddit={subreddit}
-          article={article}
-        />
-      </Card>
+      {commentId && (
+        <Button
+          w="full"
+          onClick={() => {
+            router.push(`/r/${subreddit}/comments/${article}`);
+          }}
+        >
+          View All Comments
+        </Button>
+      )}
+      <Comments
+        subreddit={subreddit}
+        article={article}
+        asCards={true}
+        initialComments={comments}
+      />
     </>
   );
 };

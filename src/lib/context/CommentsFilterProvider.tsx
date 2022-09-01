@@ -57,9 +57,10 @@ export const negativeCommentsPreset: CommentsFilter = {
   titleSentimentWeight: 0.25,
   commentsSentimentWeight: 0.25,
 };
-export const CommentsFilterContext = createContext<
-  [CommentsFilter, Dispatch<SetStateAction<CommentsFilter>>]
->([defaultCommentsPreset, () => {}]);
+export const CommentsFilterContext = createContext<{
+  commentsFilter: CommentsFilter;
+  setCommentsFilter: Dispatch<SetStateAction<CommentsFilter>>;
+}>({ commentsFilter: defaultCommentsPreset, setCommentsFilter: () => {} });
 
 type Props = {
   children: React.ReactNode;
@@ -71,7 +72,9 @@ const CommentsFilterProvider: FC<Props> = ({ children }) => {
   );
 
   return (
-    <CommentsFilterContext.Provider value={[commentsFilter, setCommentsFilter]}>
+    <CommentsFilterContext.Provider
+      value={{ commentsFilter, setCommentsFilter }}
+    >
       {children}
     </CommentsFilterContext.Provider>
   );

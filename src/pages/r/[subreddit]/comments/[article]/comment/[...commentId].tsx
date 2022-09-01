@@ -34,11 +34,11 @@ type Props = {
 };
 
 const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
-  const { data: about } = useReddit<RedditSubreddit>({
+  const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const { data: rules } = useReddit<RedditRules>({
+  const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });
@@ -50,7 +50,7 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
           <SubredditBanner
             showTitle={true}
             subreddit={subreddit}
-            subredditAbout={about}
+            subredditAbout={subredditAbout}
           />
         }
         left={
@@ -62,8 +62,8 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
         }
         right={
           <>
-            <SubredditAbout rules={about} />
-            <SubredditRules subredditRules={rules} />
+            <SubredditAbout subredditAbout={subredditAbout} />
+            <SubredditRules subredditRules={subredditRules} />
           </>
         }
         showExplanation={false}

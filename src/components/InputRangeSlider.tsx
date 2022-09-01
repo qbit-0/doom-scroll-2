@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   FlexProps,
   NumberDecrementStepper,
@@ -9,6 +10,7 @@ import {
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderMark,
+  RangeSliderMarkProps,
   RangeSliderProps,
   RangeSliderThumb,
   RangeSliderTrack,
@@ -43,9 +45,13 @@ const InputRangeSlider: FC<Props> = ({
   onChangeEnd,
   ...innerProps
 }) => {
-  const sliderMarkStyles = {
-    mt: "3",
-    fontSize: "md",
+  const sliderMarkStyles: Omit<RangeSliderMarkProps, "value"> = {
+    mt: "1",
+    ml: "-2",
+    textAlign: "center",
+    color: "white",
+    p: "0.5",
+    fontSize: "sm",
   };
 
   return (
@@ -65,29 +71,31 @@ const InputRangeSlider: FC<Props> = ({
             <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <RangeSlider
-          value={value}
-          min={min}
-          max={max}
-          step={step}
-          onChange={onBothChange}
-          onChangeEnd={onChangeEnd}
-        >
-          <RangeSliderMark value={min} {...sliderMarkStyles}>
-            {min}
-          </RangeSliderMark>
-          <RangeSliderMark value={max} {...sliderMarkStyles}>
-            {max}
-          </RangeSliderMark>
-          <RangeSliderMark value={(min + max) / 2} {...sliderMarkStyles}>
-            {(min + max) / 2}
-          </RangeSliderMark>
-          <RangeSliderTrack>
-            <RangeSliderFilledTrack />
-          </RangeSliderTrack>
-          <RangeSliderThumb index={0} />
-          <RangeSliderThumb index={1} />
-        </RangeSlider>
+        <Box w="full" h="full">
+          <RangeSlider
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            onChange={onBothChange}
+            onChangeEnd={onChangeEnd}
+          >
+            <RangeSliderMark value={min} {...sliderMarkStyles}>
+              {min}
+            </RangeSliderMark>
+            <RangeSliderMark value={max} {...sliderMarkStyles}>
+              {max}
+            </RangeSliderMark>
+            <RangeSliderMark value={(min + max) / 2} {...sliderMarkStyles}>
+              {(min + max) / 2}
+            </RangeSliderMark>
+            <RangeSliderTrack>
+              <RangeSliderFilledTrack />
+            </RangeSliderTrack>
+            <RangeSliderThumb index={0} />
+            <RangeSliderThumb index={1} />
+          </RangeSlider>
+        </Box>
         <NumberInput
           size={size}
           value={value[1]}

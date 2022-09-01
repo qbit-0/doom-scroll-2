@@ -24,7 +24,9 @@ type Props = BoxProps;
 const CommentsFilterPanel: FC<Props> = (props) => {
   const [savedCommentsFilter, setSavedCommentsFilter] =
     useLocalStorage("commentsFilter");
-  const [commentsFilter, setCommentsFilter] = useContext(CommentsFilterContext);
+  const { commentsFilter, setCommentsFilter } = useContext(
+    CommentsFilterContext
+  );
 
   useEffect(() => {
     if (savedCommentsFilter) setCommentsFilter(savedCommentsFilter);
@@ -75,7 +77,7 @@ const CommentsFilterPanel: FC<Props> = (props) => {
         </Button>
         <Button
           w="full"
-          colorScheme="blackAlpha"
+          colorScheme="purple"
           variant={
             commentsFilter.id === defaultCommentsPreset.id ? "solid" : "outline"
           }

@@ -54,7 +54,7 @@ const PostsAndCommentsModal: FC<Props> = ({
       {...modalProps}
     >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-      <ModalContent mt="0">
+      <ModalContent mt="4">
         <ModalHeader>
           <ModalCloseButton />
         </ModalHeader>

@@ -51,7 +51,7 @@ const NavBar: FC<Props> = ({ subreddit, ...innerProps }) => {
   };
 
   return (
-    <HStack w="full" p="2" bg="lightblue" {...innerProps}>
+    <HStack w="full" p="2" bgColor="gray.800" {...innerProps}>
       <NextLink href={"/"}>
         <Button variant="link">DoomScroll</Button>
       </NextLink>
@@ -92,7 +92,7 @@ const NavBar: FC<Props> = ({ subreddit, ...innerProps }) => {
       {me ? (
         <>
           <RedditAvatar username={me.name} />
-          <Text>{me.name}</Text>
+          <Text color="gray.100">{me.name}</Text>
           <Button
             onClick={async () => {
               setMe(null);

@@ -25,20 +25,20 @@ type Props = {
 } & BoxProps;
 
 const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
-  const [commentFilter] = useContext(CommentsFilterContext);
+  const { commentsFilter } = useContext(CommentsFilterContext);
   const { data: commentNlp } = useNlp(comment.data.body);
 
   const disabled =
-    Math.tanh(comment.data.score) < commentFilter.minCommentScore ||
-    Math.tanh(comment.data.score) > commentFilter.maxCommentScore ||
+    Math.tanh(comment.data.score) < commentsFilter.minCommentScore ||
+    Math.tanh(comment.data.score) > commentsFilter.maxCommentScore ||
     (commentNlp &&
-      (commentNlp.sentiment < commentFilter.minCommentSentiment ||
-        commentNlp.sentiment > commentFilter.maxCommentSentiment));
+      (commentNlp.sentiment < commentsFilter.minCommentSentiment ||
+        commentNlp.sentiment > commentsFilter.maxCommentSentiment));
 
   return (
     <Card
       borderWidth={1}
-      borderColor="blue"
+      borderColor="gray.500"
       p="1"
       disabled={disabled}
       {...innerProps}
@@ -63,7 +63,7 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
         <Box wordBreak="break-all" textOverflow="ellipsis">
           <SanitizeHTML dirty={comment.data.body_html} />
         </Box>
-        <HStack p="1" bgColor="green.100">
+        <HStack p="1">
           <Box>
             <IconButton
               display="inline"

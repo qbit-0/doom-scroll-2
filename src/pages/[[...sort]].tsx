@@ -19,8 +19,8 @@ import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const initialSort = context.query["sort"] || "best";
-  const initialTime = context.query["t"] || "day";
+  const initialSort = context.query["sort"]?.[0] || "best";
+  const initialTime = context.query["t"]?.[0] || "day";
 
   return {
     props: {
@@ -60,6 +60,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
               <ButtonGroup w="full" variant="outline" p="2">
                 <Button
                   value="best"
+                  isActive={sort === "best"}
                   leftIcon={<BellIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -67,6 +68,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 </Button>
                 <Button
                   value="hot"
+                  isActive={sort === "hot"}
                   leftIcon={<CalendarIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -74,6 +76,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 </Button>
                 <Button
                   value="new"
+                  isActive={sort === "new"}
                   leftIcon={<TimeIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -81,6 +84,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 </Button>
                 <Button
                   value="top"
+                  isActive={sort === "top"}
                   leftIcon={<StarIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -98,6 +102,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                 )}
                 <Button
                   value="rising"
+                  isActive={sort === "rising"}
                   leftIcon={<TriangleUpIcon />}
                   onClick={setValue(setSort)}
                 >

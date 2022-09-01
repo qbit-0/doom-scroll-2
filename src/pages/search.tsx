@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, HStack, Select } from "@chakra-ui/react";
+import { Button, ButtonGroup, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -9,15 +9,14 @@ import PageFrame from "../components/PageFrame";
 import SearchPostsListings from "../components/SearchPostsListings";
 import SubredditListings from "../components/SubredditListings";
 import UserListings from "../components/UsersListings";
-import useAtBottom from "../lib/hooks/useAtBottom";
 import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const initialSearchQuery = context.query["q"] || "";
-  const initialSort = context.query["sort"] || "relevance";
-  const initialTime = context.query["t"] || "all";
-  const initialType = context.query["type"] || "link";
+  const initialSearchQuery = context.query["q"]?.[0] || "";
+  const initialSort = context.query["sort"]?.[0] || "relevance";
+  const initialTime = context.query["t"]?.[0] || "all";
+  const initialType = context.query["type"]?.[0] || "link";
 
   return {
     props: {
@@ -115,16 +114,28 @@ const SearchPage: FC<Props> = ({
           <>
             <Card p="0">
               <ButtonGroup w="full" variant="ghost" p="2">
-                <Button value="link" onClick={setValue(setType)}>
+                <Button
+                  value="link"
+                  isActive={type === "link"}
+                  onClick={setValue(setType)}
+                >
                   Posts
                 </Button>
                 {/* <Button value="comment" onClick={setValue(setType)}>
                   Comments
                 </Button> */}
-                <Button value="sr" onClick={setValue(setType)}>
+                <Button
+                  value="sr"
+                  isActive={type === "sr"}
+                  onClick={setValue(setType)}
+                >
                   Communities
                 </Button>
-                <Button value="user" onClick={setValue(setType)}>
+                <Button
+                  value="user"
+                  isActive={type === "user"}
+                  onClick={setValue(setType)}
+                >
                   People
                 </Button>
               </ButtonGroup>

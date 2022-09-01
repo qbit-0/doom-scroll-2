@@ -9,7 +9,7 @@ const BackToTop: FC<Props> = ({ topRef, ...innerProps }) => {
   return (
     <Button
       onClick={() => {
-        topRef.current?.scrollIntoView();
+        topRef.current?.scrollIntoView({ behavior: "smooth" });
       }}
       {...innerProps}
     >

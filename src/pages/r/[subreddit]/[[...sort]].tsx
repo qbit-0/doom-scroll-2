@@ -4,12 +4,10 @@ import {
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, ButtonGroup, HStack, Select } from "@chakra-ui/react";
-import axios from "axios";
+import { Button, ButtonGroup, Select } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import useSWR from "swr";
 
 import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
@@ -20,7 +18,6 @@ import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
 import SubredditPostsListings from "../../../components/SubredditPostsListings";
 import SubredditRules from "../../../components/SubredditRules";
-import useAtBottom from "../../../lib/hooks/useAtBottom";
 import useReddit from "../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -31,8 +28,8 @@ import setValue from "../../../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const initialSubreddit = context.query["subreddit"] || "";
-  const initialSort = context.query["sort"] || "best";
-  const initialTime = context.query["t"] || "day";
+  const initialSort = context.query["sort"]?.[0] || "best";
+  const initialTime = context.query["t"]?.[0] || "day";
 
   return {
     props: {
@@ -131,6 +128,7 @@ const SubredditPage: FC<Props> = ({
               <ButtonGroup w="full" variant="outline" p="2">
                 <Button
                   value="hot"
+                  isActive={sort === "hot"}
                   leftIcon={<CalendarIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -138,6 +136,7 @@ const SubredditPage: FC<Props> = ({
                 </Button>
                 <Button
                   value="new"
+                  isActive={sort === "new"}
                   leftIcon={<TimeIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -145,6 +144,7 @@ const SubredditPage: FC<Props> = ({
                 </Button>
                 <Button
                   value="top"
+                  isActive={sort === "top"}
                   leftIcon={<StarIcon />}
                   onClick={setValue(setSort)}
                 >
@@ -166,6 +166,7 @@ const SubredditPage: FC<Props> = ({
                 )}
                 <Button
                   value="rising"
+                  isActive={sort === "rising"}
                   leftIcon={<TriangleUpIcon />}
                   onClick={setValue(setSort)}
                 >

@@ -23,7 +23,7 @@ type Props = BoxProps;
 const PostsFilterPanel: FC<Props> = (props) => {
   const [savedPostsFilter, setSavedPostsFilter] =
     useLocalStorage("postsFilter");
-  const [postsFilter, setPostsFilter] = useContext(PostsFilterContext);
+  const { postsFilter, setPostsFilter } = useContext(PostsFilterContext);
 
   useEffect(() => {
     if (savedPostsFilter) setPostsFilter(savedPostsFilter);
@@ -70,7 +70,7 @@ const PostsFilterPanel: FC<Props> = (props) => {
         </Button>
         <Button
           w="full"
-          colorScheme="blackAlpha"
+          colorScheme="purple"
           variant={
             postsFilter.id === defaultPostsPreset.id ? "solid" : "outline"
           }

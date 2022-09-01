@@ -1,14 +1,16 @@
-import { Box, BoxProps, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
+import { BoxProps, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
 import { FC } from "react";
+
+import Card from "./Card";
 
 type Props = BoxProps;
 
 const CommentSkeleton: FC<Props> = (props) => {
   return (
-    <Box p="4" w="full" {...props}>
+    <Card {...props}>
       <SkeletonCircle size="10" />
       <SkeletonText mt="4" noOfLines={4} />
-    </Box>
+    </Card>
   );
 };
 

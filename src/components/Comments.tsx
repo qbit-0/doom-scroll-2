@@ -7,6 +7,7 @@ import {
   RedditMore,
   genCommentTrees,
 } from "../lib/reddit/redditDataStructs";
+import Card from "./Card";
 import Comment from "./Comment";
 import CommentSkeleton from "./CommentSkeleton";
 import More from "./More";
@@ -14,13 +15,15 @@ import More from "./More";
 type Props = {
   subreddit: string;
   article: string;
+  asCards?: boolean;
   initialComments?: RedditListing<RedditComment | RedditMore>;
 } & StackProps;
 
 const Comments: FC<Props> = ({
-  initialComments,
   subreddit,
   article,
+  asCards = false,
+  initialComments,
   ...innerProps
 }) => {
   const [comments, setComments] = useState(initialComments);
@@ -63,7 +66,16 @@ const Comments: FC<Props> = ({
       {comments.data.children.map(
         (comment: RedditComment | RedditMore, index: number) => {
           if (comment.kind === "more") {
-            return (
+            return asCards ? (
+              <Card key={index}>
+                <More
+                  more={comment}
+                  updateReplies={genUpdateReplies(comment)}
+                  subreddit={subreddit}
+                  article={article}
+                />
+              </Card>
+            ) : (
               <More
                 more={comment}
                 updateReplies={genUpdateReplies(comment)}

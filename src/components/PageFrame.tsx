@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, VStack, useColorModeValue } from "@chakra-ui/react";
 import React, { FC, useRef } from "react";
 
 import BackToTop from "./BackToTop";
@@ -19,11 +19,13 @@ const PageFrame: FC<Props> = ({
   right,
   showExplanation = false,
 }) => {
+  const bgColor = useColorModeValue("gray.200", "gray.900");
+
   const topRef = useRef<HTMLDivElement>(null);
   return (
     <>
       <Box ref={topRef} />
-      <Box>
+      <Box bgColor={bgColor}>
         {top}
         <Flex py="4" justify="center" columnGap={4}>
           <Box maxW="xl">

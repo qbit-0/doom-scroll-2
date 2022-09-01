@@ -1,12 +1,10 @@
-import {
+import React, {
   Dispatch,
   FC,
   SetStateAction,
   createContext,
-  useMemo,
   useState,
 } from "react";
-import React from "react";
 
 export type PostsFilter = {
   id: number | null;
@@ -67,9 +65,10 @@ export const negativePostsPreset: PostsFilter = {
   titleSentimentWeight: 0.25,
   commentsSentimentWeight: 0.25,
 };
-export const PostsFilterContext = createContext<
-  [PostsFilter, Dispatch<SetStateAction<PostsFilter>>]
->([defaultPostsPreset, () => {}]);
+export const PostsFilterContext = createContext<{
+  postsFilter: PostsFilter;
+  setPostsFilter: Dispatch<SetStateAction<PostsFilter>>;
+}>({ postsFilter: defaultPostsPreset, setPostsFilter: () => {} });
 
 type Props = {
   children: React.ReactNode;
@@ -80,7 +79,7 @@ const PostsFilterProvider: FC<Props> = ({ children }) => {
     useState<PostsFilter>(defaultPostsPreset);
 
   return (
-    <PostsFilterContext.Provider value={[postsFilter, setPostsFilter]}>
+    <PostsFilterContext.Provider value={{ postsFilter, setPostsFilter }}>
       {children}
     </PostsFilterContext.Provider>
   );

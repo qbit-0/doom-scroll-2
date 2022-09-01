@@ -48,7 +48,7 @@ const Post: FC<Props> = ({
   const router = useRouter();
   const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [postsFilter] = useContext(PostsFilterContext);
+  const { postsFilter } = useContext(PostsFilterContext);
 
   const { data: titleNlp } = useNlp(post?.data.title);
 
@@ -110,7 +110,7 @@ const Post: FC<Props> = ({
                 )}
               </VStack>
             </Box>
-            <Box p="4" bgColor="blue.100" flex="1">
+            <Box p="4" flex="1">
               <HStack>
                 <Avatar
                   name={"r /"}
@@ -142,17 +142,12 @@ const Post: FC<Props> = ({
               >
                 <Heading>{post.data.title}</Heading>
               </Link>
-              <Box mt="2" bgColor="gray.100">
+              <Box mt="2">
                 <PostBody post={post} />
               </Box>
             </Box>
           </Flex>
-          <HStack
-            px="4"
-            py="2"
-            bgColor="green.100"
-            divider={<StackDivider borderColor="black" />}
-          >
+          <HStack px="4" py="2" divider={<StackDivider />}>
             <Box>
               <IconButton
                 display="inline"

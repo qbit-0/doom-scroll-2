@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
 import React, { FC } from "react";
 
 type Props = {
@@ -7,11 +7,14 @@ type Props = {
 } & BoxProps;
 
 const Card: FC<Props> = ({ disabled = false, children, ...innerProps }) => {
+  const bgColor = useColorModeValue("white", "gray.700");
+
   return (
     <Box
-      bgColor={"white"}
+      bgColor={bgColor}
       borderWidth={1}
-      borderColor="red"
+      borderColor="gray.500"
+      _hover={{ borderColor: "gray.400" }}
       rounded="md"
       w="full"
       p="4"

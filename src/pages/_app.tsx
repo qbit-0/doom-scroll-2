@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, localStorageManager } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 
 import CommentsFilterProvider from "../lib/context/CommentsFilterProvider";
@@ -7,7 +7,7 @@ import theme from "../styles/theme";
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider colorModeManager={localStorageManager} theme={theme}>
       <PostsFilterProvider>
         <CommentsFilterProvider>
           <Component {...pageProps} />
