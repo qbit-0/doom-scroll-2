@@ -8,7 +8,7 @@ type Props = PropsOf<typeof Card>;
 const HomeAbout: FC<Props> = (props) => {
   return (
     <Card {...props}>
-      <Heading>Home</Heading>
+      <Heading size="lg">Home</Heading>
       <Text>
         Your personal Reddit frontpage. Come here to check in with your favorite
         communities

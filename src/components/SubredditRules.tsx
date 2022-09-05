@@ -36,7 +36,7 @@ const SubredditRules: FC<Props> = ({ subredditRules, ...innerProps }) => {
 
   return (
     <Card {...innerProps}>
-      <Heading>Rules</Heading>
+      <Heading size="lg">Rules</Heading>
       <Accordion allowMultiple>
         {subredditRules
           ? subredditRules.rules.map(

@@ -12,7 +12,7 @@ type Props = {
 const SubredditAbout: FC<Props> = ({ subredditAbout, ...innerProps }) => {
   return (
     <Card {...innerProps}>
-      <Heading>About Community</Heading>
+      <Heading size="lg">About Community</Heading>
       {subredditAbout ? (
         <SanitizeHTML dirty={subredditAbout.data.public_description_html} />
       ) : (

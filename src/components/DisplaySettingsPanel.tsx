@@ -14,10 +14,10 @@ const DisplaySettingsPanel: FC<Props> = (props) => {
 
   return (
     <Card {...props}>
-      <Heading>DoomScroll Display Settings</Heading>
+      <Heading size="lg">DoomScroll Display Settings</Heading>
       <Box>
-        <Switch isChecked={colorMode === "dark"} onChange={toggleColorMode}>
-          Dark Mode
+        <Switch isChecked={colorMode === "light"} onChange={toggleColorMode}>
+          Burn Eyes
         </Switch>
       </Box>
       <Box>
