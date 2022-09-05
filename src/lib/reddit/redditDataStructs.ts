@@ -92,6 +92,7 @@ export type RedditLink = {
     upvote_ratio: number;
     url_overridden_by_dest: string;
     score: number;
+    selftext?: string;
     selftext_html?: string;
     sr_detail?: RedditSubreddit["data"];
     subreddit: string;

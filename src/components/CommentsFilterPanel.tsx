@@ -92,6 +92,10 @@ const CommentsFilterPanel: FC<Props> = (props) => {
 
       <Text>By Comment Score (After Hyperbolic Tangent)</Text>
       <InputRangeSlider
+        placeholderValue={[
+          defaultCommentsPreset.minCommentScore,
+          defaultCommentsPreset.maxCommentScore,
+        ]}
         value={[commentsFilter.minCommentScore, commentsFilter.maxCommentScore]}
         min={-1}
         max={1}
@@ -121,35 +125,39 @@ const CommentsFilterPanel: FC<Props> = (props) => {
         onChangeEnd={saveCurrentSettings}
       />
 
-      <Text>By Comment Sentiment</Text>
+      <Text>By Text Sentiment</Text>
       <InputRangeSlider
-        value={[
-          commentsFilter.minCommentSentiment,
-          commentsFilter.maxCommentSentiment,
+        placeholderValue={[
+          defaultCommentsPreset.minTextSentiment,
+          defaultCommentsPreset.maxTextSentiment,
         ]}
-        min={-5}
-        max={5}
+        value={[
+          commentsFilter.minTextSentiment,
+          commentsFilter.maxTextSentiment,
+        ]}
+        min={-1}
+        max={1}
         step={0.001}
         onMinChange={(_, value) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            minCommentSentiment: value,
+            minTextSentiment: value,
           });
         }}
         onMaxChange={(_, value) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            maxCommentSentiment: value,
+            maxTextSentiment: value,
           });
         }}
         onBothChange={(value: [number, number]) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            minCommentSentiment: value[0],
-            maxCommentSentiment: value[1],
+            minTextSentiment: value[0],
+            maxTextSentiment: value[1],
           });
         }}
         onChangeEnd={saveCurrentSettings}
@@ -157,33 +165,34 @@ const CommentsFilterPanel: FC<Props> = (props) => {
 
       <Text>By Aggregate Sentiment</Text>
       <InputRangeSlider
-        value={[
-          commentsFilter.minAggregateSentiment,
-          commentsFilter.maxAggregateSentiment,
+        placeholderValue={[
+          defaultCommentsPreset.minAggSentiment,
+          defaultCommentsPreset.maxAggSentiment,
         ]}
-        min={-5}
-        max={5}
+        value={[commentsFilter.minAggSentiment, commentsFilter.maxAggSentiment]}
+        min={-1}
+        max={1}
         step={0.001}
         onMinChange={(_, value) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            minAggregateSentiment: value,
+            minAggSentiment: value,
           });
         }}
         onMaxChange={(_, value) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            maxAggregateSentiment: value,
+            maxAggSentiment: value,
           });
         }}
         onBothChange={(value: [number, number]) => {
           setCommentsFilter({
             ...commentsFilter,
             id: null,
-            minAggregateSentiment: value[0],
-            maxAggregateSentiment: value[1],
+            minAggSentiment: value[0],
+            maxAggSentiment: value[1],
           });
         }}
         onChangeEnd={saveCurrentSettings}

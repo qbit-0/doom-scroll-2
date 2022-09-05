@@ -48,7 +48,6 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
       <PageFrame
         top={
           <SubredditBanner
-            fullBanner={true}
             subreddit={subreddit}
             subredditAbout={subredditAbout}
           />

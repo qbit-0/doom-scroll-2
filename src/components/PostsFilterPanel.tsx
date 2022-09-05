@@ -85,6 +85,10 @@ const PostsFilterPanel: FC<Props> = (props) => {
 
       <Text>By Upvote Ratio</Text>
       <InputRangeSlider
+        placeholderValue={[
+          defaultPostsPreset.minUpvoteRatio,
+          defaultPostsPreset.maxUpvoteRatio,
+        ]}
         value={[postsFilter.minUpvoteRatio, postsFilter.maxUpvoteRatio]}
         min={0}
         max={1}
@@ -106,66 +110,36 @@ const PostsFilterPanel: FC<Props> = (props) => {
         onChangeEnd={saveCurrentSettings}
       />
 
-      <Text>By Title Sentiment</Text>
+      <Text>By Text Sentiment</Text>
       <InputRangeSlider
-        value={[postsFilter.minTitleSentiment, postsFilter.maxTitleSentiment]}
-        min={-5}
-        max={5}
-        step={0.001}
-        onMinChange={(_, value) => {
-          setPostsFilter({
-            ...postsFilter,
-            id: null,
-            minTitleSentiment: value,
-          });
-        }}
-        onMaxChange={(_, value) => {
-          setPostsFilter({
-            ...postsFilter,
-            id: null,
-            maxTitleSentiment: value,
-          });
-        }}
-        onBothChange={(value: [number, number]) => {
-          setPostsFilter({
-            ...postsFilter,
-            id: null,
-            minTitleSentiment: value[0],
-            maxTitleSentiment: value[1],
-          });
-        }}
-        onChangeEnd={saveCurrentSettings}
-      />
-
-      <Text>By Comments Sentiment</Text>
-      <InputRangeSlider
-        value={[
-          postsFilter.minCommentsSentiment,
-          postsFilter.maxCommentsSentiment,
+        placeholderValue={[
+          defaultPostsPreset.minTextSentiment,
+          defaultPostsPreset.maxTextSentiment,
         ]}
-        min={-5}
-        max={5}
+        value={[postsFilter.minTextSentiment, postsFilter.maxTextSentiment]}
+        min={-1}
+        max={1}
         step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            minCommentsSentiment: value,
+            minTextSentiment: value,
           });
         }}
         onMaxChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            maxCommentsSentiment: value,
+            maxTextSentiment: value,
           });
         }}
         onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            minCommentsSentiment: value[0],
-            maxCommentsSentiment: value[1],
+            minTextSentiment: value[0],
+            maxTextSentiment: value[1],
           });
         }}
         onChangeEnd={saveCurrentSettings}
@@ -173,33 +147,34 @@ const PostsFilterPanel: FC<Props> = (props) => {
 
       <Text>By Aggregate Sentiment</Text>
       <InputRangeSlider
-        value={[
-          postsFilter.minAggregateSentiment,
-          postsFilter.maxAggregateSentiment,
+        placeholderValue={[
+          defaultPostsPreset.minAggSentiment,
+          defaultPostsPreset.maxAggSentiment,
         ]}
-        min={-5}
-        max={5}
+        value={[postsFilter.minAggSentiment, postsFilter.maxAggSentiment]}
+        min={-1}
+        max={1}
         step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            minAggregateSentiment: value,
+            minAggSentiment: value,
           });
         }}
         onMaxChange={(_, value) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            maxAggregateSentiment: value,
+            maxAggSentiment: value,
           });
         }}
         onBothChange={(value: [number, number]) => {
           setPostsFilter({
             ...postsFilter,
             id: null,
-            minAggregateSentiment: value[0],
-            maxAggregateSentiment: value[1],
+            minAggSentiment: value[0],
+            maxAggSentiment: value[1],
           });
         }}
         onChangeEnd={saveCurrentSettings}

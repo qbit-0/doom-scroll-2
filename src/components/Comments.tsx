@@ -67,7 +67,7 @@ const Comments: FC<Props> = ({
         (comment: RedditComment | RedditMore, index: number) => {
           if (comment.kind === "more") {
             return asCards ? (
-              <Card key={index}>
+              <Card p="1" key={index}>
                 <More
                   more={comment}
                   updateReplies={genUpdateReplies(comment)}

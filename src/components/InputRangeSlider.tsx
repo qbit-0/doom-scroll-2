@@ -14,15 +14,17 @@ import {
   RangeSliderProps,
   RangeSliderThumb,
   RangeSliderTrack,
-  SliderMark,
   ThemingProps,
   UseCounterProps,
 } from "@chakra-ui/react";
 import React, { FC } from "react";
 
+import { defaultPostsPreset } from "../lib/context/PostsFilterProvider";
+
 type Props = {
   size?: ThemingProps["size"];
-  value: [number, number];
+  placeholderValue: [number, number];
+  value: [number | undefined, number | undefined];
   min: number;
   max: number;
   step: number;
@@ -35,6 +37,7 @@ type Props = {
 
 const InputRangeSlider: FC<Props> = ({
   size,
+  placeholderValue,
   value,
   min,
   max,
@@ -59,13 +62,13 @@ const InputRangeSlider: FC<Props> = ({
       <Flex columnGap="4" {...innerProps}>
         <NumberInput
           size={size}
-          value={value[0]}
+          value={value[0] === undefined ? placeholderValue[0] : value[0]}
           min={min}
-          max={value[1]}
+          max={value[1] === undefined ? placeholderValue[1] : value[1]}
           step={step}
           onChange={onMinChange}
         >
-          <NumberInputField />
+          <NumberInputField w="24" />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -73,7 +76,10 @@ const InputRangeSlider: FC<Props> = ({
         </NumberInput>
         <Box w="full" h="full">
           <RangeSlider
-            value={value}
+            value={[
+              value[0] === undefined ? placeholderValue[0] : value[0],
+              value[1] === undefined ? placeholderValue[1] : value[1],
+            ]}
             min={min}
             max={max}
             step={step}
@@ -98,13 +104,13 @@ const InputRangeSlider: FC<Props> = ({
         </Box>
         <NumberInput
           size={size}
-          value={value[1]}
-          min={value[0]}
+          value={value[1] === undefined ? placeholderValue[1] : value[1]}
+          min={value[0] === undefined ? placeholderValue[0] : value[0]}
           max={max}
           step={step}
           onChange={onMaxChange}
         >
-          <NumberInputField />
+          <NumberInputField w="24" />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />

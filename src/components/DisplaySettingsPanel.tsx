@@ -1,12 +1,16 @@
 import { Box, Heading, PropsOf, Switch, useColorMode } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useContext } from "react";
 
+import { DisplaySettingsContext } from "../lib/context/DisplaySettingsProvider";
 import Card from "./Card";
 
 type Props = PropsOf<typeof Card>;
 
 const DisplaySettingsPanel: FC<Props> = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { hideFilteredContent, setHideFilteredContent } = useContext(
+    DisplaySettingsContext
+  );
 
   return (
     <Card {...props}>
@@ -17,7 +21,12 @@ const DisplaySettingsPanel: FC<Props> = (props) => {
         </Switch>
       </Box>
       <Box>
-        <Switch>Hide Filtered Content</Switch>
+        <Switch
+          isChecked={hideFilteredContent}
+          onChange={setHideFilteredContent.toggle}
+        >
+          Hide Filtered Content
+        </Switch>
       </Box>
     </Card>
   );

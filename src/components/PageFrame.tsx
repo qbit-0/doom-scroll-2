@@ -28,15 +28,23 @@ const PageFrame: FC<Props> = ({
       <Box bgColor={bgColor}>
         {top}
         <Flex py="4" justify="center" columnGap={4}>
-          <Box maxW="xl">
-            <VStack h="full">{left}</VStack>
+          <Box maxW="2xl">
+            <VStack w="full" h="full">
+              {left}
+            </VStack>
           </Box>
           <Box maxW="lg">
-            <VStack h="full">
+            <VStack w="full" h="full">
               {showExplanation && <DoomScrollExplanation />}
               {right}
-              <DisplaySettingsPanel />
-              <VStack justify="center" position="sticky" top="16" mt="2">
+              <VStack
+                justify="center"
+                w="full"
+                position="sticky"
+                top="16"
+                mt="2"
+              >
+                <DisplaySettingsPanel />
                 <DoomScrollFilters />
                 <BackToTop topRef={topRef} />
               </VStack>

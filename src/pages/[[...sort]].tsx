@@ -20,7 +20,7 @@ import setValue from "../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const initialSort = context.query["sort"]?.[0] || "best";
-  const initialTime = context.query["t"]?.[0] || "day";
+  const initialTime = context.query["t"] || "day";
 
   return {
     props: {
@@ -42,13 +42,13 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
 
   useEffect(() => {
     if (!sort || !time) return;
-    history.replaceState(null, "", getSubredditPath("", sort, time).pathname);
+    router.replace(getSubredditPath("", sort, time).pathname);
   }, [sort, time]);
 
   useEffect(() => {
     setSort(initialSort);
     setTime(initialTime);
-  }, [router, initialSort, initialTime]);
+  }, [initialSort, initialTime]);
 
   return (
     <NavBarFrame subreddit={""}>

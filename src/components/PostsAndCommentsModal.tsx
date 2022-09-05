@@ -7,6 +7,7 @@ import {
   ModalOverlay,
   ModalProps,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -46,27 +47,17 @@ const PostsAndCommentsModal: FC<Props> = ({
   });
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="6xl"
-      scrollBehavior="outside"
-      {...modalProps}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size="6xl" {...modalProps}>
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
       <ModalContent mt="4">
         <ModalHeader>
           <ModalCloseButton />
         </ModalHeader>
-        <ModalBody p="2">
+        <ModalBody zIndex={0} p="2">
           <NavBarFrame subreddit={subreddit}>
             <PageFrame
               top={
-                <SubredditBanner
-                  fullBanner={false}
-                  subreddit={subreddit}
-                  subredditAbout={about}
-                />
+                <SubredditBanner subreddit={subreddit} subredditAbout={about} />
               }
               left={
                 <PostAndComments

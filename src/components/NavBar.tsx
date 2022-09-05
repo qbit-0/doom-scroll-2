@@ -89,6 +89,13 @@ const NavBar: FC<Props> = ({ subreddit, ...innerProps }) => {
       >
         All
       </Button>
+      <Button
+        onClick={() => {
+          router.push("/r/news");
+        }}
+      >
+        News
+      </Button>
       {me ? (
         <>
           <RedditAvatar username={me.name} />

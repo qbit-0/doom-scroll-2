@@ -10,65 +10,45 @@ export type PostsFilter = {
   id: number | null;
   minUpvoteRatio: number;
   maxUpvoteRatio: number;
-  minTitleSentiment: number;
-  maxTitleSentiment: number;
-  minCommentsSentiment: number;
-  maxCommentsSentiment: number;
-  minAggregateSentiment: number;
-  maxAggregateSentiment: number;
-  upvoteRatioWeight: number;
-  titleSentimentWeight: number;
-  commentsSentimentWeight: number;
+  minTextSentiment: number;
+  maxTextSentiment: number;
+  minAggSentiment: number;
+  maxAggSentiment: number;
 };
 
 export const defaultPostsPreset: PostsFilter = {
   id: 0,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTitleSentiment: -5,
-  maxTitleSentiment: 5,
-  minCommentsSentiment: -5,
-  maxCommentsSentiment: 5,
-  minAggregateSentiment: -5,
-  maxAggregateSentiment: 5,
-  upvoteRatioWeight: 0.5,
-  titleSentimentWeight: 0.25,
-  commentsSentimentWeight: 0.25,
+  minTextSentiment: -1,
+  maxTextSentiment: 1,
+  minAggSentiment: -1,
+  maxAggSentiment: 1,
 };
 
 export const positivePostsPreset: PostsFilter = {
   id: 1,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTitleSentiment: -5,
-  maxTitleSentiment: 5,
-  minCommentsSentiment: -5,
-  maxCommentsSentiment: 5,
-  minAggregateSentiment: -5,
-  maxAggregateSentiment: 5,
-  upvoteRatioWeight: 0.5,
-  titleSentimentWeight: 0.25,
-  commentsSentimentWeight: 0.25,
+  minTextSentiment: -1,
+  maxTextSentiment: 1,
+  minAggSentiment: 0,
+  maxAggSentiment: 1,
 };
 
 export const negativePostsPreset: PostsFilter = {
   id: 2,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTitleSentiment: -5,
-  maxTitleSentiment: 5,
-  minCommentsSentiment: -5,
-  maxCommentsSentiment: 5,
-  minAggregateSentiment: -5,
-  maxAggregateSentiment: 5,
-  upvoteRatioWeight: 0.5,
-  titleSentimentWeight: 0.25,
-  commentsSentimentWeight: 0.25,
+  minTextSentiment: -1,
+  maxTextSentiment: 1,
+  minAggSentiment: -1,
+  maxAggSentiment: 0,
 };
 export const PostsFilterContext = createContext<{
   postsFilter: PostsFilter;
   setPostsFilter: Dispatch<SetStateAction<PostsFilter>>;
-}>({ postsFilter: defaultPostsPreset, setPostsFilter: () => {} });
+}>({} as any);
 
 type Props = {
   children: React.ReactNode;

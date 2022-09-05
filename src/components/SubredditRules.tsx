@@ -44,7 +44,7 @@ const SubredditRules: FC<Props> = ({ subredditRules, ...innerProps }) => {
                 return (
                   <AccordionItem overflowWrap="anywhere" key={index}>
                     <AccordionButton>
-                      <Heading flex="1" size="md">
+                      <Heading flex="1" textAlign="left" size="md">
                         {rule.short_name}
                       </Heading>
                       <AccordionIcon />

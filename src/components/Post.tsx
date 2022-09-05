@@ -1,6 +1,8 @@
 import {
   Avatar,
   Box,
+  Button,
+  ButtonGroup,
   Flex,
   HStack,
   Heading,
@@ -8,27 +10,24 @@ import {
   IconButton,
   Link,
   PropsOf,
+  Spacer,
   StackDivider,
   Text,
+  Tooltip,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useContext, useMemo, useRef } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { IoChatboxOutline } from "react-icons/io5";
+import Sentiment from "sentiment";
 
 import { PostsFilterContext } from "../lib/context/PostsFilterProvider";
-import useNlp from "../lib/hooks/useNlp";
-import useReddit from "../lib/hooks/useReddit";
-import getRedditCommentsText from "../lib/reddit/getRedditCommentsText";
-import {
-  RedditLink,
-  RedditPostAndComments,
-} from "../lib/reddit/redditDataStructs";
-import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
+import { RedditLink } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
+import { getAggPostSentiment } from "../lib/utils/sentimentUtils";
 import Card from "./Card";
 import PostBody from "./PostBody";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -46,28 +45,20 @@ const Post: FC<Props> = ({
   ...innerProps
 }) => {
   const router = useRouter();
-  const savedPath = router.asPath;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { postsFilter } = useContext(PostsFilterContext);
 
-  const { data: titleNlp } = useNlp(post?.data.title);
+  const textSentiment = useMemo(() => {
+    const sentiment = new Sentiment();
+    return sentiment.analyze(
+      post.data.title + (post.data.selftext ? `\n${post.data.selftext}` : "")
+    );
+  }, [post.data]);
 
-  const { path, query } = post
-    ? getCommentsPath(post?.data.subreddit, post?.data.id)
-    : { path: undefined, query: undefined };
-
-  const { data: postAndComments } = useReddit<RedditPostAndComments>(
-    path && query ? { method: "GET", path, query } : null
+  const aggregateSentiment = getAggPostSentiment(
+    post.data.upvote_ratio,
+    textSentiment.comparative
   );
-  const comments = postAndComments ? postAndComments[1] : undefined;
-
-  const commentsText = comments ? getRedditCommentsText(comments) : null;
-  const { data: commentsNlp } = useNlp(commentsText);
-  const handleOpenModal = () => {
-    const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
-    history.replaceState(null, "", pathname);
-    onOpen();
-  };
 
   let disabled: any = false;
   if (disabledOverride !== undefined) {
@@ -76,115 +67,134 @@ const Post: FC<Props> = ({
     disabled =
       post.data.upvote_ratio < postsFilter.minUpvoteRatio ||
       post.data.upvote_ratio > postsFilter.maxUpvoteRatio ||
-      (titleNlp &&
-        (titleNlp.sentiment < postsFilter.minTitleSentiment ||
-          titleNlp.sentiment > postsFilter.maxTitleSentiment)) ||
-      (commentsNlp &&
-        (commentsNlp.sentiment < postsFilter.minCommentsSentiment ||
-          commentsNlp.sentiment > postsFilter.maxCommentsSentiment));
+      textSentiment.comparative < postsFilter.minTextSentiment ||
+      textSentiment.comparative > postsFilter.maxTextSentiment ||
+      aggregateSentiment < postsFilter.minAggSentiment ||
+      aggregateSentiment > postsFilter.maxAggSentiment;
   }
+
+  const handleOpenModal = () => {
+    const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
+    history.pushState(null, "", pathname);
+    onOpen();
+  };
+
+  useEffect(() => {
+    router.beforePopState(({}) => {
+      onClose();
+      history.back();
+      return false;
+    });
+  }, [router, onClose]);
 
   const result = useMemo(() => {
     return (
-      <Card disabled={disabled} {...innerProps}>
+      <Card
+        p="0"
+        disabled={disabled}
+        darkenContentWhenDisabled
+        _hover={{ borderColor: "gray.400" }}
+        onClick={(event) => {
+          if (event.target === this && openModal) handleOpenModal();
+        }}
+        cursor="pointer"
+        {...innerProps}
+      >
         <Box>
           <Flex>
-            <Box w="18" p="4" overflowX="auto">
-              <VStack alignItems="start">
-                <Text>Sentiment</Text>
-                <Box>
-                  <Text>Upvote</Text>
-                  <Text>{`${(post.data.upvote_ratio * 100).toFixed(0)}%`}</Text>
-                </Box>
-                {titleNlp && (
-                  <Box>
-                    <Text>Title</Text>
-                    <Text>{`${titleNlp.sentiment.toFixed(3)}`}</Text>
-                  </Box>
-                )}
-                {commentsNlp && (
-                  <Box>
-                    <Text>Comments</Text>
-                    <Text>{`${commentsNlp.sentiment.toFixed(3)}`}</Text>
-                  </Box>
-                )}
+            <ButtonGroup size="sm" variant="ghost">
+              <VStack w="16" py="2" spacing="0">
+                <IconButton icon={<BiUpvote />} aria-label="upvote" />
+                <Text fontSize="sm" display="inline">
+                  {Intl.NumberFormat("en-US", {
+                    notation: "compact",
+                    maximumFractionDigits: 1,
+                  }).format(post.data.score)}
+                </Text>
+                <IconButton icon={<BiDownvote />} aria-label="downvote" />
               </VStack>
-            </Box>
-            <Box p="4" flex="1">
-              <HStack>
-                <Avatar
-                  name={"r /"}
-                  src={
-                    post.data?.sr_detail?.community_icon ||
-                    post.data?.sr_detail?.icon_img
-                  }
-                  size="sm"
-                />
-                <HStack display="inline" divider={<> &middot; </>}>
-                  <Heading size="sm" display="inline" color="red">
-                    <NextLink href={`/r/${post.data.subreddit}`}>
-                      <Link size="sm">{post.data.subreddit}</Link>
-                    </NextLink>
-                  </Heading>
-                  <Heading size="sm" display="inline">
-                    {post.data.author}
-                  </Heading>
-                  <Heading size="sm" display="inline" color="gray">
-                    {getElapsedString(post.data.created_utc)}
-                  </Heading>
+            </ButtonGroup>
+            <Box flex="1">
+              <Box p="2">
+                <HStack>
+                  <Avatar
+                    name={"r /"}
+                    src={
+                      post.data?.sr_detail?.community_icon ||
+                      post.data?.sr_detail?.icon_img
+                    }
+                    size="sm"
+                  />
+                  <HStack display="inline" divider={<> &middot; </>}>
+                    <Heading size="sm" display="inline" color="red">
+                      <NextLink href={`/r/${post.data.subreddit}`}>
+                        <Link size="sm">{post.data.subreddit}</Link>
+                      </NextLink>
+                    </Heading>
+                    <Heading size="sm" display="inline">
+                      {post.data.author}
+                    </Heading>
+                    <Heading size="sm" display="inline" color="gray">
+                      {getElapsedString(post.data.created_utc)}
+                    </Heading>
+                  </HStack>
                 </HStack>
-              </HStack>
-              <Link
-                size="sm"
-                onClick={() => {
-                  if (openModal) handleOpenModal();
-                }}
-              >
-                <Heading>{post.data.title}</Heading>
-              </Link>
-              <Box mt="2">
-                <PostBody post={post} />
+                <Link
+                  size="sm"
+                  onClick={() => {
+                    if (openModal) handleOpenModal();
+                  }}
+                >
+                  <Heading size="lg">{post.data.title}</Heading>
+                </Link>
               </Box>
+              <PostBody post={post} />
             </Box>
           </Flex>
-          <HStack px="4" py="2" divider={<StackDivider />}>
-            <Box>
-              <IconButton
-                display="inline"
-                icon={<Icon as={BiUpvote} />}
-                aria-label="upvote"
-              />
-              <Text display="inline">{post.data.score}</Text>
-              <IconButton
-                display="inline"
-                icon={<Icon as={BiDownvote} />}
-                aria-label="downvote"
-              />
-            </Box>
-            <Box>
-              <Text display="inline">{`${post.data.num_comments}`}</Text>
-              <IconButton
-                display="inline"
-                icon={<Icon as={IoChatboxOutline} />}
-                aria-label="comments"
-                onClick={() => {
-                  if (openModal) handleOpenModal();
-                }}
-              />
-            </Box>
+          <HStack
+            p="2"
+            onClick={() => {
+              if (openModal) handleOpenModal();
+            }}
+          >
+            <Button
+              variant="outline"
+              rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
+            >
+              <Text>{`${post.data.num_comments}`}</Text>
+            </Button>
+            <Spacer />
+            <HStack divider={<StackDivider />}>
+              <Box>
+                <Text>Upvote Ratio</Text>
+                <Text>{`${(post.data.upvote_ratio * 100).toFixed(0)}%`}</Text>
+              </Box>
+              <Tooltip
+                label={`positive: ${textSentiment.positive}\nnegative: ${textSentiment.negative}`}
+              >
+                <Box>
+                  <Text>Text Sen.</Text>
+                  <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
+                </Box>
+              </Tooltip>
+              <Box>
+                <Text>Agg. Sen.</Text>
+                <Text>{`${aggregateSentiment.toFixed(3)}`}</Text>
+              </Box>
+            </HStack>
           </HStack>
         </Box>
         <PostsAndCommentsModal
           post={post}
           isOpen={isOpen}
           onClose={() => {
-            history.replaceState(null, "", savedPath);
             onClose();
+            history.back();
           }}
         />
       </Card>
     );
-  }, [post, titleNlp, commentsNlp, disabled, isOpen]);
+  }, [post, disabled, isOpen]);
 
   return result;
 };

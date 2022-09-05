@@ -29,7 +29,7 @@ import setValue from "../../../lib/utils/setValue";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const initialSubreddit = context.query["subreddit"] || "";
   const initialSort = context.query["sort"]?.[0] || "best";
-  const initialTime = context.query["t"]?.[0] || "day";
+  const initialTime = context.query["t"] || "day";
 
   return {
     props: {
@@ -58,18 +58,14 @@ const SubredditPage: FC<Props> = ({
 
   useEffect(() => {
     if (!subreddit || !sort || !time) return;
-    history.replaceState(
-      null,
-      "",
-      getSubredditPath(subreddit, sort, time).pathname
-    );
+    router.replace(getSubredditPath(subreddit, sort, time).pathname);
   }, [subreddit, sort, time]);
 
   useEffect(() => {
     setSubreddit(initialSubreddit);
     setSort(initialSort);
     setTime(initialTime);
-  }, [router, initialSubreddit, initialSort, initialTime]);
+  }, [initialSubreddit, initialSort, initialTime]);
 
   const { data: subredditAbout } = useReddit<RedditSubreddit>(
     subreddit === "popular" || subreddit === "all"
@@ -90,11 +86,7 @@ const SubredditPage: FC<Props> = ({
 
   let top =
     subreddit === "popular" || subreddit === "all" ? null : (
-      <SubredditBanner
-        fullBanner={true}
-        subreddit={subreddit}
-        subredditAbout={subredditAbout}
-      />
+      <SubredditBanner subreddit={subreddit} subredditAbout={subredditAbout} />
     );
 
   let aboutDisplay;

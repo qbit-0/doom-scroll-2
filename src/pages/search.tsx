@@ -13,10 +13,10 @@ import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const initialSearchQuery = context.query["q"]?.[0] || "";
-  const initialSort = context.query["sort"]?.[0] || "relevance";
-  const initialTime = context.query["t"]?.[0] || "all";
-  const initialType = context.query["type"]?.[0] || "link";
+  const initialSearchQuery = context.query["q"] || "";
+  const initialSort = context.query["sort"] || "relevance";
+  const initialTime = context.query["t"] || "all";
+  const initialType = context.query["type"] || "link";
 
   return {
     props: {
@@ -49,11 +49,7 @@ const SearchPage: FC<Props> = ({
 
   useEffect(() => {
     if (!searchQuery || !sort || !time || !type) return;
-    history.replaceState(
-      null,
-      "",
-      getSearchPostsPath(searchQuery, sort, time, type).pathname
-    );
+    router.replace(getSearchPostsPath(searchQuery, sort, time, type).pathname);
   }, [searchQuery, sort, time, type]);
 
   useEffect(() => {
@@ -61,7 +57,7 @@ const SearchPage: FC<Props> = ({
     setSort(initialSort);
     setTime(initialTime);
     setType(initialType);
-  }, [router, initialSearchQuery, initialSort, initialTime, initialType]);
+  }, [initialSearchQuery, initialSort, initialTime, initialType]);
 
   let content;
   if (searchQuery && sort && time && type) {

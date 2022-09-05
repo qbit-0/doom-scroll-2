@@ -7,13 +7,11 @@ import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
 type Props = {
   subreddit: string;
   subredditAbout?: RedditSubreddit;
-  fullBanner: boolean;
 } & BoxProps;
 
 const SubredditBanner: FC<Props> = ({
   subreddit,
   subredditAbout,
-  fullBanner = false,
   ...innerProps
 }) => {
   let background;
@@ -63,25 +61,23 @@ const SubredditBanner: FC<Props> = ({
       <Link>
         <Box {...innerProps}>
           {background}
-          {fullBanner && (
-            <Flex justify="center" position="relative" bgColor="darkgray">
-              <Box p="4" w="5xl">
-                <Avatar
-                  name="r /"
-                  src={
-                    subredditAbout?.data?.community_icon ||
-                    subredditAbout?.data?.icon_img
-                  }
-                  size="xl"
-                  mt="-8"
-                />
-                <Box ml="2" display="inline-block">
-                  <Heading> {subredditAbout?.data?.title}</Heading>
-                  <Heading size="md">{`r/${subreddit}`}</Heading>
-                </Box>
+          <Flex justify="center" position="relative" bgColor="darkgray">
+            <Box p="4" w="5xl">
+              <Avatar
+                name="r /"
+                src={
+                  subredditAbout?.data?.community_icon ||
+                  subredditAbout?.data?.icon_img
+                }
+                size="xl"
+                mt="-8"
+              />
+              <Box ml="2" display="inline-block">
+                <Heading> {subredditAbout?.data?.title}</Heading>
+                <Heading size="md">{`r/${subreddit}`}</Heading>
               </Box>
-            </Flex>
-          )}
+            </Box>
+          </Flex>
         </Box>
       </Link>
     </NextLink>

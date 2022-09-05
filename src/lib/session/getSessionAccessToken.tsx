@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, NextApiRequest } from "next";
+import { NextApiRequest } from "next";
 
 import {
   getAppAccessToken,
@@ -11,7 +11,7 @@ const getSessionAccessToken = async (req: NextApiRequest) => {
   const userAccessToken = req.session.user?.userAccessToken;
   const userRefreshToken = req.session.user?.userRefreshToken;
   const userAccessTokenExpirationTime =
-    req.session.user?.userAccessTokenExpirationTime;
+    req.session.user?.userAccessToken?.userAccessTokenExpirationTime;
 
   let accessToken;
   if (
