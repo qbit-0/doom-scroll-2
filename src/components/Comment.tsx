@@ -10,8 +10,9 @@ import {
   Text,
   useConst,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { FC, useContext, useMemo } from "react";
-import { BiDownvote, BiUpvote } from "react-icons/bi";
+import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import Sentiment from "sentiment";
 
 import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
@@ -42,6 +43,35 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
     (commentSentiment &&
       (commentSentiment.comparative < commentsFilter.minTextSentiment ||
         commentSentiment.comparative > commentsFilter.maxTextSentiment));
+
+  const handleUpvote = async () => {
+    await axios.post("/api/reddit", {
+      method: "POST",
+      path: "/api/vote",
+      query: {
+        dir: comment.data.likes === true ? 0 : 1,
+        id: comment.data.name,
+        rank: 10,
+      },
+    });
+  };
+
+  const handleDownvote = async () => {
+    await axios.post("/api/reddit", {
+      method: "POST",
+      path: "/api/vote",
+      query: {
+        dir: comment.data.likes === false ? 0 : -1,
+        id: comment.data.name,
+        rank: 10,
+        header: null,
+      },
+    });
+  };
+
+  let upvoteTextColor = "";
+  if (comment.data.likes === true) upvoteTextColor = "orange";
+  else if (comment.data.likes === false) upvoteTextColor = "lightblue";
 
   const result = useMemo(() => {
     return (
@@ -79,11 +109,18 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
           <HStack mb="1">
             <ButtonGroup size="sm" variant="ghost">
               <HStack spacing="1">
-                <IconButton icon={<Icon as={BiUpvote} />} aria-label="upvote" />
-                <Text>{comment.data.score}</Text>
                 <IconButton
-                  icon={<Icon as={BiDownvote} />}
+                  colorScheme={comment.data.likes === true ? "red" : "black"}
+                  icon={<ImArrowUp />}
+                  aria-label="upvote"
+                  onClick={handleUpvote}
+                />
+                <Text color={upvoteTextColor}>{comment.data.score}</Text>
+                <IconButton
+                  colorScheme={comment.data.likes === false ? "blue" : "black"}
+                  icon={<ImArrowDown />}
                   aria-label="downvote"
+                  onClick={handleDownvote}
                 />
               </HStack>
             </ButtonGroup>
@@ -98,13 +135,11 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
         </Box>
 
         {comment.data.replies && (
-          <Box>
-            <Comments
-              initialComments={comment.data.replies}
-              subreddit={comment.data.subreddit}
-              article={article}
-            />
-          </Box>
+          <Comments
+            initialComments={comment.data.replies}
+            subreddit={comment.data.subreddit}
+            article={article}
+          />
         )}
       </Card>
     );

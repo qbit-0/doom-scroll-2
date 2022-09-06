@@ -20,8 +20,8 @@ export const defaultCommentsPreset: CommentsFilter = {
   id: 0,
   minCommentScore: -1,
   maxCommentScore: 1,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: -1,
   maxAggSentiment: 1,
 };
@@ -30,8 +30,8 @@ export const positiveCommentsPreset: CommentsFilter = {
   id: 1,
   minCommentScore: 0,
   maxCommentScore: 1,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: 0,
   maxAggSentiment: 1,
 };
@@ -40,8 +40,8 @@ export const negativeCommentsPreset: CommentsFilter = {
   id: 2,
   minCommentScore: -1,
   maxCommentScore: 0,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: -1,
   maxAggSentiment: 0,
 };

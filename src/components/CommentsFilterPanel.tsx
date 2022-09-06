@@ -135,8 +135,8 @@ const CommentsFilterPanel: FC<Props> = (props) => {
           commentsFilter.minTextSentiment,
           commentsFilter.maxTextSentiment,
         ]}
-        min={-1}
-        max={1}
+        min={-5}
+        max={5}
         step={0.001}
         onMinChange={(_, value) => {
           setCommentsFilter({

@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     const { req } = context;
     // const error = context.query["error"] as string;
     const code = context.query["code"] as string;
-    // const state = context.query["state"] as string;
+    const state = JSON.parse(context.query["state"] as string);
 
     const accessTokenResponse = await getUserAccessToken(code);
     const userAccessToken = accessTokenResponse.data["access_token"];
@@ -39,24 +39,25 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     await req.session.save();
 
     return {
-      props: { me },
+      props: { me, state },
     };
   }
 );
 
 type Props = {
   me: RedditMe;
+  state: { rand: string; next: string };
 };
 
-const AuthorizeCallbackPage: FC<Props> = ({ me }) => {
+const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
   const [_, setMe] = useLocalStorage("me");
 
   const router = useRouter();
 
   useEffect(() => {
     setMe(me);
-    router.replace("/");
-  }, [me, setMe, router]);
+    router.replace(state.next);
+  }, [me, setMe, router, state.next]);
 
   return (
     <PageFrame

@@ -1,4 +1,12 @@
-import { Box, BoxProps, Flex, HStack, Image, Link } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Box,
+  BoxProps,
+  Flex,
+  HStack,
+  Image,
+  Link,
+} from "@chakra-ui/react";
 import { FC } from "react";
 
 import { RedditLink } from "../lib/reddit/redditDataStructs";
@@ -39,30 +47,42 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
         </>
       );
     }
+    if (post.data?.media?.oembed?.html) {
+      return (
+        <SanitizeHTML
+          display="flex"
+          p="4"
+          justifyContent="center"
+          maxH="2xl"
+          dirty={post.data.media.oembed.html}
+        />
+      );
+    }
 
     if (post.data?.post_hint === "link") {
       return (
-        <HStack
+        <Flex
           bgColor="gray.600"
           onClick={() => {
             window.open(post.data.url_overridden_by_dest, "_blank");
           }}
           cursor="pointer"
+          h="32"
         >
-          <Link p="2" w="xs">
+          <Link flex="1" p="2">
             {post.data.url_overridden_by_dest}
           </Link>
           {post.data?.preview?.images?.[0]?.source?.url && (
-            <Box>
-              <Image
-                src={post.data.preview.images[0].source.url}
-                alt="post image"
-                objectFit="contain"
-                dropShadow="lg"
-              />
-            </Box>
+            <Image
+              maxW="25%"
+              maxH="full"
+              src={post.data.preview.images[0].source.url}
+              alt="post image"
+              objectFit="cover"
+              dropShadow="lg"
+            />
           )}
-        </HStack>
+        </Flex>
       );
     }
 
@@ -74,18 +94,6 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
           maxH="2xl"
           overflowY="auto"
           dirty={post.data.selftext_html}
-        />
-      );
-    }
-
-    if (post.data?.media?.oembed?.html) {
-      return (
-        <SanitizeHTML
-          display="flex"
-          p="4"
-          justifyContent="center"
-          maxH="2xl"
-          dirty={post.data.media.oembed.html}
         />
       );
     }

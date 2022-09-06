@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
@@ -72,7 +72,6 @@ const PostAndComments: FC<Props> = ({
       <Comments
         subreddit={subreddit}
         article={article}
-        asCards={true}
         initialComments={comments}
       />
     </>

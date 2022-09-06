@@ -19,9 +19,9 @@ const USER_REFRESH_GRANT_TYPE = "refresh_token";
 // application-only oauth
 const APP_GRANT_TYPE = "client_credentials";
 
-export const getAuthRequestUrl = (isCompact = false) => {
+export const getAuthRequestUrl = (isCompact = false, next: string) => {
   const url = new URL(isCompact ? USER_REQUEST_URL_COMPACT : USER_REQUEST_URL);
-  const state = v4();
+  const state = JSON.stringify({ rand: v4(), next });
   url.searchParams.append("client_id", REDDIT_APP_CLIENT_ID);
   url.searchParams.append("response_type", USER_RESPONSE_TYPE);
   url.searchParams.append("state", state);

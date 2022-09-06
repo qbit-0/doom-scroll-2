@@ -5,6 +5,7 @@ import { FC, MouseEventHandler, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 import { RedditComment, RedditMore } from "../lib/reddit/redditDataStructs";
+import Card from "./Card";
 
 type Props = {
   subreddit: string;
@@ -53,7 +54,7 @@ const More: FC<Props> = ({
   };
 
   return (
-    <Box w="full" {...innerProps}>
+    <Card p="1" {...innerProps}>
       {more.data.count > 0 ? (
         <Button isLoading={isLoading} onClick={handleClickMore}>{`${
           more.data.count
@@ -68,7 +69,7 @@ const More: FC<Props> = ({
           <Button>Continue Thread</Button>
         </NextLink>
       )}
-    </Box>
+    </Card>
   );
 };
 

@@ -117,8 +117,8 @@ const PostsFilterPanel: FC<Props> = (props) => {
           defaultPostsPreset.maxTextSentiment,
         ]}
         value={[postsFilter.minTextSentiment, postsFilter.maxTextSentiment]}
-        min={-1}
-        max={1}
+        min={-5}
+        max={5}
         step={0.001}
         onMinChange={(_, value) => {
           setPostsFilter({

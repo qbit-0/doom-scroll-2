@@ -112,7 +112,7 @@ const NavBar: FC<Props> = ({ subreddit, ...innerProps }) => {
       ) : (
         <Button
           onClick={() => {
-            const { url } = getAuthRequestUrl(isCompact);
+            const { url } = getAuthRequestUrl(isCompact, router.asPath);
             router.push(url);
           }}
         >

@@ -35,7 +35,9 @@ export type RedditComment = {
     created_utc: number;
     depth: number;
     edited?: number;
+    likes: boolean | null;
     link_id: string;
+    name: string;
     replies: RedditListing<RedditComment | RedditMore> | "";
     score: number;
     subreddit: string;
@@ -59,6 +61,7 @@ export type RedditLink = {
       items?: {};
     };
     id: string;
+    likes: boolean | null;
     media?: {
       oembed?: {
         html?: string;
@@ -78,6 +81,7 @@ export type RedditLink = {
       };
       status?: string;
     }[];
+    name: string;
     num_comments: number;
     post_hint: string;
     preview?: {

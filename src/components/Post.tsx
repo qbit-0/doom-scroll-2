@@ -9,18 +9,27 @@ import {
   Icon,
   IconButton,
   Link,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   PropsOf,
   Spacer,
   StackDivider,
   Text,
   Tooltip,
   VStack,
+  useConst,
   useDisclosure,
 } from "@chakra-ui/react";
+import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { FC, useContext, useEffect, useMemo } from "react";
-import { BiDownvote, BiUpvote } from "react-icons/bi";
+import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import { IoChatboxOutline } from "react-icons/io5";
 import Sentiment from "sentiment";
 
@@ -45,11 +54,11 @@ const Post: FC<Props> = ({
   ...innerProps
 }) => {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { postsFilter } = useContext(PostsFilterContext);
 
+  const sentiment = useConst(() => new Sentiment());
   const textSentiment = useMemo(() => {
-    const sentiment = new Sentiment();
     return sentiment.analyze(
       post.data.title + (post.data.selftext ? `\n${post.data.selftext}` : "")
     );
@@ -73,19 +82,55 @@ const Post: FC<Props> = ({
       aggregateSentiment > postsFilter.maxAggSentiment;
   }
 
-  const handleOpenModal = () => {
-    const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
-    history.pushState(null, "", pathname);
-    onOpen();
-  };
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose,
+  } = useDisclosure({
+    onOpen: () => {
+      const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
+      history.pushState(null, "", pathname);
+    },
+    onClose: () => {
+      history.back();
+    },
+  });
 
   useEffect(() => {
     router.beforePopState(({}) => {
-      onClose();
-      history.back();
+      onModalClose();
       return false;
     });
-  }, [router, onClose]);
+  }, [router, onModalClose, isModalOpen]);
+
+  const handleUpvote = async () => {
+    await axios.post("/api/reddit", {
+      method: "POST",
+      path: "/api/vote",
+      query: {
+        dir: post.data.likes === true ? 0 : 1,
+        id: post.data.name,
+        rank: 10,
+      },
+    });
+  };
+
+  const handleDownvote = async () => {
+    await axios.post("/api/reddit", {
+      method: "POST",
+      path: "/api/vote",
+      query: {
+        dir: post.data.likes === false ? 0 : -1,
+        id: post.data.name,
+        rank: 10,
+        header: null,
+      },
+    });
+  };
+
+  let upvoteTextColor = "";
+  if (post.data.likes === true) upvoteTextColor = "orange";
+  else if (post.data.likes === false) upvoteTextColor = "lightblue";
 
   const result = useMemo(() => {
     return (
@@ -95,23 +140,33 @@ const Post: FC<Props> = ({
         darkenContentWhenDisabled
         _hover={{ borderColor: "gray.400" }}
         onClick={(event) => {
-          if (event.target === this && openModal) handleOpenModal();
+          if (event.target === this && openModal) onModalOpen();
         }}
         cursor="pointer"
         {...innerProps}
       >
         <Box>
           <Flex>
-            <ButtonGroup size="sm" variant="ghost">
+            <ButtonGroup size="md" variant="ghost">
               <VStack w="16" py="2" spacing="0">
-                <IconButton icon={<BiUpvote />} aria-label="upvote" />
-                <Text fontSize="sm" display="inline">
+                <IconButton
+                  colorScheme={post.data.likes === true ? "red" : "black"}
+                  icon={<ImArrowUp />}
+                  aria-label="upvote"
+                  onClick={handleUpvote}
+                />
+                <Text fontSize="sm" display="inline" color={upvoteTextColor}>
                   {Intl.NumberFormat("en-US", {
                     notation: "compact",
                     maximumFractionDigits: 1,
                   }).format(post.data.score)}
                 </Text>
-                <IconButton icon={<BiDownvote />} aria-label="downvote" />
+                <IconButton
+                  colorScheme={post.data.likes === false ? "blue" : "black"}
+                  icon={<ImArrowDown />}
+                  aria-label="downvote"
+                  onClick={handleDownvote}
+                />
               </VStack>
             </ButtonGroup>
             <Box flex="1">
@@ -142,7 +197,7 @@ const Post: FC<Props> = ({
                 <Link
                   size="sm"
                   onClick={() => {
-                    if (openModal) handleOpenModal();
+                    if (openModal) onModalOpen();
                   }}
                 >
                   <Heading size="lg">{post.data.title}</Heading>
@@ -151,50 +206,87 @@ const Post: FC<Props> = ({
               <PostBody post={post} />
             </Box>
           </Flex>
-          <HStack
-            p="2"
-            onClick={() => {
-              if (openModal) handleOpenModal();
-            }}
-          >
+          <HStack p="2">
             <Button
               variant="outline"
               rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
+              onClick={() => {
+                if (openModal) onModalOpen();
+              }}
             >
               <Text>{`${post.data.num_comments}`}</Text>
             </Button>
             <Spacer />
-            <HStack divider={<StackDivider />}>
-              <Box>
-                <Text>Upvote Ratio</Text>
-                <Text>{`${(post.data.upvote_ratio * 100).toFixed(0)}%`}</Text>
-              </Box>
-              <Tooltip
-                label={`positive: ${textSentiment.positive}\nnegative: ${textSentiment.negative}`}
-              >
-                <Box>
-                  <Text>Text Sen.</Text>
-                  <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
-                </Box>
-              </Tooltip>
-              <Box>
-                <Text>Agg. Sen.</Text>
-                <Text>{`${aggregateSentiment.toFixed(3)}`}</Text>
-              </Box>
-            </HStack>
+            <Popover>
+              <PopoverTrigger>
+                <Button variant="outline">
+                  <HStack divider={<StackDivider />}>
+                    <Box>
+                      <Text>Upvote Ratio</Text>
+                      <Text>{`${(post.data.upvote_ratio * 100).toFixed(
+                        0
+                      )}%`}</Text>
+                    </Box>
+                    <Box>
+                      <Text>Text Sen.</Text>
+                      <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
+                    </Box>
+                    <Box>
+                      <Text>Agg. Sen.</Text>
+                      <Text>{`${aggregateSentiment.toFixed(3)}`}</Text>
+                    </Box>
+                  </HStack>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>
+                  <Heading size="md" textAlign="center">
+                    AFINN Sentiment Analysis
+                  </Heading>
+                </PopoverHeader>
+                <PopoverBody>
+                  <Heading size="sm">Sentiment Words:</Heading>
+                  {textSentiment.positive.length > 0 && (
+                    <Text>{`positive: ${textSentiment.positive
+                      .map(
+                        (word: string) =>
+                          `${word}(${sentiment.analyze(word).score})`
+                      )
+                      .join(", ")}`}</Text>
+                  )}
+                  {textSentiment.negative.length > 0 && (
+                    <Text>{`negative: ${textSentiment.negative
+                      .map(
+                        (word: string) =>
+                          `${word}(${sentiment.analyze(word).score})`
+                      )
+                      .join(", ")}`}</Text>
+                  )}
+                  {textSentiment.positive.length === 0 &&
+                    textSentiment.negative.length === 0 && (
+                      <Text>No sentiment tokens found.</Text>
+                    )}
+                  <Heading size="sm">{`Sentiment Sum: ${textSentiment.score}`}</Heading>
+                  <Heading size="sm">{`Total Number of Tokens: ${textSentiment.tokens.length}`}</Heading>
+                  <Heading size="sm">{`Comparative Text Sentiment: ${textSentiment.comparative.toFixed(
+                    3
+                  )}`}</Heading>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
           </HStack>
         </Box>
+
         <PostsAndCommentsModal
           post={post}
-          isOpen={isOpen}
-          onClose={() => {
-            onClose();
-            history.back();
-          }}
+          isOpen={isModalOpen}
+          onClose={onModalClose}
         />
       </Card>
     );
-  }, [post, disabled, isOpen]);
+  }, [post, disabled, isModalOpen]);
 
   return result;
 };

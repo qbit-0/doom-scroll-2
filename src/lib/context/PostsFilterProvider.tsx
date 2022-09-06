@@ -20,8 +20,8 @@ export const defaultPostsPreset: PostsFilter = {
   id: 0,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: -1,
   maxAggSentiment: 1,
 };
@@ -30,8 +30,8 @@ export const positivePostsPreset: PostsFilter = {
   id: 1,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: 0,
   maxAggSentiment: 1,
 };
@@ -40,8 +40,8 @@ export const negativePostsPreset: PostsFilter = {
   id: 2,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
-  minTextSentiment: -1,
-  maxTextSentiment: 1,
+  minTextSentiment: -5,
+  maxTextSentiment: 5,
   minAggSentiment: -1,
   maxAggSentiment: 0,
 };

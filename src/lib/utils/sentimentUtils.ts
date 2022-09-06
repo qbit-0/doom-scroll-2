@@ -10,10 +10,10 @@ export const getAggPostSentiment = (
 ) => {
   const upvoteRatioInput =
     (upvoteRatio + postUpvoteRatioOffset) * postUpvoteRatioWeight;
-  const titleSentimentInput =
+  const textSentimentInput =
     (textSentiment + textSentimentOffset) * textSentimentWeight;
   return Math.tanh(
-    upvoteRatioInput + titleSentimentInput + aggPostSentimentOffset
+    upvoteRatioInput + textSentimentInput + aggPostSentimentOffset
   );
 };
 
