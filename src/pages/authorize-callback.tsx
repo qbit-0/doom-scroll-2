@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 
-import HomeAbout from "../components/HomeAbout";
+import HomeAbout from "../components/panel/AboutHomePanel";
 import PageFrame from "../components/PageFrame";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { RedditMe } from "../lib/reddit/redditDataStructs";

@@ -10,15 +10,15 @@ import {
 } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { RedditRules } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
-import SanitizeHTML from "./SanitizeHTML";
+import { RedditRules } from "../../lib/reddit/redditDataStructs";
+import Card from "../Card";
+import SanitizeHTML from "../SanitizeHTML";
 
 type Props = {
   subredditRules?: RedditRules;
 } & PropsOf<typeof Card>;
 
-const SubredditRules: FC<Props> = ({ subredditRules, ...innerProps }) => {
+const SubredditRulesPanel: FC<Props> = ({ subredditRules, ...innerProps }) => {
   const rulesPlaceholder = [];
   for (let i = 0; i < 4; i++) {
     rulesPlaceholder.push(
@@ -62,4 +62,4 @@ const SubredditRules: FC<Props> = ({ subredditRules, ...innerProps }) => {
   );
 };
 
-export default SubredditRules;
+export default SubredditRulesPanel;

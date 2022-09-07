@@ -8,6 +8,8 @@ import React, {
 
 export type PostsFilter = {
   id: number | null;
+  minScore: number | null;
+  maxScore: number | null;
   minUpvoteRatio: number;
   maxUpvoteRatio: number;
   minTextSentiment: number;
@@ -18,6 +20,8 @@ export type PostsFilter = {
 
 export const defaultPostsPreset: PostsFilter = {
   id: 0,
+  minScore: null,
+  maxScore: null,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,
@@ -28,6 +32,8 @@ export const defaultPostsPreset: PostsFilter = {
 
 export const positivePostsPreset: PostsFilter = {
   id: 1,
+  minScore: null,
+  maxScore: null,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,
@@ -38,6 +44,8 @@ export const positivePostsPreset: PostsFilter = {
 
 export const negativePostsPreset: PostsFilter = {
   id: 2,
+  minScore: null,
+  maxScore: null,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,

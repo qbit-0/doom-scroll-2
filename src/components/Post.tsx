@@ -18,10 +18,12 @@ import {
   PopoverTrigger,
   PropsOf,
   Spacer,
+  Stack,
   StackDivider,
   Text,
   Tooltip,
   VStack,
+  useBreakpointValue,
   useConst,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -35,8 +37,8 @@ import Sentiment from "sentiment";
 
 import { PostsFilterContext } from "../lib/context/PostsFilterProvider";
 import { RedditLink } from "../lib/reddit/redditDataStructs";
+import { getAggPostSentiment, isPostFiltered } from "../lib/utils/filterUtils";
 import { getElapsedString } from "../lib/utils/getElapsedString";
-import { getAggPostSentiment } from "../lib/utils/sentimentUtils";
 import Card from "./Card";
 import PostBody from "./PostBody";
 import PostsAndCommentsModal from "./PostsAndCommentsModal";
@@ -54,6 +56,7 @@ const Post: FC<Props> = ({
   ...innerProps
 }) => {
   const router = useRouter();
+  const savedPath = useConst(router.asPath);
 
   const { postsFilter } = useContext(PostsFilterContext);
 
@@ -64,7 +67,7 @@ const Post: FC<Props> = ({
     );
   }, [post.data]);
 
-  const aggregateSentiment = getAggPostSentiment(
+  const aggSentiment = getAggPostSentiment(
     post.data.upvote_ratio,
     textSentiment.comparative
   );
@@ -73,13 +76,7 @@ const Post: FC<Props> = ({
   if (disabledOverride !== undefined) {
     disabled = disabledOverride;
   } else {
-    disabled =
-      post.data.upvote_ratio < postsFilter.minUpvoteRatio ||
-      post.data.upvote_ratio > postsFilter.maxUpvoteRatio ||
-      textSentiment.comparative < postsFilter.minTextSentiment ||
-      textSentiment.comparative > postsFilter.maxTextSentiment ||
-      aggregateSentiment < postsFilter.minAggSentiment ||
-      aggregateSentiment > postsFilter.maxAggSentiment;
+    disabled = isPostFiltered(postsFilter, post, textSentiment, aggSentiment);
   }
 
   const {
@@ -92,7 +89,7 @@ const Post: FC<Props> = ({
       history.pushState(null, "", pathname);
     },
     onClose: () => {
-      history.back();
+      history.replaceState(null, "", savedPath);
     },
   });
 
@@ -132,6 +129,12 @@ const Post: FC<Props> = ({
   if (post.data.likes === true) upvoteTextColor = "orange";
   else if (post.data.likes === false) upvoteTextColor = "lightblue";
 
+  const voteAtBottom = useBreakpointValue({ base: true, sm: false });
+  const bottomStackDirection = useBreakpointValue<"column" | "row">({
+    base: "column",
+    sm: "row",
+  });
+
   const result = useMemo(() => {
     return (
       <Card
@@ -147,8 +150,8 @@ const Post: FC<Props> = ({
       >
         <Box>
           <Flex>
-            <ButtonGroup size="md" variant="ghost">
-              <VStack w="16" py="2" spacing="0">
+            <ButtonGroup hidden={voteAtBottom} size="md" variant="ghost">
+              <VStack w="12" py="2" spacing="0">
                 <IconButton
                   colorScheme={post.data.likes === true ? "red" : "black"}
                   icon={<ImArrowUp />}
@@ -203,38 +206,69 @@ const Post: FC<Props> = ({
                   <Heading size="lg">{post.data.title}</Heading>
                 </Link>
               </Box>
-              <PostBody post={post} />
+              {/* <PostBody post={post} /> */}
             </Box>
           </Flex>
-          <HStack p="2">
-            <Button
-              variant="outline"
-              rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
-              onClick={() => {
-                if (openModal) onModalOpen();
-              }}
-            >
-              <Text>{`${post.data.num_comments}`}</Text>
-            </Button>
+          <Stack direction={bottomStackDirection} p="2">
+            <HStack>
+              <Button
+                variant="outline"
+                rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
+                onClick={() => {
+                  if (openModal) onModalOpen();
+                }}
+              >
+                <Text>{`${post.data.num_comments}`}</Text>
+              </Button>
+              <ButtonGroup hidden={!voteAtBottom} size="md" variant="ghost">
+                <HStack spacing="0">
+                  <IconButton
+                    colorScheme={post.data.likes === true ? "red" : "black"}
+                    icon={<ImArrowUp />}
+                    aria-label="upvote"
+                    onClick={handleUpvote}
+                  />
+                  <Text fontSize="sm" display="inline" color={upvoteTextColor}>
+                    {Intl.NumberFormat("en-US", {
+                      notation: "compact",
+                      maximumFractionDigits: 1,
+                    }).format(post.data.score)}
+                  </Text>
+                  <IconButton
+                    colorScheme={post.data.likes === false ? "blue" : "black"}
+                    icon={<ImArrowDown />}
+                    aria-label="downvote"
+                    onClick={handleDownvote}
+                  />
+                </HStack>
+              </ButtonGroup>
+            </HStack>
             <Spacer />
             <Popover>
               <PopoverTrigger>
                 <Button variant="outline">
                   <HStack divider={<StackDivider />}>
-                    <Box>
-                      <Text>Upvote Ratio</Text>
-                      <Text>{`${(post.data.upvote_ratio * 100).toFixed(
-                        0
-                      )}%`}</Text>
-                    </Box>
-                    <Box>
-                      <Text>Text Sen.</Text>
-                      <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
-                    </Box>
-                    <Box>
-                      <Text>Agg. Sen.</Text>
-                      <Text>{`${aggregateSentiment.toFixed(3)}`}</Text>
-                    </Box>
+                    <Tooltip label="The ratio of upvotes to total votes on a post.">
+                      <Box>
+                        <Text>Upvote Ratio</Text>
+                        <Text>{`${(post.data.upvote_ratio * 100).toFixed(
+                          0
+                        )}%`}</Text>
+                      </Box>
+                    </Tooltip>
+                    <Tooltip label="How positive or negative is the text content of a post. A positive value means a positive sentiment. A negative value means a negative sentiment.">
+                      <Box>
+                        <Text>Text Sen.</Text>
+                        <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
+                      </Box>
+                    </Tooltip>
+
+                    <Tooltip label="Combined score that determines the overall sentiment of a post.">
+                      <Box>
+                        <Text>Agg. Sen.</Text>
+                        <Text>{`${aggSentiment.toFixed(3)}`}</Text>
+                      </Box>
+                    </Tooltip>
                   </HStack>
                 </Button>
               </PopoverTrigger>
@@ -276,7 +310,7 @@ const Post: FC<Props> = ({
                 </PopoverBody>
               </PopoverContent>
             </Popover>
-          </HStack>
+          </Stack>
         </Box>
 
         <PostsAndCommentsModal
@@ -286,7 +320,7 @@ const Post: FC<Props> = ({
         />
       </Card>
     );
-  }, [post, disabled, isModalOpen]);
+  }, [post, disabled, isModalOpen, voteAtBottom, bottomStackDirection]);
 
   return result;
 };

@@ -1,7 +1,7 @@
-import { Heading, PropsOf, Text } from "@chakra-ui/react";
+import { Heading, PropsOf, Text, VStack } from "@chakra-ui/react";
 import { FC } from "react";
 
-import Card from "./Card";
+import Card from "../Card";
 
 type Props = PropsOf<typeof Card>;
 

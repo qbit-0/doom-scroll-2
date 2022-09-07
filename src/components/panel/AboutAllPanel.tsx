@@ -1,11 +1,11 @@
 import { Heading, PropsOf, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
-import Card from "./Card";
+import Card from "../Card";
 
 type Props = PropsOf<typeof Card>;
 
-const AllAbout: FC<Props> = (props) => {
+const AboutAllPanel: FC<Props> = (props) => {
   return (
     <Card {...props}>
       <Heading size="md">r/all</Heading>
@@ -17,4 +17,4 @@ const AllAbout: FC<Props> = (props) => {
   );
 };
 
-export default AllAbout;
+export default AboutAllPanel;

@@ -1,10 +1,10 @@
 import {
-  Box,
   BoxProps,
   Button,
   ButtonGroup,
   Heading,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { FC, useContext, useEffect } from "react";
 
@@ -14,13 +14,14 @@ import {
   defaultPostsPreset,
   negativePostsPreset,
   positivePostsPreset,
-} from "../lib/context/PostsFilterProvider";
-import useLocalStorage from "../lib/hooks/useLocalStorage";
-import InputRangeSlider from "./InputRangeSlider";
+} from "../../lib/context/PostsFilterProvider";
+import useLocalStorage from "../../lib/hooks/useLocalStorage";
+import Card from "../Card";
+import InputRangeSlider from "../InputRangeSlider";
 
 type Props = BoxProps;
 
-const PostsFilterPanel: FC<Props> = (props) => {
+const FilterPostsPanel: FC<Props> = (props) => {
   const [savedPostsFilter, setSavedPostsFilter] =
     useLocalStorage("postsFilter");
   const { postsFilter, setPostsFilter } = useContext(PostsFilterContext);
@@ -39,51 +40,92 @@ const PostsFilterPanel: FC<Props> = (props) => {
   };
 
   return (
-    <Box {...props}>
-      <Heading size="md">Filter Posts</Heading>
-      <ButtonGroup w="full">
-        <Button
-          w="full"
-          colorScheme="blue"
-          variant={
-            postsFilter.id === positivePostsPreset.id ? "solid" : "outline"
-          }
-          onClick={(event) => {
-            event.stopPropagation();
-            applyPreset(positivePostsPreset);
-          }}
-        >
-          Positive
-        </Button>
-        <Button
-          w="full"
-          colorScheme="red"
-          variant={
-            postsFilter.id === negativePostsPreset.id ? "solid" : "outline"
-          }
-          onClick={(event) => {
-            event.stopPropagation();
-            applyPreset(negativePostsPreset);
-          }}
-        >
-          Negative
-        </Button>
-        <Button
-          w="full"
-          colorScheme="purple"
-          variant={
-            postsFilter.id === defaultPostsPreset.id ? "solid" : "outline"
-          }
-          onClick={(event) => {
-            event.stopPropagation();
-            applyPreset(defaultPostsPreset);
-          }}
-        >
-          Default
-        </Button>
+    <Card {...props}>
+      <Heading size="lg">Filter Posts</Heading>
+      <ButtonGroup w="full" variant="outline">
+        <Tooltip label="Show more positive posts.">
+          <Button
+            w="full"
+            colorScheme="blue"
+            isActive={postsFilter.id === positivePostsPreset.id}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (postsFilter.id === positivePostsPreset.id) {
+                applyPreset(defaultPostsPreset);
+              } else {
+                applyPreset(positivePostsPreset);
+              }
+            }}
+          >
+            Positive
+          </Button>
+        </Tooltip>
+        <Tooltip label="Show more negative posts.">
+          <Button
+            w="full"
+            colorScheme="red"
+            isActive={postsFilter.id === negativePostsPreset.id}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (postsFilter.id === negativePostsPreset.id) {
+                applyPreset(defaultPostsPreset);
+              } else {
+                applyPreset(negativePostsPreset);
+              }
+            }}
+          >
+            Negative
+          </Button>
+        </Tooltip>
+        <Tooltip label="Show all posts.">
+          <Button
+            w="full"
+            colorScheme="purple"
+            isActive={postsFilter.id === defaultPostsPreset.id}
+            onClick={(event) => {
+              event.stopPropagation();
+              applyPreset(defaultPostsPreset);
+            }}
+          >
+            Default
+          </Button>
+        </Tooltip>
       </ButtonGroup>
 
-      <Text>By Upvote Ratio</Text>
+      <Tooltip label="Upvotes subtracted by downvotes.">
+        <Heading size="md">By Score</Heading>
+      </Tooltip>
+      <InputRangeSlider
+        placeholderValue={[
+          defaultPostsPreset.minScore,
+          defaultPostsPreset.maxScore,
+        ]}
+        value={[postsFilter.minScore, postsFilter.maxScore]}
+        min={Number.NEGATIVE_INFINITY}
+        max={Number.POSITIVE_INFINITY}
+        sliderMin={-1000}
+        sliderMax={1000}
+        step={0.001}
+        onMinChange={(_, value) => {
+          setPostsFilter({ ...postsFilter, id: null, minScore: value });
+        }}
+        onMaxChange={(_, value) => {
+          setPostsFilter({ ...postsFilter, id: null, maxScore: value });
+        }}
+        onBothChange={(value: [number, number]) => {
+          setPostsFilter({
+            ...postsFilter,
+            id: null,
+            minScore: value[0],
+            maxScore: value[1],
+          });
+        }}
+        onChangeEnd={saveCurrentSettings}
+      />
+
+      <Tooltip label="The ratio of upvotes to total votes on a post.">
+        <Heading size="md">By Upvote Ratio</Heading>
+      </Tooltip>
       <InputRangeSlider
         placeholderValue={[
           defaultPostsPreset.minUpvoteRatio,
@@ -110,7 +152,9 @@ const PostsFilterPanel: FC<Props> = (props) => {
         onChangeEnd={saveCurrentSettings}
       />
 
-      <Text>By Text Sentiment</Text>
+      <Tooltip label="How positive or negative is the text content of a post. A positive value means a positive sentiment. A negative value means a negative sentiment.">
+        <Heading size="md">By Text Sentiment</Heading>
+      </Tooltip>
       <InputRangeSlider
         placeholderValue={[
           defaultPostsPreset.minTextSentiment,
@@ -145,7 +189,9 @@ const PostsFilterPanel: FC<Props> = (props) => {
         onChangeEnd={saveCurrentSettings}
       />
 
-      <Text>By Aggregate Sentiment</Text>
+      <Tooltip label="Combined score that determines the overall sentiment of a post.">
+        <Heading size="md">By Aggregate Sentiment</Heading>
+      </Tooltip>
       <InputRangeSlider
         placeholderValue={[
           defaultPostsPreset.minAggSentiment,
@@ -179,8 +225,8 @@ const PostsFilterPanel: FC<Props> = (props) => {
         }}
         onChangeEnd={saveCurrentSettings}
       />
-    </Box>
+    </Card>
   );
 };
 
-export default PostsFilterPanel;
+export default FilterPostsPanel;

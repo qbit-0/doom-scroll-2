@@ -12,20 +12,26 @@ const Carousel: FC<Props> = ({ srcs, ...innerProps }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Box ref={carouselRef} w="md" {...innerProps}>
+    <Box ref={carouselRef} w="lg" {...innerProps}>
       <Slider
         dotsClass="slick-dots slick-thumb"
         infinite={false}
-        speed={250}
-        slidesToShow={3}
+        speed={300}
+        slidesToShow={1}
         slidesToScroll={1}
         swipeToSlide={true}
-        customPaging={(index: number) => {
-          return <Image src={srcs[index]} alt={`image-${index}`} />;
-        }}
+        adaptiveHeight
       >
         {srcs.map((src, index) => {
-          return <Image src={src} alt={`image-${index}`} key={index} />;
+          return (
+            <Image
+              src={src}
+              alt={`image-${index}`}
+              objectFit="contain"
+              maxH="md"
+              key={index}
+            />
+          );
         })}
       </Slider>
     </Box>

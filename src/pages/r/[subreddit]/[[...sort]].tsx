@@ -1,23 +1,32 @@
 import {
   CalendarIcon,
+  ChevronDownIcon,
   StarIcon,
   TimeIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { Button, ButtonGroup, Select } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonGroup,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Select,
+} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
-import AllAbout from "../../../components/AllAbout";
 import Card from "../../../components/Card";
 import NavBarFrame from "../../../components/NavBarFrame";
 import PageFrame from "../../../components/PageFrame";
-import PopularAbout from "../../../components/PopularAbout";
-import SubredditAbout from "../../../components/SubredditAbout";
 import SubredditBanner from "../../../components/SubredditBanner";
-import SubredditPostsListings from "../../../components/SubredditPostsListings";
-import SubredditRules from "../../../components/SubredditRules";
+import AboutAllPanel from "../../../components/panel/AboutAllPanel";
+import AboutPopularPanel from "../../../components/panel/AboutPopularPanel";
+import AboutSubredditPanel from "../../../components/panel/AboutSubredditPanel";
+import SubredditRulesPanel from "../../../components/panel/SubredditRulesPanel";
+import SubredditPostsListings from "../../../components/panel_collection/SubredditPostsListings";
 import useReddit from "../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -95,16 +104,16 @@ const SubredditPage: FC<Props> = ({
       aboutDisplay = null;
       break;
     case "popular":
-      aboutDisplay = <PopularAbout />;
+      aboutDisplay = <AboutPopularPanel />;
       break;
     case "all":
-      aboutDisplay = <AllAbout />;
+      aboutDisplay = <AboutAllPanel />;
       break;
     default:
       aboutDisplay = (
         <>
-          <SubredditAbout subredditAbout={subredditAbout} />
-          <SubredditRules subredditRules={subredditRules} />
+          <AboutSubredditPanel subredditAbout={subredditAbout} />
+          <SubredditRulesPanel subredditRules={subredditRules} />
         </>
       );
       break;
@@ -143,18 +152,36 @@ const SubredditPage: FC<Props> = ({
                   Top
                 </Button>
                 {sort === "top" && (
-                  <Select
-                    value={time || "day"}
-                    w={32}
-                    onChange={setValue(setTime)}
-                  >
-                    <option value="hour">Now</option>
-                    <option value="day">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                    <option value="year">This Year</option>
-                    <option value="all">All Time</option>
-                  </Select>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                      {time === "hour" && "Now"}
+                      {time === "day" && "Today"}
+                      {time === "week" && "This Week"}
+                      {time === "month" && "This Month"}
+                      {time === "year" && "This Year"}
+                      {time === "all" && "All Time"}
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem value="hour" onClick={setValue(setTime)}>
+                        Now
+                      </MenuItem>
+                      <MenuItem value="day" onClick={setValue(setTime)}>
+                        Today
+                      </MenuItem>
+                      <MenuItem value="week" onClick={setValue(setTime)}>
+                        This Week
+                      </MenuItem>
+                      <MenuItem value="month" onClick={setValue(setTime)}>
+                        This Month
+                      </MenuItem>
+                      <MenuItem value="year" onClick={setValue(setTime)}>
+                        This Year
+                      </MenuItem>
+                      <MenuItem value="all" onClick={setValue(setTime)}>
+                        All Time
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 )}
                 <Button
                   value="rising"

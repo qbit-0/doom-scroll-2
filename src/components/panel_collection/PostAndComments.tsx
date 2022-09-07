@@ -2,19 +2,19 @@ import { Button, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
-import useReddit from "../lib/hooks/useReddit";
+import useReddit from "../../lib/hooks/useReddit";
 import {
   RedditComment,
   RedditLink,
   RedditListing,
   RedditMore,
   RedditPostAndComments,
-} from "../lib/reddit/redditDataStructs";
-import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
-import Card from "./Card";
+} from "../../lib/reddit/redditDataStructs";
+import { getCommentsPath } from "../../lib/reddit/redditUrlUtils";
+import Card from "../Card";
 import Comments from "./Comments";
-import Post from "./Post";
-import PostSkeleton from "./PostSkeleton";
+import Post from "../Post";
+import PostSkeleton from "../PostSkeleton";
 
 type Props = {
   subreddit: string;

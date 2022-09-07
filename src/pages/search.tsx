@@ -1,4 +1,13 @@
-import { Button, ButtonGroup, Select } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  ButtonGroup,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Select,
+} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -6,9 +15,9 @@ import { FC, useEffect, useState } from "react";
 import Card from "../components/Card";
 import NavBarFrame from "../components/NavBarFrame";
 import PageFrame from "../components/PageFrame";
-import SearchPostsListings from "../components/SearchPostsListings";
-import SubredditListings from "../components/SubredditListings";
-import UserListings from "../components/UsersListings";
+import SearchPostsListings from "../components/panel_collection/SearchPostsListings";
+import SubredditListings from "../components/panel_collection/SubredditListings";
+import UserListings from "../components/panel_collection/UsersListings";
 import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
 import setValue from "../lib/utils/setValue";
 
@@ -67,21 +76,63 @@ const SearchPage: FC<Props> = ({
           <>
             <Card p="0">
               <ButtonGroup w="full" variant="outline" p="2">
-                <Select value={sort} w="32" onChange={setValue(setSort)}>
-                  <option value="relevance">Relevance</option>
-                  <option value="hot">Hot</option>
-                  <option value="top">Top</option>k
-                  <option value="new">New</option>
-                  <option value="comments">Comments</option>
-                </Select>
-                <Select value={time} w="32" onChange={setValue(setTime)}>
-                  <option value="all">All Time</option>
-                  <option value="year">Past Year</option>
-                  <option value="month">Past Month</option>
-                  <option value="week">Past Week</option>
-                  <option value="day">Past 24 Hours</option>
-                  <option value="hour">Past Hour</option>
-                </Select>
+                <Menu>
+                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    {sort === "relevance" && "Relevance"}
+                    {sort === "hot" && "Hot"}
+                    {sort === "top" && "Top"}
+                    {sort === "new" && "New"}
+                    {sort === "comments" && "Comments"}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem value="relevance" onClick={setValue(setSort)}>
+                      Relevance
+                    </MenuItem>
+                    <MenuItem value="hot" onClick={setValue(setSort)}>
+                      Hot
+                    </MenuItem>
+                    <MenuItem value="top" onClick={setValue(setSort)}>
+                      Top
+                    </MenuItem>
+                    <MenuItem value="new" onClick={setValue(setSort)}>
+                      New
+                    </MenuItem>
+                    <MenuItem value="comments" onClick={setValue(setSort)}>
+                      Comments
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+
+                <Menu>
+                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    {time === "all" && "All Time"}
+                    {time === "year" && "Past Year"}
+                    {time === "month" && "Past Month"}
+                    {time === "week" && "Past Week"}
+                    {time === "day" && "Past 24 Hours"}
+                    {time === "hour" && "Past Hour"}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem value="all" onClick={setValue(setTime)}>
+                      All Time
+                    </MenuItem>
+                    <MenuItem value="year" onClick={setValue(setTime)}>
+                      Past Year
+                    </MenuItem>
+                    <MenuItem value="month" onClick={setValue(setTime)}>
+                      Past Month
+                    </MenuItem>
+                    <MenuItem value="week" onClick={setValue(setTime)}>
+                      Past Week
+                    </MenuItem>
+                    <MenuItem value="day" onClick={setValue(setTime)}>
+                      Past 24 Hours
+                    </MenuItem>
+                    <MenuItem value="hour" onClick={setValue(setTime)}>
+                      Past Hour
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
               </ButtonGroup>
             </Card>
             <SearchPostsListings

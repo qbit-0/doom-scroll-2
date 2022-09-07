@@ -19,7 +19,7 @@ import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
-import Comments from "./Comments";
+import Comments from "./panel_collection/Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
 

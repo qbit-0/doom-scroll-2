@@ -1,9 +1,9 @@
 import { Box, BoxProps } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-import useAtBottom from "../lib/hooks/useAtBottom";
-import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
-import PostListing from "./PostListing";
+import useAtBottom from "../../lib/hooks/useAtBottom";
+import { getSearchPostsPath } from "../../lib/reddit/redditUrlUtils";
+import PostListing from "../PostListing";
 
 type Props = {
   searchQuery: string;

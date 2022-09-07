@@ -1,15 +1,15 @@
 import { Heading, PropsOf, SkeletonText } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
-import SanitizeHTML from "./SanitizeHTML";
+import { RedditSubreddit } from "../../lib/reddit/redditDataStructs";
+import Card from "../Card";
+import SanitizeHTML from "../SanitizeHTML";
 
 type Props = {
   subredditAbout?: RedditSubreddit;
 } & PropsOf<typeof Card>;
 
-const SubredditAbout: FC<Props> = ({ subredditAbout, ...innerProps }) => {
+const AboutSubredditPanel: FC<Props> = ({ subredditAbout, ...innerProps }) => {
   return (
     <Card {...innerProps}>
       <Heading size="lg">About Community</Heading>
@@ -22,4 +22,4 @@ const SubredditAbout: FC<Props> = ({ subredditAbout, ...innerProps }) => {
   );
 };
 
-export default SubredditAbout;
+export default AboutSubredditPanel;

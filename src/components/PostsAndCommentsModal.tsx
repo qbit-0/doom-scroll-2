@@ -7,7 +7,6 @@ import {
   ModalOverlay,
   ModalProps,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { FC } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -18,10 +17,10 @@ import {
 } from "../lib/reddit/redditDataStructs";
 import NavBarFrame from "./NavBarFrame";
 import PageFrame from "./PageFrame";
-import PostAndComments from "./PostAndComments";
-import SubredditAbout from "./SubredditAbout";
 import SubredditBanner from "./SubredditBanner";
-import SubredditRules from "./SubredditRules";
+import AboutSubredditPanel from "./panel/AboutSubredditPanel";
+import SubredditRulesPanel from "./panel/SubredditRulesPanel";
+import PostAndComments from "./panel_collection/PostAndComments";
 
 type Props = {
   post: RedditLink;
@@ -69,8 +68,8 @@ const PostsAndCommentsModal: FC<Props> = ({
               }
               right={
                 <>
-                  <SubredditAbout subredditAbout={about} />
-                  <SubredditRules subredditRules={rules} />
+                  <AboutSubredditPanel subredditAbout={about} />
+                  <SubredditRulesPanel subredditRules={rules} />
                 </>
               }
               showExplanation={false}

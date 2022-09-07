@@ -1,24 +1,21 @@
 import { StackProps } from "@chakra-ui/react";
 import { FC } from "react";
 
-import {
-  getSearchSubredditsPath,
-  getSearchUsersPath,
-} from "../lib/reddit/redditUrlUtils";
-import Listings from "./Listings";
-import UserListing from "./UserListing";
+import { getSearchSubredditsPath } from "../../lib/reddit/redditUrlUtils";
+import Listings from "../Listings";
+import SubredditListing from "../SubredditListing";
 
 type Props = {
   searchQuery: string;
 } & StackProps;
 
-const UserListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
+const SubredditListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   return (
     <Listings
       createListing={(after, updateAfter, index) => {
-        const { path, query } = getSearchUsersPath(searchQuery, after);
+        const { path, query } = getSearchSubredditsPath(searchQuery, after);
         return (
-          <UserListing
+          <SubredditListing
             path={path}
             query={query}
             updateAfter={updateAfter}
@@ -31,4 +28,4 @@ const UserListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   );
 };
 
-export default UserListings;
+export default SubredditListings;

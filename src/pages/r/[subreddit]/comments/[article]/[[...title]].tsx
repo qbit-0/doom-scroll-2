@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
+import AboutSubredditPanel from "../../../../../components/panel/AboutSubredditPanel";
 import NavBarFrame from "../../../../../components/NavBarFrame";
 import PageFrame from "../../../../../components/PageFrame";
-import PostAndComments from "../../../../../components/PostAndComments";
-import SubredditAbout from "../../../../../components/SubredditAbout";
+import PostAndComments from "../../../../../components/panel_collection/PostAndComments";
 import SubredditBanner from "../../../../../components/SubredditBanner";
-import SubredditRules from "../../../../../components/SubredditRules";
+import SubredditRulesPanel from "../../../../../components/panel/SubredditRulesPanel";
 import useReddit from "../../../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -52,8 +52,8 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
         left={<PostAndComments subreddit={subreddit} article={article} />}
         right={
           <>
-            <SubredditAbout subredditAbout={subredditAbout} />
-            <SubredditRules subredditRules={subredditRules} />
+            <AboutSubredditPanel subredditAbout={subredditAbout} />
+            <SubredditRulesPanel subredditRules={subredditRules} />
           </>
         }
       />

@@ -19,14 +19,14 @@ import {
 } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-import { defaultPostsPreset } from "../lib/context/PostsFilterProvider";
-
 type Props = {
   size?: ThemingProps["size"];
-  placeholderValue: [number, number];
-  value: [number | undefined, number | undefined];
+  placeholderValue: [number | null, number | null];
+  value: [number | null | undefined, number | null | undefined];
   min: number;
   max: number;
+  sliderMin?: number;
+  sliderMax?: number;
   step: number;
   onMinChange: UseCounterProps["onChange"];
   onMaxChange: UseCounterProps["onChange"];
@@ -41,6 +41,8 @@ const InputRangeSlider: FC<Props> = ({
   value,
   min,
   max,
+  sliderMin,
+  sliderMax,
   step,
   onMinChange,
   onMaxChange,
@@ -57,18 +59,27 @@ const InputRangeSlider: FC<Props> = ({
     fontSize: "sm",
   };
 
+  if (value[0] === undefined) value[0] = placeholderValue[0];
+  if (value[0] === null) value[0] = min;
+
+  if (value[1] === undefined) value[1] = placeholderValue[1];
+  if (value[1] === null) value[1] = max;
+
+  if (sliderMin === undefined) sliderMin = min;
+  if (sliderMax === undefined) sliderMax = max;
+
   return (
     <>
       <Flex columnGap="4" {...innerProps}>
         <NumberInput
           size={size}
-          value={value[0] === undefined ? placeholderValue[0] : value[0]}
+          value={value[0]}
           min={min}
-          max={value[1] === undefined ? placeholderValue[1] : value[1]}
+          max={value[1]}
           step={step}
           onChange={onMinChange}
         >
-          <NumberInputField w="24" />
+          <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -76,24 +87,28 @@ const InputRangeSlider: FC<Props> = ({
         </NumberInput>
         <Box w="full" h="full">
           <RangeSlider
-            value={[
-              value[0] === undefined ? placeholderValue[0] : value[0],
-              value[1] === undefined ? placeholderValue[1] : value[1],
-            ]}
-            min={min}
-            max={max}
+            value={[value[0], value[1]]}
+            min={min < sliderMin ? sliderMin - step : sliderMin}
+            max={max > sliderMax ? sliderMax + step : sliderMax}
             step={step}
-            onChange={onBothChange}
+            onChange={(value: [number, number]) => {
+              if (value[0] < (sliderMin as number)) value[0] = min;
+              if (value[1] > (sliderMax as number)) value[1] = max;
+              if (onBothChange) onBothChange(value);
+            }}
             onChangeEnd={onChangeEnd}
           >
-            <RangeSliderMark value={min} {...sliderMarkStyles}>
-              {min}
+            <RangeSliderMark value={sliderMin} {...sliderMarkStyles}>
+              {sliderMin}
             </RangeSliderMark>
-            <RangeSliderMark value={max} {...sliderMarkStyles}>
-              {max}
+            <RangeSliderMark value={sliderMax} {...sliderMarkStyles}>
+              {sliderMax}
             </RangeSliderMark>
-            <RangeSliderMark value={(min + max) / 2} {...sliderMarkStyles}>
-              {(min + max) / 2}
+            <RangeSliderMark
+              value={(sliderMin + sliderMax) / 2}
+              {...sliderMarkStyles}
+            >
+              {(sliderMin + sliderMax) / 2}
             </RangeSliderMark>
             <RangeSliderTrack>
               <RangeSliderFilledTrack />
@@ -104,8 +119,8 @@ const InputRangeSlider: FC<Props> = ({
         </Box>
         <NumberInput
           size={size}
-          value={value[1] === undefined ? placeholderValue[1] : value[1]}
-          min={value[0] === undefined ? placeholderValue[0] : value[0]}
+          value={value[1]}
+          min={value[0]}
           max={max}
           step={step}
           onChange={onMaxChange}

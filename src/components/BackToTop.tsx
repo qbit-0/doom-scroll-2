@@ -1,4 +1,5 @@
-import { Button, ButtonProps } from "@chakra-ui/react";
+import { ChevronUpIcon } from "@chakra-ui/icons";
+import { ButtonProps, IconButton } from "@chakra-ui/react";
 import { FC, RefObject } from "react";
 
 type Props = {
@@ -7,14 +8,17 @@ type Props = {
 
 const BackToTop: FC<Props> = ({ topRef, ...innerProps }) => {
   return (
-    <Button
+    <IconButton
+      zIndex={20}
+      colorScheme="red"
+      icon={<ChevronUpIcon />}
+      aria-label="back to top"
+      rounded="full"
       onClick={() => {
         topRef.current?.scrollIntoView({ behavior: "smooth" });
       }}
       {...innerProps}
-    >
-      Back to Top
-    </Button>
+    />
   );
 };
 

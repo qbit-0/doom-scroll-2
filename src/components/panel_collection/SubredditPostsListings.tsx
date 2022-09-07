@@ -1,9 +1,9 @@
 import { StackProps } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { getSubredditPath } from "../lib/reddit/redditUrlUtils";
-import Listings from "./Listings";
-import PostListing from "./PostListing";
+import { getSubredditPath } from "../../lib/reddit/redditUrlUtils";
+import Listings from "../Listings";
+import PostListing from "../PostListing";
 
 type Props = {
   subreddit: string;
