@@ -44,25 +44,14 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
   });
 
   return (
-    <NavFrame subreddit={subreddit}>
+    <NavFrame>
       <PageFrame
-        top={
-          <SubredditBanner
-            subreddit={subreddit}
-            subredditAbout={subredditAbout}
-          />
-        }
-        left={
-          <PostAndComments
-            subreddit={subreddit}
-            article={article}
-            commentId={commentId}
-          />
-        }
+        top={<SubredditBanner />}
+        left={<PostAndComments article={article} commentId={commentId} />}
         right={
           <>
-            <AboutSubredditPanel subredditAbout={subredditAbout} />
-            <SubredditRulesPanel subredditRules={subredditRules} />
+            <AboutSubredditPanel />
+            <SubredditRulesPanel />
           </>
         }
         showExplanation={false}

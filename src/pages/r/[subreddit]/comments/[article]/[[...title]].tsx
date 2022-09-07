@@ -7,6 +7,7 @@ import SubredditBanner from "../../../../../components/SubredditBanner";
 import AboutSubredditPanel from "../../../../../components/panel/AboutSubredditPanel";
 import SubredditRulesPanel from "../../../../../components/panel/SubredditRulesPanel";
 import PostAndComments from "../../../../../components/panel_collection/PostAndComments";
+import SubredditProvider from "../../../../../lib/context/SubredditProvider";
 import useReddit from "../../../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -41,23 +42,24 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
   });
 
   return (
-    <NavFrame>
-      <PageFrame
-        top={
-          <SubredditBanner
-            subreddit={subreddit}
-            subredditAbout={subredditAbout}
-          />
-        }
-        left={<PostAndComments subreddit={subreddit} article={article} />}
-        right={
-          <>
-            <AboutSubredditPanel subredditAbout={subredditAbout} />
-            <SubredditRulesPanel subredditRules={subredditRules} />
-          </>
-        }
-      />
-    </NavFrame>
+    <SubredditProvider
+      initialSubreddit={subreddit}
+      initialSubredditAbout={subredditAbout}
+      initialSubredditRules={subredditRules}
+    >
+      <NavFrame>
+        <PageFrame
+          top={<SubredditBanner />}
+          left={<PostAndComments article={article} />}
+          right={
+            <>
+              <AboutSubredditPanel />
+              <SubredditRulesPanel />
+            </>
+          }
+        />
+      </NavFrame>
+    </SubredditProvider>
   );
 };
 

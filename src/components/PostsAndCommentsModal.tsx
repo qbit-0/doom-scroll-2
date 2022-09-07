@@ -70,15 +70,9 @@ const PostsAndCommentsModal: FC<Props> = ({
           >
             <NavFrame>
               <PageFrame
-                top={
-                  <SubredditBanner
-                    subreddit={subreddit}
-                    subredditAbout={subredditAbout}
-                  />
-                }
+                top={<SubredditBanner />}
                 left={
                   <PostAndComments
-                    subreddit={subreddit}
                     article={post.data.id}
                     initialPost={post}
                     openModal={false}

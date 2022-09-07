@@ -105,9 +105,7 @@ const SubredditPage: FC<Props> = ({
   );
 
   let top =
-    subreddit === "popular" || subreddit === "all" ? null : (
-      <SubredditBanner subreddit={subreddit} subredditAbout={subredditAbout} />
-    );
+    subreddit === "popular" || subreddit === "all" ? null : <SubredditBanner />;
 
   let subredditInfoDisplay;
   switch (subreddit) {
@@ -135,6 +133,7 @@ const SubredditPage: FC<Props> = ({
   return (
     <>
       <SubredditProvider
+        initialSubreddit={subreddit}
         initialSubredditAbout={subredditAbout}
         initialSubredditRules={subredditRules}
       >

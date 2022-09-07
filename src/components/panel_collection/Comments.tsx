@@ -11,12 +11,11 @@ import CommentSkeleton from "../CommentSkeleton";
 import More from "../More";
 
 type Props = {
-  subreddit: string;
   article: string;
   initialComments?: RedditListing<RedditComment | RedditMore>;
 };
 
-const Comments: FC<Props> = ({ subreddit, article, initialComments }) => {
+const Comments: FC<Props> = ({ article, initialComments }) => {
   const [comments, setComments] = useState(initialComments);
 
   useEffect(() => {
@@ -61,7 +60,6 @@ const Comments: FC<Props> = ({ subreddit, article, initialComments }) => {
               <More
                 more={comment}
                 updateReplies={genUpdateReplies(comment)}
-                subreddit={subreddit}
                 article={article}
                 key={index}
               />

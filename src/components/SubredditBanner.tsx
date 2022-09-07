@@ -1,19 +1,14 @@
 import { Avatar, Box, BoxProps, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { FC } from "react";
+import { FC, useContext } from "react";
 
-import { RedditSubreddit } from "../lib/reddit/redditDataStructs";
+import { SubredditContext } from "../lib/context/SubredditProvider";
 
-type Props = {
-  subreddit: string;
-  subredditAbout?: RedditSubreddit;
-} & BoxProps;
+type Props = {} & BoxProps;
 
-const SubredditBanner: FC<Props> = ({
-  subreddit,
-  subredditAbout,
-  ...innerProps
-}) => {
+const SubredditBanner: FC<Props> = ({ ...innerProps }) => {
+  const { subreddit, subredditAbout } = useContext(SubredditContext);
+
   let background;
   if (subredditAbout?.data?.banner_background_image) {
     background = (

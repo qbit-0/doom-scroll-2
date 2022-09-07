@@ -1,27 +1,22 @@
 import { Box, BoxProps, Button } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
-import { FC, MouseEventHandler, useState } from "react";
+import { FC, MouseEventHandler, useContext, useState } from "react";
 import useSWR, { mutate } from "swr";
 
+import { SubredditContext } from "../lib/context/SubredditProvider";
 import { RedditComment, RedditMore } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
 
 type Props = {
-  subreddit: string;
   article: string;
   more: RedditMore;
   updateReplies: (replies: (RedditComment | RedditMore)[]) => void;
 } & BoxProps;
 
-const More: FC<Props> = ({
-  more,
-  updateReplies,
-  subreddit,
-  article,
-  ...innerProps
-}) => {
+const More: FC<Props> = ({ more, updateReplies, article, ...innerProps }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { subreddit } = useContext(SubredditContext);
 
   const params = {
     method: "POST",

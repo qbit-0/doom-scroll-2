@@ -1,7 +1,8 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
+import { SubredditContext } from "../../lib/context/SubredditProvider";
 import useReddit from "../../lib/hooks/useReddit";
 import {
   RedditComment,
@@ -11,13 +12,11 @@ import {
   RedditPostAndComments,
 } from "../../lib/reddit/redditDataStructs";
 import { getCommentsPath } from "../../lib/reddit/redditUrlUtils";
-import Card from "../Card";
-import Comments from "./Comments";
 import Post from "../Post";
 import PostSkeleton from "../PostSkeleton";
+import Comments from "./Comments";
 
 type Props = {
-  subreddit: string;
   article: string;
   commentId?: string;
   initialPost?: RedditLink;
@@ -26,18 +25,18 @@ type Props = {
 };
 
 const PostAndComments: FC<Props> = ({
-  subreddit,
   article,
   commentId,
   initialPost,
   initialComments,
   openModal = true,
 }) => {
+  const { subreddit } = useContext(SubredditContext);
   const router = useRouter();
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
 
-  const { path, query } = getCommentsPath(subreddit, article, commentId);
+  const { path, query } = getCommentsPath(subreddit || "", article, commentId);
 
   const { data: postAndComments } = useReddit<RedditPostAndComments>({
     method: "GET",
@@ -69,11 +68,7 @@ const PostAndComments: FC<Props> = ({
           View All Comments
         </Button>
       )}
-      <Comments
-        subreddit={subreddit}
-        article={article}
-        initialComments={comments}
-      />
+      <Comments article={article} initialComments={comments} />
     </>
   );
 };

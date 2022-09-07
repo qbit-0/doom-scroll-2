@@ -1,5 +1,6 @@
-import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, LinkIcon, SearchIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
   BoxProps,
   Button,
   ButtonGroup,
@@ -7,7 +8,9 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
+  Flex,
   HStack,
+  Icon,
   IconButton,
   Input,
   InputGroup,
@@ -29,6 +32,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { IoHome, IoStatsChart, IoTrendingUp } from "react-icons/io5";
 
 import { SubredditContext } from "../lib/context/SubredditProvider";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
@@ -42,7 +46,7 @@ type Props = {
 const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
   const router = useRouter();
   const [me, setMe] = useLocalStorage("me");
-  const { subreddit } = useContext(SubredditContext);
+  const { subreddit, subredditAbout } = useContext(SubredditContext);
 
   const [search, setSearch] = useState<string>(
     (router.query["q"] as string) || ""
@@ -88,13 +92,35 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             aria-label={"open navigation drawer"}
             onClick={onNavDrawerOpen}
           />
+          {subreddit && (
+            <Button
+              hidden={usingSearch}
+              rounded="full"
+              onClick={handleSubredditButtonClick}
+              display="inline"
+            >
+              <HStack>
+                <Avatar
+                  name="r /"
+                  src={
+                    subredditAbout?.data?.community_icon ||
+                    subredditAbout?.data?.icon_img
+                  }
+                  size="sm"
+                />
+                <Text>{`r/${subreddit}`}</Text>
+              </HStack>
+            </Button>
+          )}
           <Button
-            hidden={usingSearch}
+            hidden={hideNavButtons || usingSearch}
             rounded="full"
-            onClick={handleSubredditButtonClick}
-            display="inline"
+            onClick={() => {
+              router.push("/");
+            }}
+            leftIcon={<IoHome />}
           >
-            {subreddit ? `r/${subreddit}` : "Home"}
+            Home
           </Button>
           <Button
             hidden={hideNavButtons || usingSearch}
@@ -102,6 +128,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             onClick={() => {
               router.push("/r/popular");
             }}
+            leftIcon={<IoTrendingUp />}
           >
             Popular
           </Button>
@@ -111,6 +138,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             onClick={() => {
               router.push("/r/all");
             }}
+            leftIcon={<IoStatsChart />}
           >
             All
           </Button>
@@ -178,12 +206,12 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
                 )}
               </HStack>
               <ButtonGroup w="full" variant="ghost">
-                <VStack>
-                  <Button w="full">Home</Button>
-                  <Button w="full">Popular</Button>
-                  <Button w="full">All</Button>
-                  <Button w="full">News</Button>
-                </VStack>
+                <Flex flexDir="column" align="start" w="full" rowGap="2">
+                  <Button leftIcon={<IoHome />}>Home</Button>
+                  <Button leftIcon={<IoTrendingUp />}>Popular</Button>
+                  <Button leftIcon={<IoStatsChart />}>All</Button>
+                  <Button leftIcon={<LinkIcon />}>News</Button>
+                </Flex>
               </ButtonGroup>
             </VStack>
           </DrawerBody>
