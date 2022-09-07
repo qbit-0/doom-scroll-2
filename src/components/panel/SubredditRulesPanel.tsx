@@ -8,17 +8,18 @@ import {
   PropsOf,
   SkeletonText,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useContext } from "react";
 
+import { SubredditContext } from "../../lib/context/SubredditProvider";
 import { RedditRules } from "../../lib/reddit/redditDataStructs";
 import Card from "../Card";
 import SanitizeHTML from "../SanitizeHTML";
 
-type Props = {
-  subredditRules?: RedditRules;
-} & PropsOf<typeof Card>;
+type Props = PropsOf<typeof Card>;
 
-const SubredditRulesPanel: FC<Props> = ({ subredditRules, ...innerProps }) => {
+const SubredditRulesPanel: FC<Props> = (props) => {
+  const { subredditRules } = useContext(SubredditContext);
+
   const rulesPlaceholder = [];
   for (let i = 0; i < 4; i++) {
     rulesPlaceholder.push(
@@ -35,7 +36,7 @@ const SubredditRulesPanel: FC<Props> = ({ subredditRules, ...innerProps }) => {
   }
 
   return (
-    <Card {...innerProps}>
+    <Card {...props}>
       <Heading size="lg">Rules</Heading>
       <Accordion allowMultiple>
         {subredditRules

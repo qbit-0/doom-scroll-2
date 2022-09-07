@@ -1,14 +1,18 @@
 import { useBoolean } from "@chakra-ui/react";
 import { FC, createContext } from "react";
 
-export const DisplaySettingsContext = createContext<{
+interface DisplaySettingsContextInterface {
   hideFilteredContent: boolean;
   setHideFilteredContent: {
     on: () => void;
     off: () => void;
     toggle: () => void;
   };
-}>({} as any);
+}
+
+export const DisplaySettingsContext = createContext(
+  {} as DisplaySettingsContextInterface
+);
 
 type Props = {
   children: React.ReactNode;

@@ -53,10 +53,15 @@ export const negativePostsPreset: PostsFilter = {
   minAggSentiment: -1,
   maxAggSentiment: 0,
 };
-export const PostsFilterContext = createContext<{
+
+interface PostsFilterContextInterface {
   postsFilter: PostsFilter;
   setPostsFilter: Dispatch<SetStateAction<PostsFilter>>;
-}>({} as any);
+}
+
+export const PostsFilterContext = createContext(
+  {} as PostsFilterContextInterface
+);
 
 type Props = {
   children: React.ReactNode;

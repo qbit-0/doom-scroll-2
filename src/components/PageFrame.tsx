@@ -1,4 +1,9 @@
-import { ChevronLeftIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronUpIcon,
+  InfoOutlineIcon,
+  SettingsIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -9,6 +14,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  HStack,
   Heading,
   IconButton,
   Portal,
@@ -46,9 +52,9 @@ const PageFrame: FC<Props> = ({
     onClose: onSettingsClose,
   } = useDisclosure();
   const {
-    isOpen: isDetailsOpen,
-    onOpen: onDetailsOpen,
-    onClose: onDetailsClose,
+    isOpen: isInfoOpen,
+    onOpen: onInfoOpen,
+    onClose: onInfoClose,
   } = useDisclosure();
   const bgColor = useColorModeValue("gray.200", "gray.900");
 
@@ -58,8 +64,7 @@ const PageFrame: FC<Props> = ({
 
   return (
     <>
-      <Box ref={topRef} />
-      <Box bgColor={bgColor}>
+      <Box ref={topRef} bgColor={bgColor}>
         {top}
         <Flex py="4" w="full" justify="center" columnGap={4}>
           <VStack maxW="2xl" h="full">
@@ -71,8 +76,26 @@ const PageFrame: FC<Props> = ({
           </VStack>
         </Flex>
       </Box>
-      <BackToTop topRef={topRef} position="fixed" bottom="8" right="8" />
       <Portal>
+        <HStack position="fixed" bottom="4" right="4">
+          <IconButton
+            colorScheme="red"
+            icon={<InfoOutlineIcon />}
+            rounded="full"
+            onClick={onInfoOpen}
+            aria-label={"subreddit info"}
+          />
+          <IconButton
+            colorScheme="red"
+            icon={<SettingsIcon />}
+            rounded="full"
+            onClick={onSettingsOpen}
+            aria-label={"subreddit info"}
+          />
+          <BackToTop topRef={topRef} />
+        </HStack>
+      </Portal>
+      {/* <Portal>
         <Flex
           direction="column"
           justify="center"
@@ -86,7 +109,7 @@ const PageFrame: FC<Props> = ({
             variant="outline"
             hidden={hideRightPanels}
             h="25%"
-            onClick={onDetailsOpen}
+            onClick={onInfoOpen}
             aria-label={"open detail panels"}
             roundedRight="none"
           >
@@ -102,7 +125,7 @@ const PageFrame: FC<Props> = ({
             <Text sx={{ writingMode: "vertical-rl" }}>Settings</Text>
           </Button>
         </Flex>
-      </Portal>
+      </Portal> */}
       <Drawer isOpen={isSettingsOpen} onClose={onSettingsClose} size="lg">
         <DrawerContent>
           <DrawerCloseButton />
@@ -118,13 +141,15 @@ const PageFrame: FC<Props> = ({
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      <Drawer isOpen={isDetailsOpen} onClose={onDetailsClose} size="lg">
+      <Drawer isOpen={isInfoOpen} onClose={onInfoClose} size="lg">
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
             <Heading>Subreddit Details</Heading>
           </DrawerHeader>
-          <DrawerBody>{right}</DrawerBody>
+          <DrawerBody>
+            <VStack>{right}</VStack>
+          </DrawerBody>
         </DrawerContent>
       </Drawer>
     </>

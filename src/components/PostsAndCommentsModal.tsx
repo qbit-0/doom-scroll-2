@@ -1,4 +1,5 @@
 import {
+  Box,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -6,16 +7,18 @@ import {
   ModalHeader,
   ModalOverlay,
   ModalProps,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { FC } from "react";
 
+import SubredditProvider from "../lib/context/SubredditProvider";
 import useReddit from "../lib/hooks/useReddit";
 import {
   RedditLink,
   RedditRules,
   RedditSubreddit,
 } from "../lib/reddit/redditDataStructs";
-import NavBarFrame from "./NavBarFrame";
+import NavFrame from "./NavFrame";
 import PageFrame from "./PageFrame";
 import SubredditBanner from "./SubredditBanner";
 import AboutSubredditPanel from "./panel/AboutSubredditPanel";
@@ -36,45 +39,61 @@ const PostsAndCommentsModal: FC<Props> = ({
 }) => {
   const subreddit = post.data.subreddit;
 
-  const { data: about } = useReddit<RedditSubreddit>({
+  const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
     path: `/r/${subreddit}/about`,
   });
-  const { data: rules } = useReddit<RedditRules>({
+  const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
     path: `/r/${subreddit}/about/rules`,
   });
 
+  const hideModalHeader = useBreakpointValue({ base: true, lg: false });
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6xl" {...modalProps}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={["md", "md", "xl", "3xl", "6xl"]}
+      {...modalProps}
+    >
       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-      <ModalContent mt="4">
-        <ModalHeader>
+      <ModalContent mt={["0", "0", "0", "4"]}>
+        <ModalHeader p="6" hidden={hideModalHeader}>
           <ModalCloseButton />
         </ModalHeader>
-        <ModalBody zIndex={0} p="2">
-          <NavBarFrame subreddit={subreddit}>
-            <PageFrame
-              top={
-                <SubredditBanner subreddit={subreddit} subredditAbout={about} />
-              }
-              left={
-                <PostAndComments
-                  subreddit={subreddit}
-                  article={post.data.id}
-                  initialPost={post}
-                  openModal={false}
-                />
-              }
-              right={
-                <>
-                  <AboutSubredditPanel subredditAbout={about} />
-                  <SubredditRulesPanel subredditRules={rules} />
-                </>
-              }
-              showExplanation={false}
-            />
-          </NavBarFrame>
+        <ModalBody p="0">
+          <SubredditProvider
+            initialSubreddit={subreddit}
+            initialSubredditAbout={subredditAbout}
+            initialSubredditRules={subredditRules}
+          >
+            <NavFrame>
+              <PageFrame
+                top={
+                  <SubredditBanner
+                    subreddit={subreddit}
+                    subredditAbout={subredditAbout}
+                  />
+                }
+                left={
+                  <PostAndComments
+                    subreddit={subreddit}
+                    article={post.data.id}
+                    initialPost={post}
+                    openModal={false}
+                  />
+                }
+                right={
+                  <>
+                    <AboutSubredditPanel />
+                    <SubredditRulesPanel />
+                  </>
+                }
+                showExplanation={false}
+              />
+            </NavFrame>
+          </SubredditProvider>
         </ModalBody>
       </ModalContent>
     </Modal>

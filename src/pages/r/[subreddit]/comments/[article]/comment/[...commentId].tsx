@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
-import AboutSubredditPanel from "../../../../../../components/panel/AboutSubredditPanel";
-import NavBarFrame from "../../../../../../components/NavBarFrame";
+import NavFrame from "../../../../../../components/NavFrame";
 import PageFrame from "../../../../../../components/PageFrame";
-import PostAndComments from "../../../../../../components/panel_collection/PostAndComments";
 import SubredditBanner from "../../../../../../components/SubredditBanner";
+import AboutSubredditPanel from "../../../../../../components/panel/AboutSubredditPanel";
 import SubredditRulesPanel from "../../../../../../components/panel/SubredditRulesPanel";
+import PostAndComments from "../../../../../../components/panel_collection/PostAndComments";
 import useReddit from "../../../../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -44,7 +44,7 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
   });
 
   return (
-    <NavBarFrame subreddit={subreddit}>
+    <NavFrame subreddit={subreddit}>
       <PageFrame
         top={
           <SubredditBanner
@@ -67,7 +67,7 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
         }
         showExplanation={false}
       />
-    </NavBarFrame>
+    </NavFrame>
   );
 };
 

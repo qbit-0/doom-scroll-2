@@ -138,6 +138,8 @@ const Post: FC<Props> = ({
   const result = useMemo(() => {
     return (
       <Card
+        borderWidth={[0, 0, 1]}
+        rounded={["none", "none", "md"]}
         p="0"
         disabled={disabled}
         darkenContentWhenDisabled
@@ -206,7 +208,7 @@ const Post: FC<Props> = ({
                   <Heading size="lg">{post.data.title}</Heading>
                 </Link>
               </Box>
-              {/* <PostBody post={post} /> */}
+              <PostBody post={post} />
             </Box>
           </Flex>
           <Stack direction={bottomStackDirection} p="2">

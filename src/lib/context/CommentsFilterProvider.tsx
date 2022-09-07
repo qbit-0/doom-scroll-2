@@ -45,10 +45,15 @@ export const negativeCommentsPreset: CommentsFilter = {
   minAggSentiment: -1,
   maxAggSentiment: 0,
 };
-export const CommentsFilterContext = createContext<{
+
+interface CommentsFilterContextInterface {
   commentsFilter: CommentsFilter;
   setCommentsFilter: Dispatch<SetStateAction<CommentsFilter>>;
-}>({} as any);
+}
+
+export const CommentsFilterContext = createContext(
+  {} as CommentsFilterContextInterface
+);
 
 type Props = {
   children: React.ReactNode;

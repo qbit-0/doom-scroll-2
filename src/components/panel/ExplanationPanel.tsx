@@ -58,7 +58,7 @@ const ExplanationPanel: FC<Props> = (props) => {
   };
 
   return (
-    <Card {...props}>
+    <Card borderWidth={[0, 0, 1]} rounded={["none", "none", "md"]} {...props}>
       <Heading size="2xl" w="full" my="4" textAlign="center">
         DoomScroll
       </Heading>
@@ -110,14 +110,14 @@ const ExplanationPanel: FC<Props> = (props) => {
         bgColor="gray.800"
         rounded="md"
         shadow="md"
-        w="75%"
+        w="90%"
         mx="auto"
         my="4"
       >
         <Box position="relative" top="4">
           <Text textAlign="left" fontSize="4xl" lineHeight="0">{`“`}</Text>
         </Box>
-        <Text px="8" my="4" textAlign="left" sx={{ textIndent: "16px" }}>
+        <Text px="8" textAlign="left" sx={{ textIndent: "16px" }}>
           {`Doomscroll: the tendency to continue to surf or scroll through bad
           news, even though that news is saddening, disheartening, or
           depressing.`}
