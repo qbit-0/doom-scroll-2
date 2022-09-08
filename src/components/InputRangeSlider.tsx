@@ -1,7 +1,6 @@
 import {
   Box,
-  Flex,
-  FlexProps,
+  HStack,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -14,6 +13,7 @@ import {
   RangeSliderProps,
   RangeSliderThumb,
   RangeSliderTrack,
+  StackProps,
   ThemingProps,
   UseCounterProps,
 } from "@chakra-ui/react";
@@ -33,7 +33,7 @@ type Props = {
   onBothChange: RangeSliderProps["onChange"];
   onChangeEnd: RangeSliderProps["onChangeEnd"];
   sliderMarks?: React.ReactNode;
-} & Omit<FlexProps, "onChange">;
+} & Omit<StackProps, "onChange">;
 
 const InputRangeSlider: FC<Props> = ({
   size,
@@ -70,7 +70,7 @@ const InputRangeSlider: FC<Props> = ({
 
   return (
     <>
-      <Flex columnGap="4" {...innerProps}>
+      <HStack columnGap="4" {...innerProps}>
         <NumberInput
           size={size}
           value={value[0]}
@@ -131,7 +131,7 @@ const InputRangeSlider: FC<Props> = ({
             <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-      </Flex>
+      </HStack>
     </>
   );
 };

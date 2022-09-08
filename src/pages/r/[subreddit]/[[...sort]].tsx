@@ -35,6 +35,7 @@ import SubredditBanner from "../../../components/SubredditBanner";
 import AboutAllPanel from "../../../components/panel/AboutAllPanel";
 import AboutPopularPanel from "../../../components/panel/AboutPopularPanel";
 import AboutSubredditPanel from "../../../components/panel/AboutSubredditPanel";
+import ButtonPanel from "../../../components/panel/ButtonPanel";
 import SubredditRulesPanel from "../../../components/panel/SubredditRulesPanel";
 import SubredditPostsListings from "../../../components/panel_collection/SubredditPostsListings";
 import SubredditProvider from "../../../lib/context/SubredditProvider";
@@ -151,87 +152,81 @@ const SubredditPage: FC<Props> = ({
             top={top}
             left={
               <>
-                <Card p="0">
-                  <ButtonGroup w="full" variant="outline" p="2">
-                    <Button
-                      value="hot"
-                      rounded="full"
-                      isActive={sort === "hot"}
-                      leftIcon={<CalendarIcon />}
-                      onClick={setValue(setSort)}
-                    >
-                      Hot
-                    </Button>
-                    <Button
-                      value="new"
-                      rounded="full"
-                      isActive={sort === "new"}
-                      leftIcon={<TimeIcon />}
-                      onClick={setValue(setSort)}
-                    >
-                      New
-                    </Button>
-                    <Button
-                      value="top"
-                      rounded="full"
-                      isActive={sort === "top"}
-                      leftIcon={<StarIcon />}
-                      onClick={setValue(setSort)}
-                    >
-                      Top
-                    </Button>
-                    {sort === "top" && (
-                      <Menu>
-                        <MenuButton
-                          as={Button}
-                          rounded="full"
-                          rightIcon={<ChevronDownIcon />}
-                        >
-                          {time === "hour" && "Now"}
-                          {time === "day" && "Today"}
-                          {time === "week" && "This Week"}
-                          {time === "month" && "This Month"}
-                          {time === "year" && "This Year"}
-                          {time === "all" && "All Time"}
-                        </MenuButton>
-                        <MenuList>
-                          <MenuItem value="hour" onClick={setValue(setTime)}>
-                            Now
-                          </MenuItem>
-                          <MenuItem value="day" onClick={setValue(setTime)}>
-                            Today
-                          </MenuItem>
-                          <MenuItem value="week" onClick={setValue(setTime)}>
-                            This Week
-                          </MenuItem>
-                          <MenuItem value="month" onClick={setValue(setTime)}>
-                            This Month
-                          </MenuItem>
-                          <MenuItem value="year" onClick={setValue(setTime)}>
-                            This Year
-                          </MenuItem>
-                          <MenuItem value="all" onClick={setValue(setTime)}>
-                            All Time
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                    )}
-                    <Button
-                      value="rising"
-                      rounded="full"
-                      isActive={sort === "rising"}
-                      leftIcon={<TriangleUpIcon />}
-                      onClick={setValue(setSort)}
-                    >
-                      Rising
-                    </Button>
-                  </ButtonGroup>
-                </Card>
-                <SubredditPostsListings
-                  subreddit={subreddit}
-                  sort={sort}
-                  time={time}
-                />
+                <ButtonPanel>
+                  <Button
+                    value="hot"
+                    rounded="full"
+                    isActive={sort === "hot"}
+                    leftIcon={<CalendarIcon />}
+                    onClick={setValue(setSort)}
+                  >
+                    Hot
+                  </Button>
+                  <Button
+                    value="new"
+                    rounded="full"
+                    isActive={sort === "new"}
+                    leftIcon={<TimeIcon />}
+                    onClick={setValue(setSort)}
+                  >
+                    New
+                  </Button>
+                  <Button
+                    value="top"
+                    rounded="full"
+                    isActive={sort === "top"}
+                    leftIcon={<StarIcon />}
+                    onClick={setValue(setSort)}
+                  >
+                    Top
+                  </Button>
+                  {sort === "top" && (
+                    <Menu>
+                      <MenuButton
+                        as={Button}
+                        rounded="full"
+                        rightIcon={<ChevronDownIcon />}
+                      >
+                        {time === "hour" && "Now"}
+                        {time === "day" && "Today"}
+                        {time === "week" && "This Week"}
+                        {time === "month" && "This Month"}
+                        {time === "year" && "This Year"}
+                        {time === "all" && "All Time"}
+                      </MenuButton>
+                      <MenuList>
+                        <MenuItem value="hour" onClick={setValue(setTime)}>
+                          Now
+                        </MenuItem>
+                        <MenuItem value="day" onClick={setValue(setTime)}>
+                          Today
+                        </MenuItem>
+                        <MenuItem value="week" onClick={setValue(setTime)}>
+                          This Week
+                        </MenuItem>
+                        <MenuItem value="month" onClick={setValue(setTime)}>
+                          This Month
+                        </MenuItem>
+                        <MenuItem value="year" onClick={setValue(setTime)}>
+                          This Year
+                        </MenuItem>
+                        <MenuItem value="all" onClick={setValue(setTime)}>
+                          All Time
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  )}
+                  <Button
+                    value="rising"
+                    rounded="full"
+                    isActive={sort === "rising"}
+                    leftIcon={<TriangleUpIcon />}
+                    onClick={setValue(setSort)}
+                  >
+                    Rising
+                  </Button>
+                </ButtonPanel>
+                <SubredditPostsListings sort={sort} time={time} />
               </>
             }
             right={subredditInfoDisplay}

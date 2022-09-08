@@ -18,7 +18,7 @@ const Card: FC<Props> = ({
   ...innerProps
 }) => {
   const { hideFilteredContent } = useContext(DisplaySettingsContext);
-  const bgColor = useColorModeValue("white", "gray.700");
+  const bgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Box

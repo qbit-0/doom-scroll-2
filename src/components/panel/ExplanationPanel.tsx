@@ -107,7 +107,7 @@ const ExplanationPanel: FC<Props> = (props) => {
       </Heading>
       <Box
         p="4"
-        bgColor="gray.800"
+        bgColor="gray.700"
         rounded="md"
         shadow="md"
         w="90%"

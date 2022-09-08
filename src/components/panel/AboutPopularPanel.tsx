@@ -8,7 +8,7 @@ type Props = PropsOf<typeof Card>;
 const AboutPopularPanel: FC<Props> = (props) => {
   return (
     <Card {...props}>
-      <Heading size="lg">r/popular</Heading>
+      <Heading size="lg">Popular</Heading>
       <Text>
         The best posts on Reddit for you, pulled from the most active
         communities on Reddit. Check here to see the most shared, upvoted, and

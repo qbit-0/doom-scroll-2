@@ -170,11 +170,7 @@ const HomePage: FC<Props> = ({ initialSort, initialTime }) => {
                     Rising
                   </Button>
                 </ButtonPanel>
-                <SubredditPostsListings
-                  subreddit={""}
-                  sort={sort}
-                  time={time}
-                />
+                <SubredditPostsListings sort={sort} time={time} />
               </>
             }
             right={<HomeAbout />}

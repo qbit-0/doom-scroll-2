@@ -48,8 +48,8 @@ export const getSearchPostsPath = (
 };
 
 export const getCommentsPath = (
+  subreddit: string,
   article: string,
-  subreddit?: string,
   commentId?: string,
   sort = "best"
 ) => {

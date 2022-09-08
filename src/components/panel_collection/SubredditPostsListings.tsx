@@ -1,22 +1,19 @@
 import { StackProps } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useContext } from "react";
 
+import { SubredditContext } from "../../lib/context/SubredditProvider";
 import { getSubredditPath } from "../../lib/reddit/redditUrlUtils";
 import Listings from "../Listings";
 import PostListing from "../PostListing";
 
 type Props = {
-  subreddit: string;
   sort: string;
   time: string;
 } & StackProps;
 
-const SubredditPostsListings: FC<Props> = ({
-  subreddit,
-  sort,
-  time,
-  ...innerProps
-}) => {
+const SubredditPostsListings: FC<Props> = ({ sort, time, ...innerProps }) => {
+  const { subreddit } = useContext(SubredditContext);
+
   return (
     <Listings
       createListing={(after, updateAfter, index) => {

@@ -2,8 +2,10 @@ import { HamburgerIcon, LinkIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   BoxProps,
+  BreadcrumbSeparator,
   Button,
   ButtonGroup,
+  Divider,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -16,6 +18,7 @@ import {
   InputGroup,
   InputRightElement,
   Spacer,
+  StackDivider,
   Text,
   VStack,
   chakra,
@@ -24,6 +27,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import {
   ChangeEventHandler,
@@ -37,6 +41,7 @@ import { IoHome, IoStatsChart, IoTrendingUp } from "react-icons/io5";
 import { SubredditContext } from "../lib/context/SubredditProvider";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { getAuthRequestUrl } from "../lib/reddit/redditOAuth";
+import Card from "./Card";
 import RedditAvatar from "./RedditAvatar";
 
 type Props = {
@@ -83,88 +88,116 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
   return (
     <>
       <nav>
-        <HStack w="full" p="2" bgColor="gray.800" {...innerProps}>
-          <IconButton
-            hidden={usingSearch}
-            variant="ghost"
-            rounded="full"
-            icon={me ? <RedditAvatar username={me.name} /> : <HamburgerIcon />}
-            aria-label={"open navigation drawer"}
-            onClick={onNavDrawerOpen}
-          />
-          {subreddit && (
-            <Button
-              hidden={usingSearch}
-              rounded="full"
-              onClick={handleSubredditButtonClick}
-              display="inline"
-            >
-              <HStack>
-                <Avatar
-                  name="r /"
-                  src={
-                    subredditAbout?.data?.community_icon ||
-                    subredditAbout?.data?.icon_img
-                  }
-                  size="sm"
-                />
-                <Text>{`r/${subreddit}`}</Text>
-              </HStack>
-            </Button>
-          )}
-          <Button
-            hidden={hideNavButtons || usingSearch}
-            rounded="full"
-            onClick={() => {
-              router.push("/");
-            }}
-            leftIcon={<IoHome />}
-          >
-            Home
-          </Button>
-          <Button
-            hidden={hideNavButtons || usingSearch}
-            rounded="full"
-            onClick={() => {
-              router.push("/r/popular");
-            }}
-            leftIcon={<IoTrendingUp />}
-          >
-            Popular
-          </Button>
-          <Button
-            hidden={hideNavButtons || usingSearch}
-            rounded="full"
-            onClick={() => {
-              router.push("/r/all");
-            }}
-            leftIcon={<IoStatsChart />}
-          >
-            All
-          </Button>
-          <chakra.form flex="auto" onSubmit={handleSearchSubmit}>
-            <InputGroup>
-              <Input
-                variant="filled"
-                placeholder="Search"
-                rounded="full"
-                value={search}
-                onChange={handleSearchChange}
-                onFocus={setUsingSearch.on}
-                onBlur={setUsingSearch.off}
+        <Card
+          p="2"
+          borderTopWidth={0}
+          borderLeftWidth={0}
+          borderRightWidth={0}
+          rounded="none"
+          {...innerProps}
+        >
+          <HStack>
+            <ButtonGroup overflowX="clip" variant="solid" isAttached>
+              <IconButton
+                hidden={usingSearch}
+                roundedLeft="full"
+                icon={
+                  me ? <RedditAvatar username={me.name} /> : <HamburgerIcon />
+                }
+                aria-label={"open navigation drawer"}
+                onClick={onNavDrawerOpen}
               />
-              <InputRightElement>
-                <IconButton
-                  icon={<SearchIcon />}
+              <Button
+                hidden={usingSearch}
+                pl="1"
+                pr="4"
+                rounded="full"
+                onClick={handleSubredditButtonClick}
+                display="inline"
+              >
+                <HStack w="full">
+                  {subreddit === "" && <IoHome />}
+                  {subreddit === "popular" && <IoTrendingUp />}
+                  {subreddit === "all" && <IoStatsChart />}
+                  {subreddit !== "" &&
+                    subreddit !== "popular" &&
+                    subreddit !== "all" && (
+                      <Avatar
+                        name="r /"
+                        src={
+                          subredditAbout?.data?.community_icon ||
+                          subredditAbout?.data?.icon_img
+                        }
+                        size="sm"
+                      />
+                    )}
+                  <Text overflowX="clip" textOverflow="ellipsis">
+                    {subreddit === "" && "Home"}
+                    {subreddit === "popular" && "Popular"}
+                    {subreddit === "all" && "All"}
+                    {subreddit !== "" &&
+                      subreddit !== "popular" &&
+                      subreddit !== "all" &&
+                      subreddit}
+                  </Text>
+                </HStack>
+              </Button>
+            </ButtonGroup>
+            <Button
+              hidden={subreddit === "" || hideNavButtons || usingSearch}
+              rounded="full"
+              onClick={() => {
+                router.push("/");
+              }}
+              leftIcon={<IoHome />}
+            >
+              Home
+            </Button>
+            <Button
+              hidden={subreddit === "popular" || hideNavButtons || usingSearch}
+              rounded="full"
+              onClick={() => {
+                router.push("/r/popular");
+              }}
+              leftIcon={<IoTrendingUp />}
+            >
+              Popular
+            </Button>
+            <Button
+              hidden={subreddit === "all" || hideNavButtons || usingSearch}
+              rounded="full"
+              onClick={() => {
+                router.push("/r/all");
+              }}
+              leftIcon={<IoStatsChart />}
+            >
+              All
+            </Button>
+            <chakra.form flex="1" onSubmit={handleSearchSubmit}>
+              <InputGroup>
+                <Input
+                  variant="filled"
+                  minW="32"
+                  placeholder="Search"
                   rounded="full"
-                  aria-label={"search submit"}
-                  type="submit"
+                  value={search}
+                  onChange={handleSearchChange}
+                  onFocus={setUsingSearch.on}
+                  onBlur={setUsingSearch.off}
                 />
-              </InputRightElement>
-            </InputGroup>
-          </chakra.form>
-          {additionalNav}
-        </HStack>
+                <InputRightElement>
+                  <IconButton
+                    icon={<SearchIcon />}
+                    rounded="full"
+                    aria-label={"search submit"}
+                    type="submit"
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </chakra.form>
+            {additionalNav}
+          </HStack>
+        </Card>
       </nav>
       <Drawer
         isOpen={isNavDrawerOpen}
@@ -206,12 +239,20 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
                 )}
               </HStack>
               <ButtonGroup w="full" variant="ghost">
-                <Flex flexDir="column" align="start" w="full" rowGap="2">
-                  <Button leftIcon={<IoHome />}>Home</Button>
-                  <Button leftIcon={<IoTrendingUp />}>Popular</Button>
-                  <Button leftIcon={<IoStatsChart />}>All</Button>
-                  <Button leftIcon={<LinkIcon />}>News</Button>
-                </Flex>
+                <VStack w="full" alignItems="start">
+                  <NextLink href={"/"}>
+                    <Button leftIcon={<IoHome />}>Home</Button>
+                  </NextLink>
+                  <NextLink href={"/r/popular"}>
+                    <Button leftIcon={<IoTrendingUp />}>Popular</Button>
+                  </NextLink>
+                  <NextLink href={"/r/all"}>
+                    <Button leftIcon={<IoStatsChart />}>All</Button>
+                  </NextLink>
+                  <NextLink href={"/r/news"}>
+                    <Button leftIcon={<LinkIcon />}>news</Button>
+                  </NextLink>
+                </VStack>
               </ButtonGroup>
             </VStack>
           </DrawerBody>

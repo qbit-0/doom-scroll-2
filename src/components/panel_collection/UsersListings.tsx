@@ -1,10 +1,7 @@
 import { StackProps } from "@chakra-ui/react";
 import { FC } from "react";
 
-import {
-  getSearchSubredditsPath,
-  getSearchUsersPath,
-} from "../../lib/reddit/redditUrlUtils";
+import { getSearchUsersPath } from "../../lib/reddit/redditUrlUtils";
 import Listings from "../Listings";
 import UserListing from "../UserListing";
 

@@ -1,24 +1,16 @@
-import {
-  ChevronLeftIcon,
-  ChevronUpIcon,
-  InfoOutlineIcon,
-  SettingsIcon,
-} from "@chakra-ui/icons";
+import { InfoOutlineIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
-  DrawerOverlay,
   Flex,
   HStack,
   Heading,
   IconButton,
   Portal,
-  Text,
   VStack,
   useBreakpointValue,
   useColorModeValue,
@@ -27,7 +19,6 @@ import {
 import React, { FC, useRef } from "react";
 
 import BackToTop from "./BackToTop";
-import Card from "./Card";
 import DisplaySettingsPanel from "./panel/DisplaySettingsPanel";
 import ExplanationPanel from "./panel/ExplanationPanel";
 import FilterCommentsPanel from "./panel/FilterCommentsPanel";
@@ -56,7 +47,7 @@ const PageFrame: FC<Props> = ({
     onOpen: onInfoOpen,
     onClose: onInfoClose,
   } = useDisclosure();
-  const bgColor = useColorModeValue("gray.200", "gray.900");
+  const bgColor = useColorModeValue("gray.200", "black");
 
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +57,7 @@ const PageFrame: FC<Props> = ({
     <>
       <Box ref={topRef} bgColor={bgColor}>
         {top}
-        <Flex py="4" w="full" justify="center" columnGap={4}>
+        <Flex py="4" justify="center" columnGap={4}>
           <VStack maxW="2xl" h="full">
             {showExplanation && <ExplanationPanel />}
             {left}
@@ -95,37 +86,6 @@ const PageFrame: FC<Props> = ({
           <BackToTop topRef={topRef} />
         </HStack>
       </Portal>
-      {/* <Portal>
-        <Flex
-          direction="column"
-          justify="center"
-          position="fixed"
-          top="0"
-          right="0"
-          h="full"
-          rowGap="2"
-        >
-          <Button
-            variant="outline"
-            hidden={hideRightPanels}
-            h="25%"
-            onClick={onInfoOpen}
-            aria-label={"open detail panels"}
-            roundedRight="none"
-          >
-            <Text sx={{ writingMode: "vertical-rl" }}>Details</Text>
-          </Button>
-          <Button
-            variant="outline"
-            h="25%"
-            onClick={onSettingsOpen}
-            aria-label={"open settings panels"}
-            roundedRight="none"
-          >
-            <Text sx={{ writingMode: "vertical-rl" }}>Settings</Text>
-          </Button>
-        </Flex>
-      </Portal> */}
       <Drawer isOpen={isSettingsOpen} onClose={onSettingsClose} size="lg">
         <DrawerContent>
           <DrawerCloseButton />
