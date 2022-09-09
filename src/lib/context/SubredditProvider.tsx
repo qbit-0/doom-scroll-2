@@ -10,8 +10,8 @@ import {
 import { RedditRules, RedditSubreddit } from "../reddit/redditDataStructs";
 
 interface SubredditContextInterface {
-  subreddit: string;
-  setSubreddit: Dispatch<SetStateAction<string>>;
+  subreddit: string | undefined;
+  setSubreddit: Dispatch<SetStateAction<string | undefined>>;
   subredditAbout?: RedditSubreddit;
   setSubredditAbout: Dispatch<SetStateAction<RedditSubreddit | undefined>>;
   subredditRules?: RedditRules;
@@ -33,7 +33,9 @@ const SubredditProvider: FC<Props> = ({
   initialSubredditRules,
   children,
 }) => {
-  const [subreddit, setSubreddit] = useState<string>(initialSubreddit || "");
+  const [subreddit, setSubreddit] = useState<string | undefined>(
+    initialSubreddit
+  );
   const [subredditAbout, setSubredditAbout] = useState<
     RedditSubreddit | undefined
   >(initialSubredditAbout);
@@ -42,7 +44,7 @@ const SubredditProvider: FC<Props> = ({
   );
 
   useEffect(() => {
-    setSubreddit(initialSubreddit || "");
+    setSubreddit(initialSubreddit);
   }, [initialSubreddit]);
 
   useEffect(() => {

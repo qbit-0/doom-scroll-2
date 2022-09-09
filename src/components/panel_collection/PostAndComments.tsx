@@ -36,7 +36,11 @@ const PostAndComments: FC<Props> = ({
   const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
 
-  const { path, query } = getCommentsPath(subreddit, article, commentId);
+  const { pathname: path, query } = getCommentsPath(
+    subreddit,
+    article,
+    commentId
+  );
 
   const { data: postAndComments } = useReddit<RedditPostAndComments>({
     method: "GET",

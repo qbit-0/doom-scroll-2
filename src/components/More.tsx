@@ -51,9 +51,13 @@ const More: FC<Props> = ({ more, updateReplies, article, ...innerProps }) => {
   return (
     <Card p="1" {...innerProps}>
       {more.data.count > 0 ? (
-        <Button isLoading={isLoading} onClick={handleClickMore}>{`${
-          more.data.count
-        } more ${more.data.count > 1 ? "replies" : "reply"}`}</Button>
+        <Button
+          variant="link"
+          isLoading={isLoading}
+          onClick={handleClickMore}
+        >{`${more.data.count} more ${
+          more.data.count > 1 ? "replies" : "reply"
+        }`}</Button>
       ) : (
         <NextLink
           href={`/r/${subreddit}/comments/${article}/comment/${more.data.parent_id.slice(

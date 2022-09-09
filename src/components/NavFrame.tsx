@@ -10,14 +10,12 @@ type Props = {
 
 const NavFrame: FC<Props> = ({ additionalNav, children, ...innerProps }) => {
   return (
-    <>
-      <Box {...innerProps}>
-        <Box position="sticky" top="0" zIndex="10">
-          <NavBar additionalNav={additionalNav} />
-        </Box>
-        {children}
+    <Box {...innerProps}>
+      <Box position="sticky" top="0" zIndex="10">
+        <NavBar additionalNav={additionalNav} />
       </Box>
-    </>
+      {children}
+    </Box>
   );
 };
 

@@ -1,15 +1,7 @@
-import {
-  BellIcon,
-  CalendarIcon,
-  ChevronDownIcon,
-  StarIcon,
-  TimeIcon,
-  TriangleUpIcon,
-} from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Button,
   ButtonGroup,
-  HStack,
   IconButton,
   Menu,
   MenuButton,
@@ -19,71 +11,76 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
-  Select,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, FC } from "react";
 import { IoFilter } from "react-icons/io5";
 
-import Card from "../components/Card";
 import NavFrame from "../components/NavFrame";
 import PageFrame from "../components/PageFrame";
 import ButtonPanel from "../components/panel/ButtonPanel";
 import SearchPostsListings from "../components/panel_collection/SearchPostsListings";
 import SubredditListings from "../components/panel_collection/SubredditListings";
 import UserListings from "../components/panel_collection/UsersListings";
-import { getSearchPostsPath } from "../lib/reddit/redditUrlUtils";
-import setValue from "../lib/utils/setValue";
+import SubredditProvider from "../lib/context/SubredditProvider";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const initialSearchQuery = context.query["q"] || "";
-  const initialSort = context.query["sort"] || "relevance";
-  const initialTime = context.query["t"] || "all";
-  const initialType = context.query["type"] || "link";
+  const searchQuery = context.query["q"] || "";
+  const sort = context.query["sort"] || "relevance";
+  const time = context.query["t"] || "all";
+  const type = context.query["type"] || "link";
 
   return {
     props: {
-      initialSearchQuery: initialSearchQuery,
-      initialSort: initialSort,
-      initialTime: initialTime,
-      initialType: initialType,
+      navProps: {
+        searchQuery,
+        sort,
+        time,
+        type,
+      },
     },
   };
 };
 
-type Props = {
-  initialSearchQuery: string;
-  initialSort: string;
-  initialTime: string;
-  initialType: string;
+type NavProps = {
+  searchQuery: string;
+  sort: string;
+  time: string;
+  type: string;
 };
 
-const SearchPage: FC<Props> = ({
-  initialSearchQuery,
-  initialSort,
-  initialTime,
-  initialType,
-}) => {
+type Props = {
+  navProps: NavProps;
+};
+
+const SearchPage: FC<Props> = ({ navProps }) => {
+  const { searchQuery, sort, time, type } = navProps;
+
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState<string>(initialSearchQuery);
-  const [sort, setSort] = useState<string>(initialSort);
-  const [time, setTime] = useState<string>(initialTime);
-  const [type, setType] = useState<string>(initialType);
 
-  useEffect(() => {
-    if (!searchQuery || !sort || !time || !type) return;
-    router.replace(getSearchPostsPath(searchQuery, sort, time, type).pathname);
-  }, [searchQuery, sort, time, type]);
+  const renavigate = (newNavProps: NavProps) => {
+    const pathname = "/search";
+    const query: Record<string, string> = {};
+    query["q"] = newNavProps.searchQuery;
+    if (newNavProps.sort !== "relevance") query["sort"] = newNavProps.sort;
+    if (newNavProps.time !== "all") query["t"] = newNavProps.time;
+    if (newNavProps.type !== "link") query["type"] = newNavProps.type;
 
-  useEffect(() => {
-    setSearchQuery(initialSearchQuery);
-    setSort(initialSort);
-    setTime(initialTime);
-    setType(initialType);
-  }, [initialSearchQuery, initialSort, initialTime, initialType]);
+    router.push({
+      pathname,
+      query,
+    });
+  };
+
+  const handleNavChange = (propName: keyof NavProps, callback?: () => void) => {
+    return (event: ChangeEvent<any>) => {
+      renavigate({ ...navProps, [propName]: event.currentTarget.value });
+      if (callback) callback();
+    };
+  };
 
   const {
     isOpen: isSortModalOpen,
@@ -92,91 +89,89 @@ const SearchPage: FC<Props> = ({
   } = useDisclosure();
 
   let content;
-  if (searchQuery && sort && time && type) {
-    switch (type) {
-      case "link":
-        content = (
-          <>
-            <ButtonPanel>
-              <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  {sort === "relevance" && "Relevance"}
-                  {sort === "hot" && "Hot"}
-                  {sort === "top" && "Top"}
-                  {sort === "new" && "New"}
-                  {sort === "comments" && "Comments"}
-                </MenuButton>
-                <MenuList>
-                  <MenuItem value="relevance" onClick={setValue(setSort)}>
-                    Relevance
-                  </MenuItem>
-                  <MenuItem value="hot" onClick={setValue(setSort)}>
-                    Hot
-                  </MenuItem>
-                  <MenuItem value="top" onClick={setValue(setSort)}>
-                    Top
-                  </MenuItem>
-                  <MenuItem value="new" onClick={setValue(setSort)}>
-                    New
-                  </MenuItem>
-                  <MenuItem value="comments" onClick={setValue(setSort)}>
-                    Comments
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+  switch (type) {
+    case "link":
+      content = (
+        <>
+          <ButtonPanel>
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                {sort === "relevance" && "Relevance"}
+                {sort === "hot" && "Hot"}
+                {sort === "top" && "Top"}
+                {sort === "new" && "New"}
+                {sort === "comments" && "Comments"}
+              </MenuButton>
+              <MenuList>
+                <MenuItem value="relevance" onClick={handleNavChange("sort")}>
+                  Relevance
+                </MenuItem>
+                <MenuItem value="hot" onClick={handleNavChange("sort")}>
+                  Hot
+                </MenuItem>
+                <MenuItem value="top" onClick={handleNavChange("sort")}>
+                  Top
+                </MenuItem>
+                <MenuItem value="new" onClick={handleNavChange("sort")}>
+                  New
+                </MenuItem>
+                <MenuItem value="comments" onClick={handleNavChange("sort")}>
+                  Comments
+                </MenuItem>
+              </MenuList>
+            </Menu>
 
-              <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  {time === "all" && "All Time"}
-                  {time === "year" && "Past Year"}
-                  {time === "month" && "Past Month"}
-                  {time === "week" && "Past Week"}
-                  {time === "day" && "Past 24 Hours"}
-                  {time === "hour" && "Past Hour"}
-                </MenuButton>
-                <MenuList>
-                  <MenuItem value="all" onClick={setValue(setTime)}>
-                    All Time
-                  </MenuItem>
-                  <MenuItem value="year" onClick={setValue(setTime)}>
-                    Past Year
-                  </MenuItem>
-                  <MenuItem value="month" onClick={setValue(setTime)}>
-                    Past Month
-                  </MenuItem>
-                  <MenuItem value="week" onClick={setValue(setTime)}>
-                    Past Week
-                  </MenuItem>
-                  <MenuItem value="day" onClick={setValue(setTime)}>
-                    Past 24 Hours
-                  </MenuItem>
-                  <MenuItem value="hour" onClick={setValue(setTime)}>
-                    Past Hour
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </ButtonPanel>
-            <SearchPostsListings
-              searchQuery={searchQuery}
-              sort={sort}
-              time={time}
-            />
-          </>
-        );
-        break;
-      case "comment":
-        break;
-      case "sr":
-        content = <SubredditListings searchQuery={searchQuery} />;
-        break;
-      case "user":
-        content = <UserListings searchQuery={searchQuery} />;
-        break;
-    }
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                {time === "all" && "All Time"}
+                {time === "year" && "Past Year"}
+                {time === "month" && "Past Month"}
+                {time === "week" && "Past Week"}
+                {time === "day" && "Past 24 Hours"}
+                {time === "hour" && "Past Hour"}
+              </MenuButton>
+              <MenuList>
+                <MenuItem value="all" onClick={handleNavChange("time")}>
+                  All Time
+                </MenuItem>
+                <MenuItem value="year" onClick={handleNavChange("time")}>
+                  Past Year
+                </MenuItem>
+                <MenuItem value="month" onClick={handleNavChange("time")}>
+                  Past Month
+                </MenuItem>
+                <MenuItem value="week" onClick={handleNavChange("time")}>
+                  Past Week
+                </MenuItem>
+                <MenuItem value="day" onClick={handleNavChange("time")}>
+                  Past 24 Hours
+                </MenuItem>
+                <MenuItem value="hour" onClick={handleNavChange("time")}>
+                  Past Hour
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </ButtonPanel>
+          <SearchPostsListings
+            searchQuery={searchQuery}
+            sort={sort}
+            time={time}
+          />
+        </>
+      );
+      break;
+    case "comment":
+      break;
+    case "sr":
+      content = <SubredditListings searchQuery={searchQuery} />;
+      break;
+    case "user":
+      content = <UserListings searchQuery={searchQuery} />;
+      break;
   }
 
   return (
-    <>
+    <SubredditProvider initialSubreddit={undefined}>
       <NavFrame
         additionalNav={
           <IconButton
@@ -194,21 +189,21 @@ const SearchPage: FC<Props> = ({
                 <Button
                   value="link"
                   isActive={type === "link"}
-                  onClick={setValue(setType)}
+                  onClick={handleNavChange("type")}
                 >
                   Posts
                 </Button>
                 <Button
                   value="sr"
                   isActive={type === "sr"}
-                  onClick={setValue(setType)}
+                  onClick={handleNavChange("type")}
                 >
                   Communities
                 </Button>
                 <Button
                   value="user"
                   isActive={type === "user"}
-                  onClick={setValue(setType)}
+                  onClick={handleNavChange("type")}
                 >
                   People
                 </Button>
@@ -242,19 +237,19 @@ const SearchPage: FC<Props> = ({
                   <MenuList>
                     <MenuItem
                       value="link"
-                      onClick={setValue(setType, onSortModalClose)}
+                      onClick={handleNavChange("type", onSortModalClose)}
                     >
                       Posts
                     </MenuItem>
                     <MenuItem
                       value="sr"
-                      onClick={setValue(setType, onSortModalClose)}
+                      onClick={handleNavChange("type", onSortModalClose)}
                     >
                       Communities
                     </MenuItem>
                     <MenuItem
                       value="user"
-                      onClick={setValue(setType, onSortModalClose)}
+                      onClick={handleNavChange("type", onSortModalClose)}
                     >
                       People
                     </MenuItem>
@@ -276,31 +271,31 @@ const SearchPage: FC<Props> = ({
                   <MenuList>
                     <MenuItem
                       value="relevance"
-                      onClick={setValue(setSort, onSortModalClose)}
+                      onClick={handleNavChange("sort", onSortModalClose)}
                     >
                       Relevance
                     </MenuItem>
                     <MenuItem
                       value="hot"
-                      onClick={setValue(setSort, onSortModalClose)}
+                      onClick={handleNavChange("sort", onSortModalClose)}
                     >
                       Hot
                     </MenuItem>
                     <MenuItem
                       value="top"
-                      onClick={setValue(setSort, onSortModalClose)}
+                      onClick={handleNavChange("sort", onSortModalClose)}
                     >
                       Top
                     </MenuItem>
                     <MenuItem
                       value="new"
-                      onClick={setValue(setSort, onSortModalClose)}
+                      onClick={handleNavChange("sort", onSortModalClose)}
                     >
                       New
                     </MenuItem>
                     <MenuItem
                       value="comments"
-                      onClick={setValue(setSort, onSortModalClose)}
+                      onClick={handleNavChange("sort", onSortModalClose)}
                     >
                       Comments
                     </MenuItem>
@@ -323,37 +318,37 @@ const SearchPage: FC<Props> = ({
                   <MenuList>
                     <MenuItem
                       value="all"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       All Time
                     </MenuItem>
                     <MenuItem
                       value="year"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       Past Year
                     </MenuItem>
                     <MenuItem
                       value="month"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       Past Month
                     </MenuItem>
                     <MenuItem
                       value="week"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       Past Week
                     </MenuItem>
                     <MenuItem
                       value="day"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       Past 24 Hours
                     </MenuItem>
                     <MenuItem
                       value="hour"
-                      onClick={setValue(setTime, onSortModalClose)}
+                      onClick={handleNavChange("time", onSortModalClose)}
                     >
                       Past Hour
                     </MenuItem>
@@ -364,7 +359,7 @@ const SearchPage: FC<Props> = ({
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+    </SubredditProvider>
   );
 };
 

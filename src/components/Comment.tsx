@@ -19,9 +19,9 @@ import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
-import Comments from "./panel_collection/Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
+import Comments from "./panel_collection/Comments";
 
 type Props = {
   article: string;
@@ -76,7 +76,9 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
   const result = useMemo(() => {
     return (
       <Card
-        borderWidth={1}
+        borderWidth={0}
+        borderLeftWidth={1}
+        roundedLeft="none"
         borderColor="gray.500"
         p="1"
         disabled={disabled}

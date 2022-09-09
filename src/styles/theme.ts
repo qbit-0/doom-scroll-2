@@ -7,16 +7,6 @@ const themeConfig: ThemeConfig = {
 
 const theme = extendTheme({
   config: themeConfig,
-  // styles: {
-  //   global: {
-  //     a: {
-  //       color: "teal.200",
-  //       _hover: {
-  //         textDecoration: "underline",
-  //       },
-  //     },
-  //   },
-  // },
 });
 
 export default theme;

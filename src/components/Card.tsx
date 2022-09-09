@@ -24,9 +24,9 @@ const Card: FC<Props> = ({
     <Box
       display={disabled && hideFilteredContent ? "none" : "block"}
       bgColor={disabled && changeBgWhenDisabled ? "black" : bgColor}
-      borderWidth={1}
+      borderWidth={[0, 0, 1]}
+      rounded={["none", "none", "md"]}
       borderColor="gray.500"
-      rounded="md"
       w="full"
       p="4"
       boxShadow={disabled ? "none" : "md"}

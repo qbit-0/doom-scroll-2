@@ -2,23 +2,18 @@ import { HamburgerIcon, LinkIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   BoxProps,
-  BreadcrumbSeparator,
   Button,
   ButtonGroup,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  Flex,
   HStack,
-  Icon,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Spacer,
-  StackDivider,
   Text,
   VStack,
   chakra,
@@ -93,6 +88,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
           borderTopWidth={0}
           borderLeftWidth={0}
           borderRightWidth={0}
+          borderBottomWidth={1}
           rounded="none"
           {...innerProps}
         >
@@ -109,8 +105,8 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
               />
               <Button
                 hidden={usingSearch}
+                variant="outline"
                 pl="1"
-                pr="4"
                 rounded="full"
                 onClick={handleSubredditButtonClick}
                 display="inline"
@@ -146,6 +142,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             <Button
               hidden={subreddit === "" || hideNavButtons || usingSearch}
               rounded="full"
+              variant="outline"
               onClick={() => {
                 router.push("/");
               }}
@@ -156,6 +153,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             <Button
               hidden={subreddit === "popular" || hideNavButtons || usingSearch}
               rounded="full"
+              variant="outline"
               onClick={() => {
                 router.push("/r/popular");
               }}
@@ -165,6 +163,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             </Button>
             <Button
               hidden={subreddit === "all" || hideNavButtons || usingSearch}
+              variant="outline"
               rounded="full"
               onClick={() => {
                 router.push("/r/all");
@@ -177,7 +176,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
               <InputGroup>
                 <Input
                   variant="filled"
-                  minW="32"
+                  minW="10"
                   placeholder="Search"
                   rounded="full"
                   value={search}

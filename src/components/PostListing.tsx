@@ -8,13 +8,13 @@ import Post from "./Post";
 import PostSkeleton from "./PostSkeleton";
 
 type Props = {
-  path: string;
+  pathname: string;
   query: Record<string, string>;
   updateAfter: (after: string) => void;
 } & StackProps;
 
 const PostListing: FC<Props> = ({
-  path,
+  pathname: path,
   query,
   updateAfter,
   ...innerProps

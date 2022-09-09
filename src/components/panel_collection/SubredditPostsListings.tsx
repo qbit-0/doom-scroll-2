@@ -17,10 +17,15 @@ const SubredditPostsListings: FC<Props> = ({ sort, time, ...innerProps }) => {
   return (
     <Listings
       createListing={(after, updateAfter, index) => {
-        const { path, query } = getSubredditPath(subreddit, sort, time, after);
+        const { pathname, query } = getSubredditPath(
+          subreddit,
+          sort,
+          time,
+          after
+        );
         return (
           <PostListing
-            path={path}
+            pathname={pathname}
             query={query}
             updateAfter={updateAfter}
             key={index}

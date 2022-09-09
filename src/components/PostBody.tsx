@@ -48,17 +48,17 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
       );
     }
 
-    // if (post.data?.media?.oembed?.html) {
-    //   return (
-    //     <SanitizeHTML
-    //       display="flex"
-    //       p="4"
-    //       justifyContent="center"
-    //       maxH="md"
-    //       dirty={post.data.media.oembed.html}
-    //     />
-    //   );
-    // }
+    if (post.data?.media?.oembed?.html) {
+      return (
+        <SanitizeHTML
+          display="flex"
+          p="4"
+          justifyContent="center"
+          maxH="md"
+          dirty={post.data.media.oembed.html}
+        />
+      );
+    }
 
     if (post.data?.post_hint === "link") {
       return (

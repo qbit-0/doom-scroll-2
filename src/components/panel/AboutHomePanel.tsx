@@ -5,7 +5,7 @@ import Card from "../Card";
 
 type Props = PropsOf<typeof Card>;
 
-const HomeAbout: FC<Props> = (props) => {
+const AboutHomePanel: FC<Props> = (props) => {
   return (
     <Card {...props}>
       <Heading size="lg">Home</Heading>
@@ -17,4 +17,4 @@ const HomeAbout: FC<Props> = (props) => {
   );
 };
 
-export default HomeAbout;
+export default AboutHomePanel;

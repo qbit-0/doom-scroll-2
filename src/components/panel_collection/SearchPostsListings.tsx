@@ -41,7 +41,7 @@ const SearchPostsListings: FC<Props> = ({
 
   const pages: JSX.Element[] = [];
   for (let i = 0; i < pageCount; i++) {
-    const { path, query } = getSearchPostsPath(
+    const { pathname: path, query } = getSearchPostsPath(
       searchQuery,
       sort,
       time,
@@ -50,7 +50,7 @@ const SearchPostsListings: FC<Props> = ({
     );
     pages.push(
       <PostListing
-        path={path}
+        pathname={path}
         query={query}
         updateAfter={genUpdateAfter(i)}
         key={i}

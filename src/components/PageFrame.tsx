@@ -47,7 +47,7 @@ const PageFrame: FC<Props> = ({
     onOpen: onInfoOpen,
     onClose: onInfoClose,
   } = useDisclosure();
-  const bgColor = useColorModeValue("gray.200", "black");
+  const bgColor = useColorModeValue("gray.200", "gray.900");
 
   const topRef = useRef<HTMLDivElement>(null);
 

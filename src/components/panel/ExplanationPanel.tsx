@@ -80,7 +80,7 @@ const ExplanationPanel: FC<Props> = (props) => {
               }
             }}
           >
-            Best
+            <Heading fontSize="2xl">Best</Heading>
           </Button>
         </Tooltip>{" "}
         and{" "}
@@ -100,7 +100,7 @@ const ExplanationPanel: FC<Props> = (props) => {
               }
             }}
           >
-            Worst
+            <Heading fontSize="2xl">Worst</Heading>
           </Button>
         </Tooltip>{" "}
         of Reddit

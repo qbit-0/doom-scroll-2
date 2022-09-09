@@ -30,7 +30,7 @@ import {
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useContext, useEffect, useMemo } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import { IoChatboxOutline } from "react-icons/io5";
 import Sentiment from "sentiment";
@@ -56,7 +56,8 @@ const Post: FC<Props> = ({
   ...innerProps
 }) => {
   const router = useRouter();
-  const savedPath = useConst(router.asPath);
+  const browsePathname = useConst(router.asPath);
+  const postPathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
 
   const { postsFilter } = useContext(PostsFilterContext);
 
@@ -79,26 +80,51 @@ const Post: FC<Props> = ({
     disabled = isPostFiltered(postsFilter, post, textSentiment, aggSentiment);
   }
 
+  const closeOnUrlMismatch = useCallback(() => {
+    if (window.location.pathname !== postPathname) onModalClose();
+  }, []);
+
+  const openOnUrlMatch = useCallback(() => {
+    if (window.location.pathname === postPathname) onModalOpen();
+  }, []);
+
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
     onClose: onModalClose,
   } = useDisclosure({
     onOpen: () => {
-      const pathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
-      history.pushState(null, "", pathname);
+      window.addEventListener("popstate", closeOnUrlMismatch);
+      window.removeEventListener("popstate", openOnUrlMatch);
+      console.log("open", post.data.id);
     },
     onClose: () => {
-      history.replaceState(null, "", savedPath);
+      window.addEventListener("popstate", openOnUrlMatch);
+      window.removeEventListener("popstate", closeOnUrlMismatch);
+      console.log("close", post.data.id);
     },
   });
 
   useEffect(() => {
-    router.beforePopState(({}) => {
-      onModalClose();
-      return false;
-    });
-  }, [router, onModalClose, isModalOpen]);
+    return () => {
+      window.removeEventListener("popstate", closeOnUrlMismatch);
+      window.removeEventListener("popstate", openOnUrlMatch);
+    };
+  }, []);
+
+  const handleModalOpen = () => {
+    history.pushState(
+      null,
+      "",
+      `/r/${post.data.subreddit}/comments/${post.data.id}`
+    );
+    onModalOpen();
+  };
+
+  const handleModalClose = () => {
+    history.back();
+    onModalClose();
+  };
 
   const handleUpvote = async () => {
     await axios.post("/api/reddit", {
@@ -138,14 +164,12 @@ const Post: FC<Props> = ({
   const result = useMemo(() => {
     return (
       <Card
-        borderWidth={[0, 0, 1]}
-        rounded={["none", "none", "md"]}
         p="0"
         disabled={disabled}
         darkenContentWhenDisabled
         _hover={{ borderColor: "gray.400" }}
         onClick={(event) => {
-          if (event.target === this && openModal) onModalOpen();
+          if (event.target === this && openModal) handleModalOpen();
         }}
         cursor="pointer"
         {...innerProps}
@@ -202,7 +226,7 @@ const Post: FC<Props> = ({
                 <Link
                   size="sm"
                   onClick={() => {
-                    if (openModal) onModalOpen();
+                    if (openModal) handleModalOpen();
                   }}
                 >
                   <Heading size="lg">{post.data.title}</Heading>
@@ -217,7 +241,7 @@ const Post: FC<Props> = ({
                 variant="outline"
                 rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
                 onClick={() => {
-                  if (openModal) onModalOpen();
+                  if (openModal) handleModalOpen();
                 }}
               >
                 <Text>{`${post.data.num_comments}`}</Text>
@@ -318,7 +342,7 @@ const Post: FC<Props> = ({
         <PostsAndCommentsModal
           post={post}
           isOpen={isModalOpen}
-          onClose={onModalClose}
+          onClose={handleModalClose}
         />
       </Card>
     );

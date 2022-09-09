@@ -1,7 +1,13 @@
-export const getPathname = (path: string, query: Record<string, string>) => {
+export const getPathname = ({
+  pathname,
+  query,
+}: {
+  pathname: string;
+  query: Record<string, string>;
+}) => {
   return Object.entries(query).length
-    ? path + `?${new URLSearchParams(query).toString()}`
-    : path;
+    ? pathname + `?${new URLSearchParams(query).toString()}`
+    : pathname;
 };
 
 export const getSubredditPath = (
@@ -10,16 +16,15 @@ export const getSubredditPath = (
   time: string,
   after?: string
 ) => {
-  let path = !subreddit ? "" : `/r/${subreddit}`;
-  path += `/${sort}`;
+  let pathname = !subreddit ? "" : `/r/${subreddit}`;
+  pathname += `/${sort}`;
 
   const query: Record<string, string> = {};
   query["t"] = time;
   query["sr_detail"] = "true";
   if (after) query["after"] = after;
 
-  const pathname = getPathname(path, query);
-  return { path, query, pathname };
+  return { pathname, query };
 };
 
 export const getSearchPostsPath = (
@@ -33,7 +38,7 @@ export const getSearchPostsPath = (
   time = time || "all";
   type = type || "link";
 
-  const path = "/search";
+  const pathname = "/search";
 
   const query: Record<string, string> = {};
   query["q"] = searchQuery;
@@ -43,8 +48,7 @@ export const getSearchPostsPath = (
   query["type"] = type;
   if (after) query["after"] = after;
 
-  const pathname = getPathname(path, query);
-  return { path, query, pathname };
+  return { pathname, query };
 };
 
 export const getCommentsPath = (
@@ -53,24 +57,22 @@ export const getCommentsPath = (
   commentId?: string,
   sort = "best"
 ) => {
-  let path = `/r/${subreddit}/comments/${article}`;
+  let pathname = `/r/${subreddit}/comments/${article}`;
   if (commentId) {
-    path += `/comment/${commentId}`;
+    pathname += `/comment/${commentId}`;
   }
 
   const query: Record<string, string> = {};
   query["sort"] = sort;
   query["sr_detail"] = "true";
-
-  const pathname = getPathname(path, query);
-  return { path, query, pathname };
+  return { pathname, query };
 };
 
 export const getSearchSubredditsPath = (
   searchQuery: string,
   after?: string
 ) => {
-  const path = "/subreddits/search";
+  const pathname = "/subreddits/search";
 
   const query: Record<string, string> = {};
   query["q"] = searchQuery;
@@ -78,18 +80,15 @@ export const getSearchSubredditsPath = (
   query["sr_detail"] = "true";
   if (after) query["after"] = after;
 
-  const pathname = getPathname(path, query);
-  return { path, query, pathname };
+  return { pathname, query };
 };
 
 export const getSearchUsersPath = (searchQuery: string, after?: string) => {
-  const path = "/users/search";
+  const pathname = "/users/search";
 
   const query: Record<string, string> = {};
   query["q"] = searchQuery;
   query["sort"] = "relevance";
   if (after) query["after"] = after;
-
-  const pathname = getPathname(path, query);
-  return { path, query, pathname };
+  return { pathname, query };
 };

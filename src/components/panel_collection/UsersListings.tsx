@@ -13,7 +13,10 @@ const UserListings: FC<Props> = ({ searchQuery, ...innerProps }) => {
   return (
     <Listings
       createListing={(after, updateAfter, index) => {
-        const { path, query } = getSearchUsersPath(searchQuery, after);
+        const { pathname: path, query } = getSearchUsersPath(
+          searchQuery,
+          after
+        );
         return (
           <UserListing
             path={path}
