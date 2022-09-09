@@ -1,6 +1,7 @@
 import { HamburgerIcon, LinkIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Avatar,
+  Box,
   BoxProps,
   Button,
   ButtonGroup,
@@ -201,13 +202,15 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
       <Drawer
         isOpen={isNavDrawerOpen}
         onClose={onNavDrawerClose}
-        size="sm"
+        size="xs"
         placement="left"
       >
         <DrawerContent>
-          <DrawerCloseButton />
+          <Box p="4">
+            <DrawerCloseButton />
+          </Box>
           <DrawerBody>
-            <VStack p="4">
+            <VStack>
               <HStack w="full">
                 {me ? (
                   <>

@@ -96,12 +96,10 @@ const Post: FC<Props> = ({
     onOpen: () => {
       window.addEventListener("popstate", closeOnUrlMismatch);
       window.removeEventListener("popstate", openOnUrlMatch);
-      console.log("open", post.data.id);
     },
     onClose: () => {
       window.addEventListener("popstate", openOnUrlMatch);
       window.removeEventListener("popstate", closeOnUrlMismatch);
-      console.log("close", post.data.id);
     },
   });
 
@@ -122,7 +120,7 @@ const Post: FC<Props> = ({
   };
 
   const handleModalClose = () => {
-    history.back();
+    history.pushState(null, "", browsePathname);
     onModalClose();
   };
 

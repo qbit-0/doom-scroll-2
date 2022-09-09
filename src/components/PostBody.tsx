@@ -52,7 +52,6 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
       return (
         <SanitizeHTML
           display="flex"
-          p="4"
           justifyContent="center"
           maxH="md"
           dirty={post.data.media.oembed.html}
@@ -121,22 +120,23 @@ const PostBody: FC<Props> = ({ post, ...innerProps }) => {
       );
     }
 
-    // if (post.data?.gallery_data?.items) {
-    //   return (
-    //     <Carousel
-    //       mx="auto"
-    //       srcs={Object.values(post.data.gallery_data.items)
-    //         .filter(
-    //           ({ media_id }: any) =>
-    //             post.data?.media_metadata?.[media_id]?.status === "valid"
-    //         )
-    //         .map(
-    //           ({ media_id }: any) =>
-    //             post.data.media_metadata?.[media_id]?.s?.u as string
-    //         )}
-    //     />
-    //   );
-    // }
+    if (post.data?.gallery_data?.items) {
+      return (
+        <Carousel
+          w={["xs", "sm", "lg"]}
+          mx="auto"
+          srcs={Object.values(post.data.gallery_data.items)
+            .filter(
+              ({ media_id }: any) =>
+                post.data?.media_metadata?.[media_id]?.status === "valid"
+            )
+            .map(
+              ({ media_id }: any) =>
+                post.data.media_metadata?.[media_id]?.s?.u as string
+            )}
+        />
+      );
+    }
 
     if (
       post.data?.thumbnail !== "default" &&

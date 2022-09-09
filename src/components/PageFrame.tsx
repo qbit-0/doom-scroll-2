@@ -67,25 +67,34 @@ const PageFrame: FC<Props> = ({
           </VStack>
         </Flex>
       </Box>
-      <Portal>
-        <HStack position="fixed" bottom="4" right="4">
-          <IconButton
-            colorScheme="red"
-            icon={<InfoOutlineIcon />}
-            rounded="full"
-            onClick={onInfoOpen}
-            aria-label={"subreddit info"}
-          />
-          <IconButton
-            colorScheme="red"
-            icon={<SettingsIcon />}
-            rounded="full"
-            onClick={onSettingsOpen}
-            aria-label={"subreddit info"}
-          />
-          <BackToTop topRef={topRef} />
-        </HStack>
-      </Portal>
+      <HStack position="fixed" bottom="4" right="4">
+        <IconButton
+          colorScheme="red"
+          icon={<InfoOutlineIcon />}
+          rounded="full"
+          onClick={onInfoOpen}
+          aria-label={"subreddit info"}
+        />
+        <IconButton
+          colorScheme="red"
+          icon={<SettingsIcon />}
+          rounded="full"
+          onClick={onSettingsOpen}
+          aria-label={"doomscroll settings"}
+        />
+        <BackToTop topRef={topRef} />
+      </HStack>
+      <Drawer isOpen={isInfoOpen} onClose={onInfoClose} size="lg">
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>
+            <Heading>Subreddit Info</Heading>
+          </DrawerHeader>
+          <DrawerBody>
+            <VStack>{right}</VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
       <Drawer isOpen={isSettingsOpen} onClose={onSettingsClose} size="lg">
         <DrawerContent>
           <DrawerCloseButton />
@@ -98,17 +107,6 @@ const PageFrame: FC<Props> = ({
               <FilterPostsPanel />
               <FilterCommentsPanel />
             </VStack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-      <Drawer isOpen={isInfoOpen} onClose={onInfoClose} size="lg">
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>
-            <Heading>Subreddit Details</Heading>
-          </DrawerHeader>
-          <DrawerBody>
-            <VStack>{right}</VStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
