@@ -6,7 +6,7 @@ import PageFrame from "../../../../../../components/PageFrame";
 import SubredditBanner from "../../../../../../components/SubredditBanner";
 import AboutSubredditPanel from "../../../../../../components/panel/AboutSubredditPanel";
 import SubredditRulesPanel from "../../../../../../components/panel/SubredditRulesPanel";
-import PostAndComments from "../../../../../../components/panel_collection/PostAndComments";
+import PostAndComments from "../../../../../../components/PostAndComments";
 import useReddit from "../../../../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -36,19 +36,21 @@ type Props = {
 const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
   const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
-    path: `/r/${subreddit}/about`,
+    pathname: `/r/${subreddit}/about`,
   });
   const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
-    path: `/r/${subreddit}/about/rules`,
+    pathname: `/r/${subreddit}/about/rules`,
   });
 
   return (
     <NavFrame>
       <PageFrame
-        top={<SubredditBanner />}
-        left={<PostAndComments article={article} commentId={commentId} />}
-        right={
+        topChildren={<SubredditBanner />}
+        leftChildren={
+          <PostAndComments article={article} commentId={commentId} />
+        }
+        rightChildren={
           <>
             <AboutSubredditPanel />
             <SubredditRulesPanel />

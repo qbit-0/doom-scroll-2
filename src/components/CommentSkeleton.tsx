@@ -3,11 +3,11 @@ import { FC } from "react";
 
 import Card from "./Card";
 
-type Props = BoxProps;
+type Props = {};
 
-const CommentSkeleton: FC<Props> = (props) => {
+const CommentSkeleton: FC<Props> = () => {
   return (
-    <Card {...props}>
+    <Card>
       <SkeletonCircle size="10" />
       <SkeletonText mt="4" noOfLines={4} />
     </Card>

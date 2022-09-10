@@ -20,6 +20,7 @@ import {
   chakra,
   useBoolean,
   useBreakpointValue,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -42,9 +43,9 @@ import RedditAvatar from "./RedditAvatar";
 
 type Props = {
   additionalNav: React.ReactNode;
-} & BoxProps;
+};
 
-const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
+const NavBar: FC<Props> = ({ additionalNav }) => {
   const router = useRouter();
   const [me, setMe] = useLocalStorage("me");
   const { subreddit, subredditAbout } = useContext(SubredditContext);
@@ -81,17 +82,16 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
     onClose: onNavDrawerClose,
   } = useDisclosure();
 
+  const bgColor = useColorModeValue("white", "gray.800");
+
   return (
     <>
       <nav>
-        <Card
+        <Box
+          bgColor={bgColor}
           p="2"
-          borderTopWidth={0}
-          borderLeftWidth={0}
-          borderRightWidth={0}
           borderBottomWidth={1}
-          rounded="none"
-          {...innerProps}
+          borderBottomColor="gray.500"
         >
           <HStack>
             <ButtonGroup overflowX="clip" variant="solid" isAttached>
@@ -197,7 +197,7 @@ const NavBar: FC<Props> = ({ additionalNav, ...innerProps }) => {
             </chakra.form>
             {additionalNav}
           </HStack>
-        </Card>
+        </Box>
       </nav>
       <Drawer
         isOpen={isNavDrawerOpen}

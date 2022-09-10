@@ -11,19 +11,19 @@ import {
 } from "@chakra-ui/react";
 import { FC } from "react";
 
-import SubredditProvider from "../lib/context/SubredditProvider";
-import useReddit from "../lib/hooks/useReddit";
+import SubredditProvider from "../../lib/context/SubredditProvider";
+import useReddit from "../../lib/hooks/useReddit";
 import {
   RedditLink,
   RedditRules,
   RedditSubreddit,
-} from "../lib/reddit/redditDataStructs";
-import NavFrame from "./NavFrame";
-import PageFrame from "./PageFrame";
-import SubredditBanner from "./SubredditBanner";
-import AboutSubredditPanel from "./panel/AboutSubredditPanel";
-import SubredditRulesPanel from "./panel/SubredditRulesPanel";
-import PostAndComments from "./panel_collection/PostAndComments";
+} from "../../lib/reddit/redditDataStructs";
+import NavFrame from "../NavFrame";
+import PageFrame from "../PageFrame";
+import PostAndComments from "../PostAndComments";
+import SubredditBanner from "../SubredditBanner";
+import AboutSubredditPanel from "../panel/AboutSubredditPanel";
+import SubredditRulesPanel from "../panel/SubredditRulesPanel";
 
 type Props = {
   post: RedditLink;
@@ -41,11 +41,11 @@ const PostsAndCommentsModal: FC<Props> = ({
 
   const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
-    path: `/r/${subreddit}/about`,
+    pathname: `/r/${subreddit}/about`,
   });
   const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
-    path: `/r/${subreddit}/about/rules`,
+    pathname: `/r/${subreddit}/about/rules`,
   });
 
   const hideModalHeader = useBreakpointValue({ base: true, lg: false });
@@ -71,15 +71,15 @@ const PostsAndCommentsModal: FC<Props> = ({
           >
             <NavFrame>
               <PageFrame
-                top={<SubredditBanner />}
-                left={
+                topChildren={<SubredditBanner />}
+                leftChildren={
                   <PostAndComments
                     article={post.data.id}
                     initialPost={post}
                     openModal={false}
                   />
                 }
-                right={
+                rightChildren={
                   <>
                     <AboutSubredditPanel />
                     <SubredditRulesPanel />

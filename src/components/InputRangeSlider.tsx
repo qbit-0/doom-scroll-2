@@ -13,7 +13,6 @@ import {
   RangeSliderProps,
   RangeSliderThumb,
   RangeSliderTrack,
-  StackProps,
   ThemingProps,
   UseCounterProps,
 } from "@chakra-ui/react";
@@ -33,7 +32,7 @@ type Props = {
   onBothChange: RangeSliderProps["onChange"];
   onChangeEnd: RangeSliderProps["onChangeEnd"];
   sliderMarks?: React.ReactNode;
-} & Omit<StackProps, "onChange">;
+};
 
 const InputRangeSlider: FC<Props> = ({
   size,
@@ -48,7 +47,6 @@ const InputRangeSlider: FC<Props> = ({
   onMaxChange,
   onBothChange,
   onChangeEnd,
-  ...innerProps
 }) => {
   const sliderMarkStyles: Omit<RangeSliderMarkProps, "value"> = {
     mt: "1",
@@ -70,7 +68,7 @@ const InputRangeSlider: FC<Props> = ({
 
   return (
     <>
-      <HStack columnGap="4" {...innerProps}>
+      <HStack columnGap="4">
         <NumberInput
           size={size}
           value={value[0]}

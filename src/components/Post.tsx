@@ -41,7 +41,7 @@ import { getAggPostSentiment, isPostFiltered } from "../lib/utils/filterUtils";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
 import PostBody from "./PostBody";
-import PostsAndCommentsModal from "./PostsAndCommentsModal";
+import PostsAndCommentsModal from "./modal/PostsAndCommentsModal";
 
 type Props = {
   post: RedditLink;
@@ -161,17 +161,7 @@ const Post: FC<Props> = ({
 
   const result = useMemo(() => {
     return (
-      <Card
-        p="0"
-        disabled={disabled}
-        darkenContentWhenDisabled
-        _hover={{ borderColor: "gray.400" }}
-        onClick={(event) => {
-          if (event.target === this && openModal) handleModalOpen();
-        }}
-        cursor="pointer"
-        {...innerProps}
-      >
+      <Card disabled={disabled} darkenContentWhenDisabled {...innerProps}>
         <Box>
           <Flex>
             <ButtonGroup hidden={voteAtBottom} size="md" variant="ghost">

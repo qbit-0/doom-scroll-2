@@ -1,18 +1,18 @@
-import { Box, BoxProps, Flex, Heading, Image, Text } from "@chakra-ui/react";
-import { FC, useRef, useState } from "react";
+import { Image, Text } from "@chakra-ui/react";
+import { FC, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 type Props = {
   srcs: string[];
-} & BoxProps;
+};
 
-const Carousel: FC<Props> = ({ srcs, ...innerProps }) => {
+const Carousel: FC<Props> = ({ srcs }) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
   return (
-    <Box {...innerProps}>
+    <>
       <Text
         rounded="full"
         fontSize="xs"
@@ -48,7 +48,7 @@ const Carousel: FC<Props> = ({ srcs, ...innerProps }) => {
           );
         })}
       </Slider>
-    </Box>
+    </>
   );
 };
 

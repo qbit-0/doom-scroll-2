@@ -8,18 +8,13 @@ import {
 } from "@chakra-ui/icons";
 import {
   Button,
-  ButtonGroup,
+  ButtonProps,
   HStack,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -29,29 +24,72 @@ import { IoFilter } from "react-icons/io5";
 import SubredditProvider from "../../lib/context/SubredditProvider";
 import useReddit from "../../lib/hooks/useReddit";
 import {
+  RedditLink,
   RedditRules,
   RedditSubreddit,
 } from "../../lib/reddit/redditDataStructs";
+import { REDDIT_URL_PARAMS } from "../../lib/reddit/redditUrlParams";
+import { getSubredditPath } from "../../lib/reddit/redditUrlUtils";
 import NavFrame from "../NavFrame";
 import PageFrame from "../PageFrame";
+import Post from "../Post";
+import PostSkeleton from "../PostSkeleton";
 import SubredditBanner from "../SubredditBanner";
+import FilterModal from "../modal/FilterModal";
 import AboutAllPanel from "../panel/AboutAllPanel";
 import AboutHomePanel from "../panel/AboutHomePanel";
 import AboutPopularPanel from "../panel/AboutPopularPanel";
 import AboutSubredditPanel from "../panel/AboutSubredditPanel";
 import ButtonPanel from "../panel/ButtonPanel";
+import Listing from "../panel/Listing";
+import Listings from "../panel/Listings";
 import SubredditRulesPanel from "../panel/SubredditRulesPanel";
-import SubredditPostsListings from "../panel_collection/SubredditPostsListings";
+
+const URL_SORT_VALUES = REDDIT_URL_PARAMS["/[[...sort]]"].sort;
+const URL_TIME_VALUES = REDDIT_URL_PARAMS["/[[...sort]]"].t;
+
+const SUBREDDIT_SORT_VALUES =
+  REDDIT_URL_PARAMS["/r/[subreddit]/[[...sort]]"].sort;
 
 type NavProps = {
   subreddit: string;
-  sort: string;
-  time: string;
+  sort: typeof URL_SORT_VALUES[number];
+  time: typeof URL_TIME_VALUES[number];
+};
+
+const SORT_DISPLAY_NAMES: Record<typeof URL_SORT_VALUES[number], string> = {
+  best: "Best",
+  hot: "Hot",
+  new: "New",
+  top: "Top",
+  rising: "Rising",
+};
+
+const SORT_BUTTON_ICONS: Record<
+  typeof URL_SORT_VALUES[number],
+  React.ReactElement
+> = {
+  best: <BellIcon />,
+  hot: <StarIcon />,
+  new: <TimeIcon />,
+  top: <CalendarIcon />,
+  rising: <TriangleUpIcon />,
+};
+
+const TIME_DISPLAY_NAMES: Record<typeof URL_TIME_VALUES[number], string> = {
+  hour: "Now",
+  day: "Today",
+  week: "This Week",
+  month: "This Month",
+  year: "This Year",
+  all: "All Time",
 };
 
 type Props = {
   navProps: NavProps;
 };
+
+const SUBREDDITS_WITHOUT_INFO = ["", "popular", "all"];
 
 const BrowseSubreddit: FC<Props> = ({ navProps }) => {
   const { subreddit, sort, time } = navProps;
@@ -60,12 +98,12 @@ const BrowseSubreddit: FC<Props> = ({ navProps }) => {
   const renavigate = (newNavProps: NavProps) => {
     let pathname = subreddit !== "" ? `/r/${subreddit}/` : "/";
     if (
-      (subreddit === "" && newNavProps.sort !== "best") ||
-      (subreddit !== "" && newNavProps.sort !== "hot")
+      (subreddit === "" && newNavProps.sort !== URL_SORT_VALUES[0]) ||
+      (subreddit !== "" && newNavProps.sort !== SUBREDDIT_SORT_VALUES[0])
     )
       pathname += newNavProps.sort;
     const query: Record<string, string> = {};
-    if (newNavProps.time !== "day") query["t"] = newNavProps.time;
+    if (newNavProps.time !== URL_TIME_VALUES[0]) query["t"] = newNavProps.time;
 
     router.push({
       pathname,
@@ -75,34 +113,29 @@ const BrowseSubreddit: FC<Props> = ({ navProps }) => {
 
   const handleNavChange = (propName: keyof NavProps, callback?: () => void) => {
     return (event: ChangeEvent<any>) => {
+      console.log(propName);
+
       renavigate({ ...navProps, [propName]: event.currentTarget.value });
       if (callback) callback();
     };
   };
 
   const { data: subredditAbout } = useReddit<RedditSubreddit>(
-    subreddit === "" || subreddit === "popular" || subreddit === "all"
+    SUBREDDITS_WITHOUT_INFO.includes(subreddit)
       ? null
       : {
           method: "GET",
-          path: `/r/${subreddit}/about`,
+          pathname: `/r/${subreddit}/about`,
         }
   );
   const { data: subredditRules } = useReddit<RedditRules>(
-    subreddit === "" || subreddit === "popular" || subreddit === "all"
+    SUBREDDITS_WITHOUT_INFO.includes(subreddit)
       ? null
       : {
           method: "GET",
-          path: `/r/${subreddit}/about/rules`,
+          pathname: `/r/${subreddit}/about/rules`,
         }
   );
-
-  let top =
-    subreddit === "" ||
-    subreddit === "popular" ||
-    subreddit === "all" ? null : (
-      <SubredditBanner />
-    );
 
   let subredditInfoDisplay;
   switch (subreddit) {
@@ -127,6 +160,78 @@ const BrowseSubreddit: FC<Props> = ({ navProps }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const SortButton: FC<{
+    value: typeof URL_SORT_VALUES[number];
+    callback?: () => void;
+    buttonProps?: ButtonProps;
+  }> = ({ value, callback, buttonProps }) => (
+    <Button
+      value={value}
+      rounded="full"
+      isActive={sort === value}
+      leftIcon={SORT_BUTTON_ICONS[value]}
+      onClick={handleNavChange("sort", callback)}
+      {...buttonProps}
+    >
+      {SORT_DISPLAY_NAMES[value]}
+    </Button>
+  );
+
+  const TimeMenuItem: FC<{
+    value: typeof URL_TIME_VALUES[number];
+    callback?: () => void;
+  }> = ({ value, callback }) => (
+    <MenuItem value={value} onClick={handleNavChange("time", callback)}>
+      {TIME_DISPLAY_NAMES[value]}
+    </MenuItem>
+  );
+
+  const TimeMenu: FC<{
+    callback?: () => void;
+    buttonProps?: ButtonProps;
+  }> = ({ callback, buttonProps }) => (
+    <Menu>
+      <MenuButton
+        as={Button}
+        rounded="full"
+        rightIcon={<ChevronDownIcon />}
+        {...buttonProps}
+      >
+        {TIME_DISPLAY_NAMES[time]}
+      </MenuButton>
+      <MenuList>
+        <TimeMenuItem value="hour" callback={callback} />
+        <TimeMenuItem value="day" callback={callback} />
+        <TimeMenuItem value="week" callback={callback} />
+        <TimeMenuItem value="month" callback={callback} />
+        <TimeMenuItem value="year" callback={callback} />
+        <TimeMenuItem value="all" callback={callback} />
+      </MenuList>
+    </Menu>
+  );
+
+  const PostListings: FC = () => (
+    <Listings
+      createListing={(after, updateAfter) => {
+        const { pathname, query } = getSubredditPath(
+          subreddit,
+          sort,
+          time,
+          after
+        );
+        return (
+          <Listing
+            pathname={pathname}
+            query={query}
+            createItem={(item: RedditLink) => <Post post={item} />}
+            createSkeleton={() => <PostSkeleton />}
+            updateAfter={updateAfter}
+          />
+        );
+      }}
+    />
+  );
+
   return (
     <>
       <SubredditProvider
@@ -145,236 +250,58 @@ const BrowseSubreddit: FC<Props> = ({ navProps }) => {
           }
         >
           <PageFrame
-            top={top}
-            left={
+            topChildren={
+              !SUBREDDITS_WITHOUT_INFO.includes(subreddit) && (
+                <SubredditBanner />
+              )
+            }
+            leftChildren={
               <>
                 <ButtonPanel>
-                  {subreddit === "" && (
-                    <Button
-                      value="best"
-                      rounded="full"
-                      isActive={sort === "best"}
-                      leftIcon={<BellIcon />}
-                      onClick={handleNavChange("sort")}
-                    >
-                      Best
-                    </Button>
-                  )}
-                  <Button
-                    value="hot"
-                    rounded="full"
-                    isActive={sort === "hot"}
-                    leftIcon={<CalendarIcon />}
-                    onClick={handleNavChange("sort")}
-                  >
-                    Hot
-                  </Button>
-                  <Button
-                    value="new"
-                    rounded="full"
-                    isActive={sort === "new"}
-                    leftIcon={<TimeIcon />}
-                    onClick={handleNavChange("sort")}
-                  >
-                    New
-                  </Button>
-                  <Button
-                    value="top"
-                    rounded="full"
-                    isActive={sort === "top"}
-                    leftIcon={<StarIcon />}
-                    onClick={handleNavChange("sort")}
-                  >
-                    Top
-                  </Button>
-                  {sort === "top" && (
-                    <Menu>
-                      <MenuButton
-                        as={Button}
-                        rounded="full"
-                        rightIcon={<ChevronDownIcon />}
-                      >
-                        {time === "hour" && "Now"}
-                        {time === "day" && "Today"}
-                        {time === "week" && "This Week"}
-                        {time === "month" && "This Month"}
-                        {time === "year" && "This Year"}
-                        {time === "all" && "All Time"}
-                      </MenuButton>
-                      <MenuList>
-                        <MenuItem
-                          value="hour"
-                          onClick={handleNavChange("time")}
-                        >
-                          Now
-                        </MenuItem>
-                        <MenuItem value="day" onClick={handleNavChange("time")}>
-                          Today
-                        </MenuItem>
-                        <MenuItem
-                          value="week"
-                          onClick={handleNavChange("time")}
-                        >
-                          This Week
-                        </MenuItem>
-                        <MenuItem
-                          value="month"
-                          onClick={handleNavChange("time")}
-                        >
-                          This Month
-                        </MenuItem>
-                        <MenuItem
-                          value="year"
-                          onClick={handleNavChange("time")}
-                        >
-                          This Year
-                        </MenuItem>
-                        <MenuItem value="all" onClick={handleNavChange("time")}>
-                          All Time
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  )}
-                  <Button
-                    value="rising"
-                    rounded="full"
-                    isActive={sort === "rising"}
-                    leftIcon={<TriangleUpIcon />}
-                    onClick={handleNavChange("sort")}
-                  >
-                    Rising
-                  </Button>
+                  {subreddit === "" && <SortButton value="best" />}
+                  <SortButton value="hot" />
+                  <SortButton value="new" />
+                  <SortButton value="top" />
+                  {sort === "top" && <TimeMenu />}
+                  <SortButton value="rising" />
                 </ButtonPanel>
-                <SubredditPostsListings sort={sort} time={time} />
+                <PostListings />
               </>
             }
-            right={subredditInfoDisplay}
+            rightChildren={subredditInfoDisplay}
           />
         </NavFrame>
       </SubredditProvider>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
-        <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-        <ModalContent mt="4">
-          <ModalBody p="2">
-            <ButtonGroup display="flex" w="full" variant="outline" p="2">
-              <VStack w="full">
-                {subreddit === "" && (
-                  <Button
-                    w="full"
-                    value="best"
-                    isActive={sort === "best"}
-                    rounded="full"
-                    leftIcon={<BellIcon />}
-                    onClick={handleNavChange("sort", onClose)}
-                  >
-                    Best
-                  </Button>
-                )}
-                <Button
-                  w="full"
-                  value="hot"
-                  isActive={sort === "hot"}
-                  rounded="full"
-                  leftIcon={<CalendarIcon />}
-                  onClick={handleNavChange("sort", onClose)}
-                >
-                  Hot
-                </Button>
-                <Button
-                  w="full"
-                  value="new"
-                  isActive={sort === "new"}
-                  rounded="full"
-                  leftIcon={<TimeIcon />}
-                  onClick={handleNavChange("sort", onClose)}
-                >
-                  New
-                </Button>
-                <HStack w="full">
-                  <Button
-                    value="top"
-                    flex="1"
-                    isActive={sort === "top"}
-                    rounded="full"
-                    leftIcon={<StarIcon />}
-                    onClick={
-                      sort === "top"
-                        ? handleNavChange("sort", onClose)
-                        : handleNavChange("sort")
-                    }
-                  >
-                    Top
-                  </Button>
-                  {sort === "top" && time && (
-                    <Menu>
-                      <MenuButton
-                        as={Button}
-                        rounded="full"
-                        rightIcon={<ChevronDownIcon />}
-                      >
-                        {time === "hour" && "Now"}
-                        {time === "day" && "Today"}
-                        {time === "week" && "This Week"}
-                        {time === "month" && "This Month"}
-                        {time === "year" && "This Year"}
-                        {time === "all" && "All Time"}
-                      </MenuButton>
-                      <MenuList>
-                        <MenuItem
-                          value="hour"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          Now
-                        </MenuItem>
-                        <MenuItem
-                          value="day"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          Today
-                        </MenuItem>
-                        <MenuItem
-                          value="week"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          This Week
-                        </MenuItem>
-                        <MenuItem
-                          value="month"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          This Month
-                        </MenuItem>
-                        <MenuItem
-                          value="year"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          This Year
-                        </MenuItem>
-                        <MenuItem
-                          value="all"
-                          onClick={handleNavChange("time", onClose)}
-                        >
-                          All Time
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  )}
-                </HStack>
-                <Button
-                  w="full"
-                  value="rising"
-                  isActive={sort === "rising"}
-                  rounded="full"
-                  leftIcon={<TriangleUpIcon />}
-                  onClick={handleNavChange("sort", onClose)}
-                >
-                  Rising
-                </Button>
-              </VStack>
-            </ButtonGroup>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <FilterModal isOpen={isOpen} onClose={onClose}>
+        <SortButton
+          value="best"
+          callback={onClose}
+          buttonProps={{ w: "full" }}
+        />
+        <SortButton
+          value="hot"
+          callback={onClose}
+          buttonProps={{ w: "full" }}
+        />
+        <SortButton
+          value="new"
+          callback={onClose}
+          buttonProps={{ w: "full" }}
+        />
+        <HStack w="full">
+          <SortButton
+            value="top"
+            callback={onClose}
+            buttonProps={{ w: "full" }}
+          />
+          <TimeMenu callback={onClose} buttonProps={{ w: "full" }} />
+        </HStack>
+        <SortButton
+          value="rising"
+          callback={onClose}
+          buttonProps={{ w: "full" }}
+        />
+      </FilterModal>
     </>
   );
 };

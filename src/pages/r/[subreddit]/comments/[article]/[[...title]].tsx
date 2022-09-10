@@ -6,7 +6,7 @@ import PageFrame from "../../../../../components/PageFrame";
 import SubredditBanner from "../../../../../components/SubredditBanner";
 import AboutSubredditPanel from "../../../../../components/panel/AboutSubredditPanel";
 import SubredditRulesPanel from "../../../../../components/panel/SubredditRulesPanel";
-import PostAndComments from "../../../../../components/panel_collection/PostAndComments";
+import PostAndComments from "../../../../../components/PostAndComments";
 import SubredditProvider from "../../../../../lib/context/SubredditProvider";
 import useReddit from "../../../../../lib/hooks/useReddit";
 import {
@@ -34,11 +34,11 @@ type Props = {
 const CommentsPage: FC<Props> = ({ article, subreddit }) => {
   const { data: subredditAbout } = useReddit<RedditSubreddit>({
     method: "GET",
-    path: `/r/${subreddit}/about`,
+    pathname: `/r/${subreddit}/about`,
   });
   const { data: subredditRules } = useReddit<RedditRules>({
     method: "GET",
-    path: `/r/${subreddit}/about/rules`,
+    pathname: `/r/${subreddit}/about/rules`,
   });
 
   return (
@@ -49,9 +49,9 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
     >
       <NavFrame>
         <PageFrame
-          top={<SubredditBanner />}
-          left={<PostAndComments article={article} />}
-          right={
+          topChildren={<SubredditBanner />}
+          leftChildren={<PostAndComments article={article} />}
+          rightChildren={
             <>
               <AboutSubredditPanel />
               <SubredditRulesPanel />

@@ -7,10 +7,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -21,17 +17,68 @@ import { IoFilter } from "react-icons/io5";
 
 import NavFrame from "../components/NavFrame";
 import PageFrame from "../components/PageFrame";
+import Post from "../components/Post";
+import PostSkeleton from "../components/PostSkeleton";
+import Subreddit from "../components/Subreddit";
+import User from "../components/User";
+import FilterModal from "../components/modal/FilterModal";
 import ButtonPanel from "../components/panel/ButtonPanel";
-import SearchPostsListings from "../components/panel_collection/SearchPostsListings";
-import SubredditListings from "../components/panel_collection/SubredditListings";
-import UserListings from "../components/panel_collection/UsersListings";
+import Listing from "../components/panel/Listing";
+import Listings from "../components/panel/Listings";
 import SubredditProvider from "../lib/context/SubredditProvider";
+import {
+  RedditAccount,
+  RedditLink,
+  RedditSubreddit,
+} from "../lib/reddit/redditDataStructs";
+import { REDDIT_URL_PARAMS } from "../lib/reddit/redditUrlParams";
+import {
+  getSearchPostsPath,
+  getSearchSubredditsPath,
+  getSearchUsersPath,
+} from "../lib/reddit/redditUrlUtils";
+
+const SEARCH_TYPE_VALUES = REDDIT_URL_PARAMS["/search"].type;
+const SEARCH_SORT_VALUES = REDDIT_URL_PARAMS["/search"].sort;
+const SEARCH_TIME_VALUES = REDDIT_URL_PARAMS["/search"].t;
+
+const TYPE_DISPLAY_NAMES: Record<typeof SEARCH_TYPE_VALUES[number], string> = {
+  link: "Posts",
+  sr: "Communities",
+  user: "People",
+};
+
+const SORT_DISPLAY_NAMES: Record<typeof SEARCH_SORT_VALUES[number], string> = {
+  relevance: "Relevance",
+  hot: "Hot",
+  top: "Top",
+  new: "New",
+  comments: "Most Comments",
+};
+
+const TIME_DISPLAY_NAMES: Record<typeof SEARCH_TIME_VALUES[number], string> = {
+  all: "All Time",
+  year: "Past Year",
+  month: "Past Month",
+  week: "Past Week",
+  day: "Past 24 Hours",
+  hour: "Past Hour",
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const searchQuery = context.query["q"] || "";
-  const sort = context.query["sort"] || "relevance";
-  const time = context.query["t"] || "all";
-  const type = context.query["type"] || "link";
+
+  const type = SEARCH_TYPE_VALUES.includes(context.query["type"] as any)
+    ? (context.query["type"] as typeof SEARCH_TYPE_VALUES[number])
+    : SEARCH_TYPE_VALUES[0];
+
+  const sort = SEARCH_SORT_VALUES.includes(context.query["sort"]?.[0] as any)
+    ? (context.query["sort"]?.[0] as typeof SEARCH_SORT_VALUES[number])
+    : SEARCH_SORT_VALUES[0];
+
+  const time = SEARCH_TIME_VALUES.includes(context.query["t"] as any)
+    ? (context.query["t"] as typeof SEARCH_TIME_VALUES[number])
+    : SEARCH_TIME_VALUES[0];
 
   return {
     props: {
@@ -47,9 +94,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 type NavProps = {
   searchQuery: string;
-  sort: string;
-  time: string;
-  type: string;
+  type: typeof SEARCH_TYPE_VALUES[number];
+  sort: typeof SEARCH_SORT_VALUES[number];
+  time: typeof SEARCH_TIME_VALUES[number];
 };
 
 type Props = {
@@ -88,87 +135,144 @@ const SearchPage: FC<Props> = ({ navProps }) => {
     onClose: onSortModalClose,
   } = useDisclosure();
 
-  let content;
-  switch (type) {
-    case "link":
-      content = (
-        <>
-          <ButtonPanel>
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                {sort === "relevance" && "Relevance"}
-                {sort === "hot" && "Hot"}
-                {sort === "top" && "Top"}
-                {sort === "new" && "New"}
-                {sort === "comments" && "Comments"}
-              </MenuButton>
-              <MenuList>
-                <MenuItem value="relevance" onClick={handleNavChange("sort")}>
-                  Relevance
-                </MenuItem>
-                <MenuItem value="hot" onClick={handleNavChange("sort")}>
-                  Hot
-                </MenuItem>
-                <MenuItem value="top" onClick={handleNavChange("sort")}>
-                  Top
-                </MenuItem>
-                <MenuItem value="new" onClick={handleNavChange("sort")}>
-                  New
-                </MenuItem>
-                <MenuItem value="comments" onClick={handleNavChange("sort")}>
-                  Comments
-                </MenuItem>
-              </MenuList>
-            </Menu>
+  const SortMenuItem: FC<{ value: typeof SEARCH_SORT_VALUES[number] }> = ({
+    value,
+  }) => (
+    <MenuItem value={value} onClick={handleNavChange("sort")}>
+      {SORT_DISPLAY_NAMES[value]}
+    </MenuItem>
+  );
 
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                {time === "all" && "All Time"}
-                {time === "year" && "Past Year"}
-                {time === "month" && "Past Month"}
-                {time === "week" && "Past Week"}
-                {time === "day" && "Past 24 Hours"}
-                {time === "hour" && "Past Hour"}
-              </MenuButton>
-              <MenuList>
-                <MenuItem value="all" onClick={handleNavChange("time")}>
-                  All Time
-                </MenuItem>
-                <MenuItem value="year" onClick={handleNavChange("time")}>
-                  Past Year
-                </MenuItem>
-                <MenuItem value="month" onClick={handleNavChange("time")}>
-                  Past Month
-                </MenuItem>
-                <MenuItem value="week" onClick={handleNavChange("time")}>
-                  Past Week
-                </MenuItem>
-                <MenuItem value="day" onClick={handleNavChange("time")}>
-                  Past 24 Hours
-                </MenuItem>
-                <MenuItem value="hour" onClick={handleNavChange("time")}>
-                  Past Hour
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </ButtonPanel>
-          <SearchPostsListings
-            searchQuery={searchQuery}
-            sort={sort}
-            time={time}
+  const SortMenu: FC = () => (
+    <Menu>
+      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+        {SORT_DISPLAY_NAMES[sort]}
+      </MenuButton>
+      <MenuList>
+        <SortMenuItem value="relevance" />
+        <SortMenuItem value="hot" />
+        <SortMenuItem value="top" />
+        <SortMenuItem value="new" />
+        <SortMenuItem value="comments" />
+      </MenuList>
+    </Menu>
+  );
+
+  const TimeMenuItem: FC<{ value: typeof SEARCH_TIME_VALUES[number] }> = ({
+    value,
+  }) => (
+    <MenuItem value={value} onClick={handleNavChange("time")}>
+      {TIME_DISPLAY_NAMES[value]}
+    </MenuItem>
+  );
+
+  const TimeMenu: FC = () => (
+    <Menu>
+      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+        {TIME_DISPLAY_NAMES[time]}
+      </MenuButton>
+      <MenuList>
+        <TimeMenuItem value="all" />
+        <TimeMenuItem value="year" />
+        <TimeMenuItem value="month" />
+        <TimeMenuItem value="week" />
+        <TimeMenuItem value="day" />
+        <TimeMenuItem value="hour" />
+      </MenuList>
+    </Menu>
+  );
+
+  const PostListings: FC = () => (
+    <Listings
+      createListing={(after, updateAfter) => {
+        const { pathname, query } = getSearchPostsPath(
+          searchQuery,
+          sort,
+          time,
+          after
+        );
+        return (
+          <Listing
+            pathname={pathname}
+            query={query}
+            createItem={(item: RedditLink) => <Post post={item} />}
+            createSkeleton={() => <PostSkeleton />}
+            updateAfter={updateAfter}
           />
-        </>
-      );
-      break;
-    case "comment":
-      break;
-    case "sr":
-      content = <SubredditListings searchQuery={searchQuery} />;
-      break;
-    case "user":
-      content = <UserListings searchQuery={searchQuery} />;
-      break;
-  }
+        );
+      }}
+    />
+  );
+
+  const SubredditListings: FC = () => (
+    <Listings
+      createListing={(after, updateAfter) => {
+        const { pathname, query } = getSearchSubredditsPath(searchQuery, after);
+        return (
+          <Listing
+            pathname={pathname}
+            query={query}
+            createItem={(item: RedditSubreddit) => (
+              <Subreddit subreddit={item} />
+            )}
+            createSkeleton={() => <PostSkeleton />}
+            updateAfter={updateAfter}
+          />
+        );
+      }}
+    />
+  );
+
+  const UserListings: FC = () => (
+    <Listings
+      createListing={(after, updateAfter) => {
+        const { pathname, query } = getSearchUsersPath(searchQuery, after);
+        return (
+          <Listing
+            pathname={pathname}
+            query={query}
+            createItem={(item: RedditAccount) => <User user={item} />}
+            createSkeleton={() => <PostSkeleton />}
+            updateAfter={updateAfter}
+          />
+        );
+      }}
+    />
+  );
+
+  const SearchContent: FC = () => {
+    switch (type) {
+      case "link":
+        return (
+          <>
+            <ButtonPanel>
+              <SortMenu />
+              <TimeMenu />
+            </ButtonPanel>
+            <PostListings />
+          </>
+        );
+        break;
+      case "sr":
+        return <SubredditListings />;
+        break;
+      case "user":
+        return <UserListings />;
+        break;
+    }
+  };
+
+  const TypeButton: FC<{ value: typeof SEARCH_TYPE_VALUES[number] }> = ({
+    value,
+  }) => (
+    <Button
+      value={value}
+      isActive={type === value}
+      onClick={handleNavChange("type")}
+    >
+      {TYPE_DISPLAY_NAMES[value]}
+    </Button>
+  );
 
   return (
     <SubredditProvider initialSubreddit={undefined}>
@@ -183,182 +287,25 @@ const SearchPage: FC<Props> = ({ navProps }) => {
         }
       >
         <PageFrame
-          left={
+          leftChildren={
             <>
               <ButtonPanel>
-                <Button
-                  value="link"
-                  isActive={type === "link"}
-                  onClick={handleNavChange("type")}
-                >
-                  Posts
-                </Button>
-                <Button
-                  value="sr"
-                  isActive={type === "sr"}
-                  onClick={handleNavChange("type")}
-                >
-                  Communities
-                </Button>
-                <Button
-                  value="user"
-                  isActive={type === "user"}
-                  onClick={handleNavChange("type")}
-                >
-                  People
-                </Button>
+                <TypeButton value="link" />
+                <TypeButton value="sr" />
+                <TypeButton value="user" />
               </ButtonPanel>
-              {content}
+              <SearchContent />
             </>
           }
         />
       </NavFrame>
-      <Modal
-        isOpen={isSortModalOpen}
-        onClose={onSortModalClose}
-        isCentered
-        size="md"
-      >
-        <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-        <ModalContent mt="4">
-          <ModalBody p="2">
-            <ButtonGroup display="flex" w="full" variant="outline" p="2">
-              <VStack w="full">
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    w="full"
-                    rightIcon={<ChevronDownIcon />}
-                  >
-                    {type === "link" && "Posts"}
-                    {type === "sr" && "Communities"}
-                    {type === "user" && "People"}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      value="link"
-                      onClick={handleNavChange("type", onSortModalClose)}
-                    >
-                      Posts
-                    </MenuItem>
-                    <MenuItem
-                      value="sr"
-                      onClick={handleNavChange("type", onSortModalClose)}
-                    >
-                      Communities
-                    </MenuItem>
-                    <MenuItem
-                      value="user"
-                      onClick={handleNavChange("type", onSortModalClose)}
-                    >
-                      People
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    w="full"
-                    rightIcon={<ChevronDownIcon />}
-                  >
-                    {sort === "relevance" && "Relevance"}
-                    {sort === "hot" && "Hot"}
-                    {sort === "top" && "Top"}
-                    {sort === "new" && "New"}
-                    {sort === "comments" && "Comments"}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      value="relevance"
-                      onClick={handleNavChange("sort", onSortModalClose)}
-                    >
-                      Relevance
-                    </MenuItem>
-                    <MenuItem
-                      value="hot"
-                      onClick={handleNavChange("sort", onSortModalClose)}
-                    >
-                      Hot
-                    </MenuItem>
-                    <MenuItem
-                      value="top"
-                      onClick={handleNavChange("sort", onSortModalClose)}
-                    >
-                      Top
-                    </MenuItem>
-                    <MenuItem
-                      value="new"
-                      onClick={handleNavChange("sort", onSortModalClose)}
-                    >
-                      New
-                    </MenuItem>
-                    <MenuItem
-                      value="comments"
-                      onClick={handleNavChange("sort", onSortModalClose)}
-                    >
-                      Comments
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    w="full"
-                    rightIcon={<ChevronDownIcon />}
-                  >
-                    {time === "all" && "All Time"}
-                    {time === "year" && "Past Year"}
-                    {time === "month" && "Past Month"}
-                    {time === "week" && "Past Week"}
-                    {time === "day" && "Past 24 Hours"}
-                    {time === "hour" && "Past Hour"}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      value="all"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      All Time
-                    </MenuItem>
-                    <MenuItem
-                      value="year"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      Past Year
-                    </MenuItem>
-                    <MenuItem
-                      value="month"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      Past Month
-                    </MenuItem>
-                    <MenuItem
-                      value="week"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      Past Week
-                    </MenuItem>
-                    <MenuItem
-                      value="day"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      Past 24 Hours
-                    </MenuItem>
-                    <MenuItem
-                      value="hour"
-                      onClick={handleNavChange("time", onSortModalClose)}
-                    >
-                      Past Hour
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </VStack>
-            </ButtonGroup>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <FilterModal isOpen={isSortModalOpen} onClose={onSortModalClose}>
+        <TypeButton value="link" />
+        <TypeButton value="sr" />
+        <TypeButton value="user" />
+        <SortMenu />
+        <TimeMenu />
+      </FilterModal>
     </SubredditProvider>
   );
 };

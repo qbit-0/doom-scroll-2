@@ -5,10 +5,10 @@ import {
   RedditListing,
   RedditMore,
   genCommentTrees,
-} from "../../lib/reddit/redditDataStructs";
-import Comment from "../Comment";
-import CommentSkeleton from "../CommentSkeleton";
-import More from "../More";
+} from "../lib/reddit/redditDataStructs";
+import Comment from "./Comment";
+import CommentSkeleton from "./CommentSkeleton";
+import More from "./More";
 
 type Props = {
   article: string;

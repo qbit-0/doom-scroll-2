@@ -5,7 +5,7 @@ import { BareFetcher, PublicConfiguration } from "swr/dist/types";
 const useReddit = <T>(
   params: {
     method: string;
-    path: string;
+    pathname: string;
     query?: Record<string, string>;
     data?: any;
   } | null,
@@ -17,7 +17,7 @@ const useReddit = <T>(
       if (!params) return null;
       const response = await axios.post("/api/reddit", {
         method: params.method,
-        path: params.path,
+        path: params.pathname,
         query: params.query,
         data: params.data,
       });

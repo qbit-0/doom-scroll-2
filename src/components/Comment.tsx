@@ -19,16 +19,16 @@ import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
+import Comments from "./Comments";
 import RedditAvatar from "./RedditAvatar";
 import SanitizeHTML from "./SanitizeHTML";
-import Comments from "./panel_collection/Comments";
 
 type Props = {
   article: string;
   comment: RedditComment;
-} & BoxProps;
+};
 
-const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
+const Comment: FC<Props> = ({ article, comment }) => {
   const { commentsFilter } = useContext(CommentsFilterContext);
   const sentiment = useConst(() => new Sentiment());
 
@@ -75,16 +75,7 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
 
   const result = useMemo(() => {
     return (
-      <Card
-        borderWidth={0}
-        borderLeftWidth={1}
-        roundedLeft="none"
-        borderColor="gray.500"
-        p="1"
-        disabled={disabled}
-        changeBgWhenDisabled
-        {...innerProps}
-      >
+      <Card disabled={disabled} changeBgWhenDisabled>
         <Box
           filter={disabled ? "auto" : "none"}
           brightness={disabled ? "50%" : "none"}
@@ -137,11 +128,7 @@ const Comment: FC<Props> = ({ article, comment, ...innerProps }) => {
         </Box>
 
         {comment.data.replies && (
-          <Comments
-            initialComments={comment.data.replies}
-            subreddit={comment.data.subreddit}
-            article={article}
-          />
+          <Comments initialComments={comment.data.replies} article={article} />
         )}
       </Card>
     );

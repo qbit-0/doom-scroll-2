@@ -4,13 +4,13 @@ import sanitizeHtml from "sanitize-html";
 
 type Props = {
   dirty: string;
-} & BoxProps;
+};
 
 const innerHtmlStyle: CSSObject = {
   a: { color: "cyan.500", _hover: { textDecoration: "underline" } },
 };
 
-const SanitizeHTML: FC<Props> = ({ dirty, ...boxProps }) => {
+const SanitizeHTML: FC<Props> = ({ dirty }) => {
   return (
     <Box
       wordBreak="break-word"
@@ -25,7 +25,6 @@ const SanitizeHTML: FC<Props> = ({ dirty, ...boxProps }) => {
         }),
       }}
       sx={innerHtmlStyle}
-      {...boxProps}
     />
   );
 };

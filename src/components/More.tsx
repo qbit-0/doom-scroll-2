@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button } from "@chakra-ui/react";
+import { BoxProps, Button } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
 import { FC, MouseEventHandler, useContext, useState } from "react";
@@ -12,9 +12,9 @@ type Props = {
   article: string;
   more: RedditMore;
   updateReplies: (replies: (RedditComment | RedditMore)[]) => void;
-} & BoxProps;
+};
 
-const More: FC<Props> = ({ more, updateReplies, article, ...innerProps }) => {
+const More: FC<Props> = ({ more, updateReplies, article }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { subreddit } = useContext(SubredditContext);
 
@@ -49,7 +49,7 @@ const More: FC<Props> = ({ more, updateReplies, article, ...innerProps }) => {
   };
 
   return (
-    <Card p="1" {...innerProps}>
+    <Card>
       {more.data.count > 0 ? (
         <Button
           variant="link"

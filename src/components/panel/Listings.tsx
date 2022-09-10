@@ -1,13 +1,12 @@
 import { StackProps, VStack } from "@chakra-ui/react";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 
-import useAtBottom from "../lib/hooks/useAtBottom";
+import useAtBottom from "../../lib/hooks/useAtBottom";
 
 type Props = {
   createListing: (
     after: string,
-    updateAfter: (after: string) => void,
-    index: number
+    updateAfter: (after: string) => void
   ) => React.ReactNode;
 } & StackProps;
 
@@ -37,7 +36,9 @@ const Listings: FC<Props> = ({ createListing, ...innerProps }) => {
   const pages: React.ReactNode[] = [];
   for (let index = 0; index < pageCount; index++) {
     pages.push(
-      createListing(afters[index] as string, genUpdateAfter(index), index)
+      <Fragment key={index}>
+        {createListing(afters[index] as string, genUpdateAfter(index))}
+      </Fragment>
     );
   }
 

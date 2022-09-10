@@ -7,11 +7,11 @@ import Card from "./Card";
 import PostSkeleton from "./PostSkeleton";
 import SanitizeHTML from "./SanitizeHTML";
 
-type Props = { subreddit: RedditSubreddit } & BoxProps;
+type Props = { subreddit: RedditSubreddit };
 
-const Subreddit: FC<Props> = ({ subreddit, ...boxProps }) => {
+const Subreddit: FC<Props> = ({ subreddit }) => {
   return (
-    <Card {...boxProps}>
+    <Card>
       <NextLink href={`/r/${subreddit.data.display_name}`}>
         <Link>
           <Avatar

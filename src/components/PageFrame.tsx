@@ -1,6 +1,7 @@
 import { InfoOutlineIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Box,
+  BoxProps,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -25,17 +26,18 @@ import FilterCommentsPanel from "./panel/FilterCommentsPanel";
 import FilterPostsPanel from "./panel/FilterPostsPanel";
 
 type Props = {
-  top?: React.ReactNode;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
+  topChildren?: React.ReactNode;
+  leftChildren?: React.ReactNode;
+  rightChildren?: React.ReactNode;
   showExplanation?: boolean;
-};
+} & BoxProps;
 
 const PageFrame: FC<Props> = ({
-  top,
-  left,
-  right,
+  topChildren,
+  leftChildren,
+  rightChildren,
   showExplanation = false,
+  ...innerProps
 }) => {
   const {
     isOpen: isSettingsOpen,
@@ -55,15 +57,15 @@ const PageFrame: FC<Props> = ({
 
   return (
     <>
-      <Box ref={topRef} bgColor={bgColor}>
-        {top}
+      <Box ref={topRef} bgColor={bgColor} {...innerProps}>
+        {topChildren}
         <Flex py="4" justify="center" columnGap={4}>
           <VStack maxW="2xl" h="full">
             {showExplanation && <ExplanationPanel />}
-            {left}
+            {leftChildren}
           </VStack>
           <VStack hidden={!hideRightPanels} maxW="lg">
-            {right}
+            {rightChildren}
           </VStack>
         </Flex>
       </Box>
@@ -91,7 +93,7 @@ const PageFrame: FC<Props> = ({
             <Heading>Subreddit Info</Heading>
           </DrawerHeader>
           <DrawerBody>
-            <VStack>{right}</VStack>
+            <VStack>{rightChildren}</VStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

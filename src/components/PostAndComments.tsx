@@ -2,19 +2,19 @@ import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FC, useContext, useEffect, useState } from "react";
 
-import { SubredditContext } from "../../lib/context/SubredditProvider";
-import useReddit from "../../lib/hooks/useReddit";
+import { SubredditContext } from "../lib/context/SubredditProvider";
+import useReddit from "../lib/hooks/useReddit";
 import {
   RedditComment,
   RedditLink,
   RedditListing,
   RedditMore,
   RedditPostAndComments,
-} from "../../lib/reddit/redditDataStructs";
-import { getCommentsPath } from "../../lib/reddit/redditUrlUtils";
-import Post from "../Post";
-import PostSkeleton from "../PostSkeleton";
+} from "../lib/reddit/redditDataStructs";
+import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import Comments from "./Comments";
+import Post from "./Post";
+import PostSkeleton from "./PostSkeleton";
 
 type Props = {
   article: string;
@@ -37,14 +37,14 @@ const PostAndComments: FC<Props> = ({
   const [comments, setComments] = useState(initialComments);
 
   const { pathname: path, query } = getCommentsPath(
-    subreddit,
+    subreddit || "",
     article,
     commentId
   );
 
   const { data: postAndComments } = useReddit<RedditPostAndComments>({
     method: "GET",
-    path,
+    pathname: path,
     query,
   });
 

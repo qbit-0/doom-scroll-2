@@ -61,9 +61,9 @@ const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
 
   return (
     <PageFrame
-      top={null}
-      left={null}
-      right={<AboutHomePanel />}
+      topChildren={null}
+      leftChildren={null}
+      rightChildren={<AboutHomePanel />}
       showExplanation={true}
     />
   );

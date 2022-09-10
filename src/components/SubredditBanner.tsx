@@ -4,9 +4,9 @@ import { FC, useContext } from "react";
 
 import { SubredditContext } from "../lib/context/SubredditProvider";
 
-type Props = {} & BoxProps;
+type Props = {};
 
-const SubredditBanner: FC<Props> = ({ ...innerProps }) => {
+const SubredditBanner: FC<Props> = ({}) => {
   const { subreddit, subredditAbout } = useContext(SubredditContext);
 
   let background;
@@ -54,26 +54,24 @@ const SubredditBanner: FC<Props> = ({ ...innerProps }) => {
   return (
     <NextLink href={`/r/${subreddit}`}>
       <Link>
-        <Box {...innerProps}>
-          {background}
-          <Flex justify="center" position="relative" bgColor="darkgray">
-            <Box p="4" w="5xl">
-              <Avatar
-                name="r /"
-                src={
-                  subredditAbout?.data?.community_icon ||
-                  subredditAbout?.data?.icon_img
-                }
-                size="xl"
-                mt="-8"
-              />
-              <Box ml="2" display="inline-block">
-                <Heading> {subredditAbout?.data?.title}</Heading>
-                <Heading size="md">{`r/${subreddit}`}</Heading>
-              </Box>
+        {background}
+        <Flex justify="center" position="relative" bgColor="darkgray">
+          <Box p="4" w="5xl">
+            <Avatar
+              name="r /"
+              src={
+                subredditAbout?.data?.community_icon ||
+                subredditAbout?.data?.icon_img
+              }
+              size="xl"
+              mt="-8"
+            />
+            <Box ml="2" display="inline-block">
+              <Heading> {subredditAbout?.data?.title}</Heading>
+              <Heading size="md">{`r/${subreddit}`}</Heading>
             </Box>
-          </Flex>
-        </Box>
+          </Box>
+        </Flex>
       </Link>
     </NextLink>
   );
