@@ -2,6 +2,7 @@ import { GetServerSideProps } from "next";
 import { FC } from "react";
 
 import BrowseSubreddit from "../../../components/page/BrowseSubreddit";
+import SubredditProvider from "../../../lib/context/SubredditProvider";
 import { REDDIT_URL_PARAMS } from "../../../lib/reddit/redditUrlParams";
 
 const URL_SORT_VALUES = REDDIT_URL_PARAMS["/r/[subreddit]/[[...sort]]"].sort;
@@ -20,27 +21,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      navProps: {
-        subreddit,
-        sort,
-        time,
-      },
+      subreddit,
+      sort,
+      time,
     },
   };
 };
 
-type NavProps = {
+type Props = {
   subreddit: string;
   sort: typeof URL_SORT_VALUES[number];
   time: typeof URL_TIME_VALUES[number];
 };
 
-type Props = {
-  navProps: NavProps;
-};
-
-const SubredditPage: FC<Props> = ({ navProps }) => {
-  return <BrowseSubreddit navProps={navProps} />;
+const SubredditPage: FC<Props> = ({ subreddit, sort, time }) => {
+  return (
+    <SubredditProvider subreddit={subreddit}>
+      <BrowseSubreddit sort={sort} time={time} />
+    </SubredditProvider>
+  );
 };
 
 export default SubredditPage;

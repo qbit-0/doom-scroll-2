@@ -1,13 +1,11 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Button,
-  ButtonGroup,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
@@ -15,25 +13,23 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FC } from "react";
 import { IoFilter } from "react-icons/io5";
 
-import NavFrame from "../components/NavFrame";
-import PageFrame from "../components/PageFrame";
-import Post from "../components/Post";
-import PostSkeleton from "../components/PostSkeleton";
-import Subreddit from "../components/Subreddit";
-import User from "../components/User";
-import FilterModal from "../components/modal/FilterModal";
-import ButtonPanel from "../components/panel/ButtonPanel";
-import Listing from "../components/panel/Listing";
-import Listings from "../components/panel/Listings";
+import Buttons from "../components/card/Buttons";
+import Listing from "../components/card_collection/Listing";
+import Listings from "../components/card_collection/Listings";
+import SearchPostListings from "../components/card_collection/SearchPostListings";
+import NavModal from "../components/modal/NavModal";
+import NavFrame from "../components/page/NavFrame";
+import PageFrame from "../components/page/PageFrame";
+import PostSkeleton from "../components/post/PostSkeleton";
+import Subreddit from "../components/subreddit/Subreddit";
+import User from "../components/user/User";
 import SubredditProvider from "../lib/context/SubredditProvider";
 import {
   RedditAccount,
-  RedditLink,
   RedditSubreddit,
 } from "../lib/reddit/redditDataStructs";
 import { REDDIT_URL_PARAMS } from "../lib/reddit/redditUrlParams";
 import {
-  getSearchPostsPath,
   getSearchSubredditsPath,
   getSearchUsersPath,
 } from "../lib/reddit/redditUrlUtils";
@@ -82,50 +78,42 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      navProps: {
-        searchQuery,
-        sort,
-        time,
-        type,
-      },
+      searchQuery,
+      sort,
+      time,
+      type,
     },
   };
 };
 
-type NavProps = {
+type Props = {
   searchQuery: string;
   type: typeof SEARCH_TYPE_VALUES[number];
   sort: typeof SEARCH_SORT_VALUES[number];
   time: typeof SEARCH_TIME_VALUES[number];
 };
 
-type Props = {
-  navProps: NavProps;
-};
-
-const SearchPage: FC<Props> = ({ navProps }) => {
-  const { searchQuery, sort, time, type } = navProps;
-
+const SearchPage: FC<Props> = (props) => {
+  const { searchQuery, type, sort, time } = props;
   const router = useRouter();
 
-  const renavigate = (newNavProps: NavProps) => {
-    const pathname = "/search";
-    const query: Record<string, string> = {};
-    query["q"] = newNavProps.searchQuery;
-    if (newNavProps.sort !== "relevance") query["sort"] = newNavProps.sort;
-    if (newNavProps.time !== "all") query["t"] = newNavProps.time;
-    if (newNavProps.type !== "link") query["type"] = newNavProps.type;
-
-    router.push({
-      pathname,
-      query,
-    });
-  };
-
-  const handleNavChange = (propName: keyof NavProps, callback?: () => void) => {
+  const handleNavChange = (propName: keyof Props, cb?: () => void) => {
     return (event: ChangeEvent<any>) => {
-      renavigate({ ...navProps, [propName]: event.currentTarget.value });
-      if (callback) callback();
+      const nextProps = { ...props, [propName]: event.currentTarget.value };
+
+      const pathname = "/search";
+      const query: Record<string, string> = {};
+      query["q"] = nextProps.searchQuery;
+      if (nextProps.sort !== "relevance") query["sort"] = nextProps.sort;
+      if (nextProps.time !== "all") query["t"] = nextProps.time;
+      if (nextProps.type !== "link") query["type"] = nextProps.type;
+
+      router.push({
+        pathname,
+        query,
+      });
+
+      if (cb) cb();
     };
   };
 
@@ -135,73 +123,57 @@ const SearchPage: FC<Props> = ({ navProps }) => {
     onClose: onSortModalClose,
   } = useDisclosure();
 
-  const SortMenuItem: FC<{ value: typeof SEARCH_SORT_VALUES[number] }> = ({
-    value,
-  }) => (
-    <MenuItem value={value} onClick={handleNavChange("sort")}>
-      {SORT_DISPLAY_NAMES[value]}
-    </MenuItem>
-  );
-
-  const SortMenu: FC = () => (
+  const sortMenu = (
     <Menu>
       <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
         {SORT_DISPLAY_NAMES[sort]}
       </MenuButton>
       <MenuList>
-        <SortMenuItem value="relevance" />
-        <SortMenuItem value="hot" />
-        <SortMenuItem value="top" />
-        <SortMenuItem value="new" />
-        <SortMenuItem value="comments" />
+        <MenuItem value="relevance" onClick={handleNavChange("sort")}>
+          {SORT_DISPLAY_NAMES["relevance"]}
+        </MenuItem>
+        <MenuItem value="hot" onClick={handleNavChange("sort")}>
+          {SORT_DISPLAY_NAMES["hot"]}
+        </MenuItem>
+        <MenuItem value="top" onClick={handleNavChange("sort")}>
+          {SORT_DISPLAY_NAMES["top"]}
+        </MenuItem>
+        <MenuItem value="new" onClick={handleNavChange("sort")}>
+          {SORT_DISPLAY_NAMES["new"]}
+        </MenuItem>
+        <MenuItem value="comments" onClick={handleNavChange("sort")}>
+          {SORT_DISPLAY_NAMES["comments"]}
+        </MenuItem>
       </MenuList>
     </Menu>
   );
 
-  const TimeMenuItem: FC<{ value: typeof SEARCH_TIME_VALUES[number] }> = ({
-    value,
-  }) => (
-    <MenuItem value={value} onClick={handleNavChange("time")}>
-      {TIME_DISPLAY_NAMES[value]}
-    </MenuItem>
-  );
-
-  const TimeMenu: FC = () => (
+  const timeMenu = (
     <Menu>
       <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
         {TIME_DISPLAY_NAMES[time]}
       </MenuButton>
       <MenuList>
-        <TimeMenuItem value="all" />
-        <TimeMenuItem value="year" />
-        <TimeMenuItem value="month" />
-        <TimeMenuItem value="week" />
-        <TimeMenuItem value="day" />
-        <TimeMenuItem value="hour" />
+        <MenuItem value="all" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["all"]}
+        </MenuItem>
+        <MenuItem value="year" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["year"]}
+        </MenuItem>
+        <MenuItem value="month" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["month"]}
+        </MenuItem>
+        <MenuItem value="week" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["week"]}
+        </MenuItem>
+        <MenuItem value="day" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["day"]}
+        </MenuItem>
+        <MenuItem value="hour" onClick={handleNavChange("time")}>
+          {TIME_DISPLAY_NAMES["hour"]}
+        </MenuItem>
       </MenuList>
     </Menu>
-  );
-
-  const PostListings: FC = () => (
-    <Listings
-      createListing={(after, updateAfter) => {
-        const { pathname, query } = getSearchPostsPath(
-          searchQuery,
-          sort,
-          time,
-          after
-        );
-        return (
-          <Listing
-            pathname={pathname}
-            query={query}
-            createItem={(item: RedditLink) => <Post post={item} />}
-            createSkeleton={() => <PostSkeleton />}
-            updateAfter={updateAfter}
-          />
-        );
-      }}
-    />
   );
 
   const SubredditListings: FC = () => (
@@ -245,11 +217,15 @@ const SearchPage: FC<Props> = ({ navProps }) => {
       case "link":
         return (
           <>
-            <ButtonPanel>
-              <SortMenu />
-              <TimeMenu />
-            </ButtonPanel>
-            <PostListings />
+            <Buttons>
+              {sortMenu}
+              {timeMenu}
+            </Buttons>
+            <SearchPostListings
+              searchQuery={searchQuery}
+              sort={sort}
+              time={time}
+            />
           </>
         );
         break;
@@ -275,7 +251,7 @@ const SearchPage: FC<Props> = ({ navProps }) => {
   );
 
   return (
-    <SubredditProvider initialSubreddit={undefined}>
+    <SubredditProvider subreddit={undefined}>
       <NavFrame
         additionalNav={
           <IconButton
@@ -289,23 +265,23 @@ const SearchPage: FC<Props> = ({ navProps }) => {
         <PageFrame
           leftChildren={
             <>
-              <ButtonPanel>
+              <Buttons>
                 <TypeButton value="link" />
                 <TypeButton value="sr" />
                 <TypeButton value="user" />
-              </ButtonPanel>
+              </Buttons>
               <SearchContent />
             </>
           }
         />
       </NavFrame>
-      <FilterModal isOpen={isSortModalOpen} onClose={onSortModalClose}>
+      <NavModal isOpen={isSortModalOpen} onClose={onSortModalClose}>
         <TypeButton value="link" />
         <TypeButton value="sr" />
         <TypeButton value="user" />
-        <SortMenu />
-        <TimeMenu />
-      </FilterModal>
+        {sortMenu}
+        {timeMenu}
+      </NavModal>
     </SubredditProvider>
   );
 };

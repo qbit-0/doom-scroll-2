@@ -1,4 +1,4 @@
-import { Box, BoxProps, CSSObject } from "@chakra-ui/react";
+import { Box, CSSObject } from "@chakra-ui/react";
 import { FC } from "react";
 import sanitizeHtml from "sanitize-html";
 

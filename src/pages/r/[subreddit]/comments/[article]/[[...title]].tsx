@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
-import NavFrame from "../../../../../components/NavFrame";
-import PageFrame from "../../../../../components/PageFrame";
+import Article from "../../../../../components/Article";
 import SubredditBanner from "../../../../../components/SubredditBanner";
-import AboutSubredditPanel from "../../../../../components/panel/AboutSubredditPanel";
-import SubredditRulesPanel from "../../../../../components/panel/SubredditRulesPanel";
-import PostAndComments from "../../../../../components/PostAndComments";
+import AboutSubreddit from "../../../../../components/card/AboutSr";
+import SubredditRules from "../../../../../components/card/SrRules";
+import NavFrame from "../../../../../components/page/NavFrame";
+import PageFrame from "../../../../../components/page/PageFrame";
 import SubredditProvider from "../../../../../lib/context/SubredditProvider";
 import useReddit from "../../../../../lib/hooks/useReddit";
 import {
@@ -43,18 +43,18 @@ const CommentsPage: FC<Props> = ({ article, subreddit }) => {
 
   return (
     <SubredditProvider
-      initialSubreddit={subreddit}
+      subreddit={subreddit}
       initialSubredditAbout={subredditAbout}
       initialSubredditRules={subredditRules}
     >
       <NavFrame>
         <PageFrame
           topChildren={<SubredditBanner />}
-          leftChildren={<PostAndComments article={article} />}
+          leftChildren={<Article article={article} />}
           rightChildren={
             <>
-              <AboutSubredditPanel />
-              <SubredditRulesPanel />
+              <AboutSubreddit />
+              <SubredditRules />
             </>
           }
         />

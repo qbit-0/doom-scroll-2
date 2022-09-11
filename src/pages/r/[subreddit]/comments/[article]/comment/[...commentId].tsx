@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
-import NavFrame from "../../../../../../components/NavFrame";
-import PageFrame from "../../../../../../components/PageFrame";
+import Article from "../../../../../../components/Article";
 import SubredditBanner from "../../../../../../components/SubredditBanner";
-import AboutSubredditPanel from "../../../../../../components/panel/AboutSubredditPanel";
-import SubredditRulesPanel from "../../../../../../components/panel/SubredditRulesPanel";
-import PostAndComments from "../../../../../../components/PostAndComments";
+import AboutSubreddit from "../../../../../../components/card/AboutSr";
+import SubredditRules from "../../../../../../components/card/SrRules";
+import NavFrame from "../../../../../../components/page/NavFrame";
+import PageFrame from "../../../../../../components/page/PageFrame";
 import useReddit from "../../../../../../lib/hooks/useReddit";
 import {
   RedditRules,
@@ -47,13 +47,11 @@ const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
     <NavFrame>
       <PageFrame
         topChildren={<SubredditBanner />}
-        leftChildren={
-          <PostAndComments article={article} commentId={commentId} />
-        }
+        leftChildren={<Article article={article} commentId={commentId} />}
         rightChildren={
           <>
-            <AboutSubredditPanel />
-            <SubredditRulesPanel />
+            <AboutSubreddit />
+            <SubredditRules />
           </>
         }
         showExplanation={false}

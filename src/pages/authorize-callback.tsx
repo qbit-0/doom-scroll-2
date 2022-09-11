@@ -2,8 +2,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 
-import PageFrame from "../components/PageFrame";
-import AboutHomePanel from "../components/panel/AboutHomePanel";
+import AboutHome from "../components/card/AboutHome";
+import PageFrame from "../components/page/PageFrame";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
@@ -63,7 +63,7 @@ const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
     <PageFrame
       topChildren={null}
       leftChildren={null}
-      rightChildren={<AboutHomePanel />}
+      rightChildren={<AboutHome />}
       showExplanation={true}
     />
   );

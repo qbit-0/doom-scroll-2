@@ -1,10 +1,8 @@
 import {
   Box,
-  BoxProps,
   ButtonGroup,
   HStack,
   Heading,
-  Icon,
   IconButton,
   Spacer,
   Text,
@@ -19,9 +17,9 @@ import { CommentsFilterContext } from "../lib/context/CommentsFilterProvider";
 import { RedditComment } from "../lib/reddit/redditDataStructs";
 import { getElapsedString } from "../lib/utils/getElapsedString";
 import Card from "./Card";
-import Comments from "./Comments";
-import RedditAvatar from "./RedditAvatar";
+import CommentListing from "./CommentListing";
 import SanitizeHTML from "./SanitizeHTML";
+import RedditAvatar from "./reddit_basic/RedditAvatar";
 
 type Props = {
   article: string;
@@ -75,7 +73,7 @@ const Comment: FC<Props> = ({ article, comment }) => {
 
   const result = useMemo(() => {
     return (
-      <Card disabled={disabled} changeBgWhenDisabled>
+      <Card>
         <Box
           filter={disabled ? "auto" : "none"}
           brightness={disabled ? "50%" : "none"}
@@ -128,7 +126,10 @@ const Comment: FC<Props> = ({ article, comment }) => {
         </Box>
 
         {comment.data.replies && (
-          <Comments initialComments={comment.data.replies} article={article} />
+          <CommentListing
+            initialComments={comment.data.replies}
+            article={article}
+          />
         )}
       </Card>
     );

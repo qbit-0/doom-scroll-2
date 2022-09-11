@@ -1,69 +1,47 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  createContext,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, FC, SetStateAction, createContext, useEffect } from "react";
 
+import useReddit from "../hooks/useReddit";
 import { RedditRules, RedditSubreddit } from "../reddit/redditDataStructs";
 
 interface SubredditContextInterface {
   subreddit: string | undefined;
-  setSubreddit: Dispatch<SetStateAction<string | undefined>>;
   subredditAbout?: RedditSubreddit;
-  setSubredditAbout: Dispatch<SetStateAction<RedditSubreddit | undefined>>;
   subredditRules?: RedditRules;
-  setSubredditRules: Dispatch<SetStateAction<RedditRules | undefined>>;
 }
 
 export const SubredditContext = createContext({} as SubredditContextInterface);
 
+const SUBREDDITS_WITHOUT_INFO = ["", "popular", "all"];
+
 type Props = {
-  initialSubreddit?: string;
-  initialSubredditAbout?: RedditSubreddit;
-  initialSubredditRules?: RedditRules;
+  subreddit?: string;
   children: React.ReactNode;
 };
 
-const SubredditProvider: FC<Props> = ({
-  initialSubreddit,
-  initialSubredditAbout,
-  initialSubredditRules,
-  children,
-}) => {
-  const [subreddit, setSubreddit] = useState<string | undefined>(
-    initialSubreddit
+const SubredditProvider: FC<Props> = ({ subreddit, children }) => {
+  const { data: subredditAbout } = useReddit<RedditSubreddit>(
+    SUBREDDITS_WITHOUT_INFO.includes(subreddit || "")
+      ? null
+      : {
+          method: "GET",
+          pathname: `/r/${subreddit}/about`,
+        }
   );
-  const [subredditAbout, setSubredditAbout] = useState<
-    RedditSubreddit | undefined
-  >(initialSubredditAbout);
-  const [subredditRules, setSubredditRules] = useState<RedditRules | undefined>(
-    initialSubredditRules
+  const { data: subredditRules } = useReddit<RedditRules>(
+    SUBREDDITS_WITHOUT_INFO.includes(subreddit || "")
+      ? null
+      : {
+          method: "GET",
+          pathname: `/r/${subreddit}/about/rules`,
+        }
   );
-
-  useEffect(() => {
-    setSubreddit(initialSubreddit);
-  }, [initialSubreddit]);
-
-  useEffect(() => {
-    setSubredditAbout(initialSubredditAbout);
-  }, [initialSubredditAbout]);
-
-  useEffect(() => {
-    setSubredditRules(initialSubredditRules);
-  }, [initialSubredditRules]);
 
   return (
     <SubredditContext.Provider
       value={{
         subreddit,
-        setSubreddit,
         subredditAbout,
-        setSubredditAbout,
         subredditRules,
-        setSubredditRules,
       }}
     >
       {children}

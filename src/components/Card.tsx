@@ -1,33 +1,26 @@
-import { Box, useColorModeValue, useStyleConfig } from "@chakra-ui/react";
-import React, { FC, useContext } from "react";
-
-import { DisplaySettingsContext } from "../lib/context/DisplaySettingsProvider";
+import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
+import React, { FC } from "react";
 
 type Props = {
-  disabled?: boolean | null;
-  changeBgWhenDisabled?: boolean;
-  darkenContentWhenDisabled?: boolean;
   children?: React.ReactNode;
+  boxProps?: BoxProps;
 };
 
-const Card: FC<Props> = ({
-  disabled = false,
-  changeBgWhenDisabled = false,
-  darkenContentWhenDisabled = false,
-  children,
-}) => {
-  const styles = useStyleConfig("Card");
+const Card: FC<Props> = ({ boxProps, children }) => {
   const bgColor = useColorModeValue("white", "gray.800");
-  const { hideFilteredContent } = useContext(DisplaySettingsContext);
 
   return (
     <Box
-      display={disabled && hideFilteredContent ? "none" : "block"}
-      bgColor={disabled && changeBgWhenDisabled ? "black" : bgColor}
-      filter={disabled && darkenContentWhenDisabled ? "auto" : "none"}
-      brightness={disabled && darkenContentWhenDisabled ? "50%" : "none"}
-      boxShadow={disabled ? "none" : "md"}
-      __css={styles}
+      borderWidth={[0, 0, 1]}
+      w="full"
+      p="4"
+      shadow="md"
+      rounded={["none", "none", "md"]}
+      borderColor="gray.500"
+      bgColor={bgColor}
+      boxShadow="md"
+      overflow="hidden"
+      {...boxProps}
     >
       {children}
     </Box>

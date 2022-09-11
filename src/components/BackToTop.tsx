@@ -1,12 +1,12 @@
 import { ChevronUpIcon } from "@chakra-ui/icons";
-import { ButtonProps, IconButton } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import { FC, RefObject } from "react";
 
 type Props = {
   topRef: RefObject<HTMLDivElement>;
-} & ButtonProps;
+};
 
-const BackToTop: FC<Props> = ({ topRef, ...innerProps }) => {
+const BackToTop: FC<Props> = ({ topRef }) => {
   return (
     <IconButton
       zIndex={20}
@@ -17,7 +17,6 @@ const BackToTop: FC<Props> = ({ topRef, ...innerProps }) => {
       onClick={() => {
         topRef.current?.scrollIntoView({ behavior: "smooth" });
       }}
-      {...innerProps}
     />
   );
 };
