@@ -13,7 +13,7 @@ const PostBody: FC<Props> = ({ post }) => {
   if (post.data?.post_hint === "image") {
     return (
       <>
-        <Flex maxH="xs">
+        <Flex maxH="xs" justify="center">
           <Image
             src={post.data.url_overridden_by_dest}
             alt="post image"

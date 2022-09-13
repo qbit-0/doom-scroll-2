@@ -24,8 +24,8 @@ import { SubredditContext } from "../../lib/context/SubredditProvider";
 import { REDDIT_URL_PARAMS } from "../../lib/reddit/redditUrlParams";
 import Buttons from "../Buttons";
 import SrInfo from "../SrInfo";
-import PostListings from "../SrPostListings";
 import SubredditBanner from "../SubredditBanner";
+import SrPostListings from "../listings/SrPostListings";
 import NavModal from "../modal/NavModal";
 import NavFrame from "./NavFrame";
 import PageFrame from "./PageFrame";
@@ -206,7 +206,7 @@ const BrowseSubreddit: FC<Props> = (props) => {
                   {SORT_DISPLAY_NAMES["rising"]}
                 </Button>
               </Buttons>
-              <PostListings subreddit={subreddit} sort={sort} time={time} />
+              <SrPostListings subreddit={subreddit} sort={sort} time={time} />
             </>
           }
           rightChildren={<SrInfo />}

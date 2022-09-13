@@ -6,6 +6,7 @@ import {
   IconButton,
   Spacer,
   Text,
+  VStack,
   useConst,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -73,7 +74,7 @@ const Comment: FC<Props> = ({ article, comment }) => {
 
   const result = useMemo(() => {
     return (
-      <Card>
+      <Card boxProps={{ p: "2" }}>
         <Box
           filter={disabled ? "auto" : "none"}
           brightness={disabled ? "50%" : "none"}
@@ -125,12 +126,14 @@ const Comment: FC<Props> = ({ article, comment }) => {
           </HStack>
         </Box>
 
-        {comment.data.replies && (
-          <CommentListing
-            initialComments={comment.data.replies}
-            article={article}
-          />
-        )}
+        <VStack>
+          {comment.data.replies && (
+            <CommentListing
+              initialComments={comment.data.replies}
+              article={article}
+            />
+          )}
+        </VStack>
       </Card>
     );
   }, [comment, disabled]);

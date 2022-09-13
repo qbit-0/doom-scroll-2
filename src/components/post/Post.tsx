@@ -16,7 +16,6 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  PropsOf,
   Spacer,
   Stack,
   StackDivider,
@@ -30,7 +29,7 @@ import {
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useCallback, useContext, useEffect, useMemo } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import { IoChatboxOutline } from "react-icons/io5";
 import Sentiment from "sentiment";
@@ -52,7 +51,7 @@ type Props = {
   disabledOverride?: boolean;
 };
 
-const PostCard: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
+const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
   const router = useRouter();
   const browsePathname = useConst(router.asPath);
   const postPathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
@@ -159,182 +158,204 @@ const PostCard: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
 
   const result = useMemo(() => {
     return (
-      <Card boxProps={{ p: "0" }}>
-        <Box>
-          <Flex>
-            <ButtonGroup hidden={voteAtBottom} size="md" variant="ghost">
-              <VStack w="12" py="2" spacing="0">
-                <IconButton
-                  colorScheme={post.data.likes === true ? "red" : "black"}
-                  icon={<ImArrowUp />}
-                  aria-label="upvote"
-                  onClick={handleUpvote}
-                />
-                <Text fontSize="sm" display="inline" color={upvoteTextColor}>
-                  {Intl.NumberFormat("en-US", {
-                    notation: "compact",
-                    maximumFractionDigits: 1,
-                  }).format(post.data.score)}
-                </Text>
-                <IconButton
-                  colorScheme={post.data.likes === false ? "blue" : "black"}
-                  icon={<ImArrowDown />}
-                  aria-label="downvote"
-                  onClick={handleDownvote}
-                />
-              </VStack>
-            </ButtonGroup>
-            <Box flex="1">
-              <Box p="2">
+      <>
+        <Box
+          w="full"
+          filter={disabled ? "auto" : "none"}
+          brightness="50%"
+          cursor="pointer"
+        >
+          <Card boxProps={{ p: "0" }}>
+            <Box>
+              <Flex>
+                <ButtonGroup hidden={voteAtBottom} size="md" variant="ghost">
+                  <VStack w="12" py="2" spacing="0">
+                    <IconButton
+                      colorScheme={post.data.likes === true ? "red" : "black"}
+                      icon={<ImArrowUp />}
+                      aria-label="upvote"
+                      onClick={handleUpvote}
+                    />
+                    <Text
+                      fontSize="sm"
+                      display="inline"
+                      color={upvoteTextColor}
+                    >
+                      {Intl.NumberFormat("en-US", {
+                        notation: "compact",
+                        maximumFractionDigits: 1,
+                      }).format(post.data.score)}
+                    </Text>
+                    <IconButton
+                      colorScheme={post.data.likes === false ? "blue" : "black"}
+                      icon={<ImArrowDown />}
+                      aria-label="downvote"
+                      onClick={handleDownvote}
+                    />
+                  </VStack>
+                </ButtonGroup>
+                <Box flex="1">
+                  <Box p="2">
+                    <HStack>
+                      <Avatar
+                        name={"r /"}
+                        src={
+                          post.data?.sr_detail?.community_icon ||
+                          post.data?.sr_detail?.icon_img
+                        }
+                        size="sm"
+                      />
+                      <HStack display="inline" divider={<> &middot; </>}>
+                        <Heading size="sm" display="inline" color="red">
+                          <NextLink href={`/r/${post.data.subreddit}`}>
+                            <Link size="sm">{post.data.subreddit}</Link>
+                          </NextLink>
+                        </Heading>
+                        <Heading size="sm" display="inline">
+                          {post.data.author}
+                        </Heading>
+                        <Heading size="sm" display="inline" color="gray">
+                          {getElapsedString(post.data.created_utc)}
+                        </Heading>
+                      </HStack>
+                    </HStack>
+                    <Link
+                      size="sm"
+                      onClick={() => {
+                        if (openModal) handleModalOpen();
+                      }}
+                    >
+                      <Heading size="lg">{post.data.title}</Heading>
+                    </Link>
+                  </Box>
+                  <PostBody post={post} />
+                </Box>
+              </Flex>
+              <Stack direction={bottomStackDirection} p="2">
                 <HStack>
-                  <Avatar
-                    name={"r /"}
-                    src={
-                      post.data?.sr_detail?.community_icon ||
-                      post.data?.sr_detail?.icon_img
+                  <Button
+                    variant="outline"
+                    rightIcon={
+                      <Icon as={IoChatboxOutline} aria-label="comments" />
                     }
-                    size="sm"
-                  />
-                  <HStack display="inline" divider={<> &middot; </>}>
-                    <Heading size="sm" display="inline" color="red">
-                      <NextLink href={`/r/${post.data.subreddit}`}>
-                        <Link size="sm">{post.data.subreddit}</Link>
-                      </NextLink>
-                    </Heading>
-                    <Heading size="sm" display="inline">
-                      {post.data.author}
-                    </Heading>
-                    <Heading size="sm" display="inline" color="gray">
-                      {getElapsedString(post.data.created_utc)}
-                    </Heading>
-                  </HStack>
+                    onClick={() => {
+                      if (openModal) handleModalOpen();
+                    }}
+                  >
+                    <Text>{`${post.data.num_comments}`}</Text>
+                  </Button>
+                  <ButtonGroup hidden={!voteAtBottom} size="md" variant="ghost">
+                    <HStack spacing="0">
+                      <IconButton
+                        colorScheme={post.data.likes === true ? "red" : "black"}
+                        icon={<ImArrowUp />}
+                        aria-label="upvote"
+                        onClick={handleUpvote}
+                      />
+                      <Text
+                        fontSize="sm"
+                        display="inline"
+                        color={upvoteTextColor}
+                      >
+                        {Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                          maximumFractionDigits: 1,
+                        }).format(post.data.score)}
+                      </Text>
+                      <IconButton
+                        colorScheme={
+                          post.data.likes === false ? "blue" : "black"
+                        }
+                        icon={<ImArrowDown />}
+                        aria-label="downvote"
+                        onClick={handleDownvote}
+                      />
+                    </HStack>
+                  </ButtonGroup>
                 </HStack>
-                <Link
-                  size="sm"
-                  onClick={() => {
-                    if (openModal) handleModalOpen();
-                  }}
-                >
-                  <Heading size="lg">{post.data.title}</Heading>
-                </Link>
-              </Box>
-              <PostBody post={post} />
+                <Spacer />
+                <Popover>
+                  <PopoverTrigger>
+                    <Button variant="outline">
+                      <HStack divider={<StackDivider />}>
+                        <Tooltip label="The ratio of upvotes to total votes on a post.">
+                          <Box>
+                            <Text>Upvote Ratio</Text>
+                            <Text>{`${(post.data.upvote_ratio * 100).toFixed(
+                              0
+                            )}%`}</Text>
+                          </Box>
+                        </Tooltip>
+                        <Tooltip label="How positive or negative is the text content of a post. A positive value means a positive sentiment. A negative value means a negative sentiment.">
+                          <Box>
+                            <Text>Text Sen.</Text>
+                            <Text>{`${textSentiment.comparative.toFixed(
+                              3
+                            )}`}</Text>
+                          </Box>
+                        </Tooltip>
+
+                        <Tooltip label="Combined score that determines the overall sentiment of a post.">
+                          <Box>
+                            <Text>Agg. Sen.</Text>
+                            <Text>{`${aggSentiment.toFixed(3)}`}</Text>
+                          </Box>
+                        </Tooltip>
+                      </HStack>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>
+                      <Heading size="md" textAlign="center">
+                        AFINN Sentiment Analysis
+                      </Heading>
+                    </PopoverHeader>
+                    <PopoverBody>
+                      <Heading size="sm">Sentiment Words:</Heading>
+                      {textSentiment.positive.length > 0 && (
+                        <Text>{`positive: ${textSentiment.positive
+                          .map(
+                            (word: string) =>
+                              `${word}(${sentiment.analyze(word).score})`
+                          )
+                          .join(", ")}`}</Text>
+                      )}
+                      {textSentiment.negative.length > 0 && (
+                        <Text>{`negative: ${textSentiment.negative
+                          .map(
+                            (word: string) =>
+                              `${word}(${sentiment.analyze(word).score})`
+                          )
+                          .join(", ")}`}</Text>
+                      )}
+                      {textSentiment.positive.length === 0 &&
+                        textSentiment.negative.length === 0 && (
+                          <Text>No sentiment tokens found.</Text>
+                        )}
+                      <Heading size="sm">{`Sentiment Sum: ${textSentiment.score}`}</Heading>
+                      <Heading size="sm">{`Total Number of Tokens: ${textSentiment.tokens.length}`}</Heading>
+                      <Heading size="sm">{`Comparative Text Sentiment: ${textSentiment.comparative.toFixed(
+                        3
+                      )}`}</Heading>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </Stack>
             </Box>
-          </Flex>
-          <Stack direction={bottomStackDirection} p="2">
-            <HStack>
-              <Button
-                variant="outline"
-                rightIcon={<Icon as={IoChatboxOutline} aria-label="comments" />}
-                onClick={() => {
-                  if (openModal) handleModalOpen();
-                }}
-              >
-                <Text>{`${post.data.num_comments}`}</Text>
-              </Button>
-              <ButtonGroup hidden={!voteAtBottom} size="md" variant="ghost">
-                <HStack spacing="0">
-                  <IconButton
-                    colorScheme={post.data.likes === true ? "red" : "black"}
-                    icon={<ImArrowUp />}
-                    aria-label="upvote"
-                    onClick={handleUpvote}
-                  />
-                  <Text fontSize="sm" display="inline" color={upvoteTextColor}>
-                    {Intl.NumberFormat("en-US", {
-                      notation: "compact",
-                      maximumFractionDigits: 1,
-                    }).format(post.data.score)}
-                  </Text>
-                  <IconButton
-                    colorScheme={post.data.likes === false ? "blue" : "black"}
-                    icon={<ImArrowDown />}
-                    aria-label="downvote"
-                    onClick={handleDownvote}
-                  />
-                </HStack>
-              </ButtonGroup>
-            </HStack>
-            <Spacer />
-            <Popover>
-              <PopoverTrigger>
-                <Button variant="outline">
-                  <HStack divider={<StackDivider />}>
-                    <Tooltip label="The ratio of upvotes to total votes on a post.">
-                      <Box>
-                        <Text>Upvote Ratio</Text>
-                        <Text>{`${(post.data.upvote_ratio * 100).toFixed(
-                          0
-                        )}%`}</Text>
-                      </Box>
-                    </Tooltip>
-                    <Tooltip label="How positive or negative is the text content of a post. A positive value means a positive sentiment. A negative value means a negative sentiment.">
-                      <Box>
-                        <Text>Text Sen.</Text>
-                        <Text>{`${textSentiment.comparative.toFixed(3)}`}</Text>
-                      </Box>
-                    </Tooltip>
-
-                    <Tooltip label="Combined score that determines the overall sentiment of a post.">
-                      <Box>
-                        <Text>Agg. Sen.</Text>
-                        <Text>{`${aggSentiment.toFixed(3)}`}</Text>
-                      </Box>
-                    </Tooltip>
-                  </HStack>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverCloseButton />
-                <PopoverHeader>
-                  <Heading size="md" textAlign="center">
-                    AFINN Sentiment Analysis
-                  </Heading>
-                </PopoverHeader>
-                <PopoverBody>
-                  <Heading size="sm">Sentiment Words:</Heading>
-                  {textSentiment.positive.length > 0 && (
-                    <Text>{`positive: ${textSentiment.positive
-                      .map(
-                        (word: string) =>
-                          `${word}(${sentiment.analyze(word).score})`
-                      )
-                      .join(", ")}`}</Text>
-                  )}
-                  {textSentiment.negative.length > 0 && (
-                    <Text>{`negative: ${textSentiment.negative
-                      .map(
-                        (word: string) =>
-                          `${word}(${sentiment.analyze(word).score})`
-                      )
-                      .join(", ")}`}</Text>
-                  )}
-                  {textSentiment.positive.length === 0 &&
-                    textSentiment.negative.length === 0 && (
-                      <Text>No sentiment tokens found.</Text>
-                    )}
-                  <Heading size="sm">{`Sentiment Sum: ${textSentiment.score}`}</Heading>
-                  <Heading size="sm">{`Total Number of Tokens: ${textSentiment.tokens.length}`}</Heading>
-                  <Heading size="sm">{`Comparative Text Sentiment: ${textSentiment.comparative.toFixed(
-                    3
-                  )}`}</Heading>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          </Stack>
+          </Card>
         </Box>
-
         <ArticleModal
           post={post}
           isOpen={isModalOpen}
           onClose={handleModalClose}
         />
-      </Card>
+      </>
     );
   }, [post, disabled, isModalOpen, voteAtBottom, bottomStackDirection]);
 
   return result;
 };
 
-export default PostCard;
+export default Post;

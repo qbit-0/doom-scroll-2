@@ -54,11 +54,11 @@ const PageFrame: FC<Props> = ({ topChildren, leftChildren, rightChildren }) => {
       <Box ref={topRef} bgColor={bgColor}>
         {topChildren}
         <Flex py="4" justify="center" columnGap={4}>
-          <VStack maxW="2xl" h="full">
+          <VStack w="full" maxW="2xl" h="full">
             {subreddit === "" && <Explaination />}
             {leftChildren}
           </VStack>
-          <VStack hidden={!hideRightPanels} maxW="lg">
+          <VStack hidden={!hideRightPanels} w="full" maxW="lg">
             {rightChildren}
           </VStack>
         </Flex>

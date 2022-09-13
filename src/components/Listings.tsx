@@ -1,4 +1,3 @@
-import { StackProps, VStack } from "@chakra-ui/react";
 import { FC, Fragment, useEffect, useState } from "react";
 
 import useAtBottom from "../lib/hooks/useAtBottom";
@@ -42,7 +41,7 @@ const Listings: FC<Props> = ({ createListing }) => {
     );
   }
 
-  return <VStack w="full">{pages}</VStack>;
+  return <>{pages}</>;
 };
 
 export default Listings;

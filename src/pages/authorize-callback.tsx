@@ -2,7 +2,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 
-import AboutHome from "../components/card/AboutHome";
+import AboutHome from "../components/AboutHome";
+import NavFrame from "../components/page/NavFrame";
 import PageFrame from "../components/page/PageFrame";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
 import { RedditMe } from "../lib/reddit/redditDataStructs";
@@ -59,14 +60,7 @@ const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
     router.replace(state.next);
   }, [me, setMe, router, state.next]);
 
-  return (
-    <PageFrame
-      topChildren={null}
-      leftChildren={null}
-      rightChildren={<AboutHome />}
-      showExplanation={true}
-    />
-  );
+  return null;
 };
 
 export default AuthorizeCallbackPage;

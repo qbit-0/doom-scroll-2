@@ -127,8 +127,7 @@ const Explaination: FC<Props> = () => {
         </Text>
         <Text>
           {`Overall, filtering by only positive posts will lead to more positive
-        interactions, with more agreeable content. Expect r/aww or good news.
-        Fitlering by only negative posts will lead to more contoversial posts
+        interactions, with more agreeable content. Fitlering by only negative posts will lead to more contoversial posts
         and comments, including more angry, edgy, or depressing content.`}
         </Text>
       </VStack>

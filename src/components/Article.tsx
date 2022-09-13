@@ -13,7 +13,7 @@ import {
 } from "../lib/reddit/redditDataStructs";
 import { getCommentsPath } from "../lib/reddit/redditUrlUtils";
 import CommentListing from "./CommentListing";
-import PostCard from "./post/Post";
+import Post from "./post/Post";
 import PostSkeleton from "./post/PostSkeleton";
 
 type Props = {
@@ -58,7 +58,7 @@ const Article: FC<Props> = ({
   return (
     <>
       {post ? (
-        <PostCard post={post} openModal={openModal} disabledOverride={false} />
+        <Post post={post} openModal={openModal} disabledOverride={false} />
       ) : (
         <PostSkeleton />
       )}

@@ -1,4 +1,3 @@
-import { VStack } from "@chakra-ui/react";
 import React, { FC, Fragment, useEffect } from "react";
 
 import useReddit from "../lib/hooks/useReddit";
@@ -32,20 +31,20 @@ const Listing: FC<Props> = ({
 
   if (!listing) {
     return (
-      <VStack w="full">
+      <>
         {new Array(4).fill(null).map((_, index: number) => (
           <Fragment key={index}>{createSkeleton()}</Fragment>
         ))}
-      </VStack>
+      </>
     );
   }
 
   return (
-    <VStack w="full">
+    <>
       {listing.data.children.map((item: any, index: number) => (
         <Fragment key={index}>{createItem(item)}</Fragment>
       ))}
-    </VStack>
+    </>
   );
 };
 

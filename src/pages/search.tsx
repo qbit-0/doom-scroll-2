@@ -13,26 +13,15 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FC } from "react";
 import { IoFilter } from "react-icons/io5";
 
-import Buttons from "../components/card/Buttons";
-import Listing from "../components/card_collection/Listing";
-import Listings from "../components/card_collection/Listings";
-import SearchPostListings from "../components/card_collection/SearchPostListings";
+import Buttons from "../components/Buttons";
+import SearchPostListings from "../components/listings/SearchPostListings";
+import SearchSrListings from "../components/listings/SearchSrListings";
+import UserListings from "../components/listings/UserListings";
 import NavModal from "../components/modal/NavModal";
 import NavFrame from "../components/page/NavFrame";
 import PageFrame from "../components/page/PageFrame";
-import PostSkeleton from "../components/post/PostSkeleton";
-import Subreddit from "../components/subreddit/Subreddit";
-import User from "../components/user/User";
 import SubredditProvider from "../lib/context/SubredditProvider";
-import {
-  RedditAccount,
-  RedditSubreddit,
-} from "../lib/reddit/redditDataStructs";
 import { REDDIT_URL_PARAMS } from "../lib/reddit/redditUrlParams";
-import {
-  getSearchSubredditsPath,
-  getSearchUsersPath,
-} from "../lib/reddit/redditUrlUtils";
 
 const SEARCH_TYPE_VALUES = REDDIT_URL_PARAMS["/search"].type;
 const SEARCH_SORT_VALUES = REDDIT_URL_PARAMS["/search"].sort;
@@ -176,79 +165,30 @@ const SearchPage: FC<Props> = (props) => {
     </Menu>
   );
 
-  const SubredditListings: FC = () => (
-    <Listings
-      createListing={(after, updateAfter) => {
-        const { pathname, query } = getSearchSubredditsPath(searchQuery, after);
-        return (
-          <Listing
-            pathname={pathname}
-            query={query}
-            createItem={(item: RedditSubreddit) => (
-              <Subreddit subreddit={item} />
-            )}
-            createSkeleton={() => <PostSkeleton />}
-            updateAfter={updateAfter}
+  let searchContent;
+  switch (type) {
+    case "link":
+      searchContent = (
+        <>
+          <Buttons>
+            {sortMenu}
+            {timeMenu}
+          </Buttons>
+          <SearchPostListings
+            searchQuery={searchQuery}
+            sort={sort}
+            time={time}
           />
-        );
-      }}
-    />
-  );
-
-  const UserListings: FC = () => (
-    <Listings
-      createListing={(after, updateAfter) => {
-        const { pathname, query } = getSearchUsersPath(searchQuery, after);
-        return (
-          <Listing
-            pathname={pathname}
-            query={query}
-            createItem={(item: RedditAccount) => <User user={item} />}
-            createSkeleton={() => <PostSkeleton />}
-            updateAfter={updateAfter}
-          />
-        );
-      }}
-    />
-  );
-
-  const SearchContent: FC = () => {
-    switch (type) {
-      case "link":
-        return (
-          <>
-            <Buttons>
-              {sortMenu}
-              {timeMenu}
-            </Buttons>
-            <SearchPostListings
-              searchQuery={searchQuery}
-              sort={sort}
-              time={time}
-            />
-          </>
-        );
-        break;
-      case "sr":
-        return <SubredditListings />;
-        break;
-      case "user":
-        return <UserListings />;
-        break;
-    }
-  };
-
-  const TypeButton: FC<{ value: typeof SEARCH_TYPE_VALUES[number] }> = ({
-    value,
-  }) => (
-    <Button
-      value={value}
-      isActive={type === value}
-      onClick={handleNavChange("type")}
-    >
-      {TYPE_DISPLAY_NAMES[value]}
-    </Button>
-  );
+        </>
+      );
+      break;
+    case "sr":
+      searchContent = <SearchSrListings searchQuery={searchQuery} />;
+      break;
+    case "user":
+      searchContent = <UserListings searchQuery={searchQuery} />;
+      break;
+  }
 
   return (
     <SubredditProvider subreddit={undefined}>
@@ -266,19 +206,55 @@ const SearchPage: FC<Props> = (props) => {
           leftChildren={
             <>
               <Buttons>
-                <TypeButton value="link" />
-                <TypeButton value="sr" />
-                <TypeButton value="user" />
+                <Button
+                  value="link"
+                  isActive={type === "link"}
+                  onClick={handleNavChange("type")}
+                >
+                  {TYPE_DISPLAY_NAMES["link"]}
+                </Button>
+                <Button
+                  value="sr"
+                  isActive={type === "sr"}
+                  onClick={handleNavChange("type")}
+                >
+                  {TYPE_DISPLAY_NAMES["link"]}
+                </Button>
+                <Button
+                  value="user"
+                  isActive={type === "user"}
+                  onClick={handleNavChange("type")}
+                >
+                  {TYPE_DISPLAY_NAMES["link"]}
+                </Button>
               </Buttons>
-              <SearchContent />
+              {searchContent}
             </>
           }
         />
       </NavFrame>
       <NavModal isOpen={isSortModalOpen} onClose={onSortModalClose}>
-        <TypeButton value="link" />
-        <TypeButton value="sr" />
-        <TypeButton value="user" />
+        <Button
+          value="link"
+          isActive={type === "link"}
+          onClick={handleNavChange("type")}
+        >
+          {TYPE_DISPLAY_NAMES["link"]}
+        </Button>
+        <Button
+          value="sr"
+          isActive={type === "sr"}
+          onClick={handleNavChange("type")}
+        >
+          {TYPE_DISPLAY_NAMES["link"]}
+        </Button>
+        <Button
+          value="user"
+          isActive={type === "user"}
+          onClick={handleNavChange("type")}
+        >
+          {TYPE_DISPLAY_NAMES["link"]}
+        </Button>
         {sortMenu}
         {timeMenu}
       </NavModal>
