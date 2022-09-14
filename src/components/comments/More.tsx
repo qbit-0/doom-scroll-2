@@ -1,12 +1,13 @@
-import { BoxProps, Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import axios from "axios";
 import NextLink from "next/link";
 import { FC, MouseEventHandler, useContext, useState } from "react";
 import useSWR, { mutate } from "swr";
 
+import ContentCard from "../../ContentCard";
 import { SubredditContext } from "../../lib/context/SubredditProvider";
 import { RedditComment, RedditMore } from "../../lib/reddit/redditDataStructs";
-import Card from "../Card";
+import CommentCard from "../CommentCard";
 
 type Props = {
   article: string;
@@ -49,7 +50,7 @@ const More: FC<Props> = ({ more, updateReplies, article }) => {
   };
 
   return (
-    <Card>
+    <>
       {more.data.count > 0 ? (
         <Button
           variant="link"
@@ -65,10 +66,10 @@ const More: FC<Props> = ({ more, updateReplies, article }) => {
             more.data.parent_id.length
           )}`}
         >
-          <Button>Continue Thread</Button>
+          <Button variant="link">Continue Thread</Button>
         </NextLink>
       )}
-    </Card>
+    </>
   );
 };
 

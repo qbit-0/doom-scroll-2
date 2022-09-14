@@ -2,15 +2,15 @@ import { Avatar, Box, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { FC } from "react";
 
+import ContentCard from "../../ContentCard";
 import { RedditSubreddit } from "../../lib/reddit/redditDataStructs";
-import Card from "../Card";
 import SanitizeHTML from "../SanitizeHTML";
 
 type Props = { subreddit: RedditSubreddit };
 
 const Subreddit: FC<Props> = ({ subreddit }) => {
   return (
-    <Card>
+    <ContentCard>
       <NextLink href={`/r/${subreddit.data.display_name}`}>
         <Link>
           <Avatar
@@ -24,7 +24,7 @@ const Subreddit: FC<Props> = ({ subreddit }) => {
       <Box>
         <SanitizeHTML dirty={subreddit.data.public_description_html} />
       </Box>
-    </Card>
+    </ContentCard>
   );
 };
 

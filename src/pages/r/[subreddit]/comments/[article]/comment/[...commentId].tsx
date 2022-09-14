@@ -1,17 +1,13 @@
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 
+import AboutSubreddit from "../../../../../../components/AboutSr";
 import Article from "../../../../../../components/Article";
+import SubredditRules from "../../../../../../components/SrRules";
 import SubredditBanner from "../../../../../../components/SubredditBanner";
-import AboutSubreddit from "../../../../../../components/card/AboutSr";
-import SubredditRules from "../../../../../../components/card/SrRules";
 import NavFrame from "../../../../../../components/page/NavFrame";
 import PageFrame from "../../../../../../components/page/PageFrame";
-import useReddit from "../../../../../../lib/hooks/useReddit";
-import {
-  RedditRules,
-  RedditSubreddit,
-} from "../../../../../../lib/reddit/redditDataStructs";
+import SubredditProvider from "../../../../../../lib/context/SubredditProvider";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const subreddit = context.query["subreddit"] || "";
@@ -34,29 +30,21 @@ type Props = {
 };
 
 const ContinueThreadPage: FC<Props> = ({ subreddit, article, commentId }) => {
-  const { data: subredditAbout } = useReddit<RedditSubreddit>({
-    method: "GET",
-    pathname: `/r/${subreddit}/about`,
-  });
-  const { data: subredditRules } = useReddit<RedditRules>({
-    method: "GET",
-    pathname: `/r/${subreddit}/about/rules`,
-  });
-
   return (
-    <NavFrame>
-      <PageFrame
-        topChildren={<SubredditBanner />}
-        leftChildren={<Article article={article} commentId={commentId} />}
-        rightChildren={
-          <>
-            <AboutSubreddit />
-            <SubredditRules />
-          </>
-        }
-        showExplanation={false}
-      />
-    </NavFrame>
+    <SubredditProvider subreddit={subreddit}>
+      <NavFrame>
+        <PageFrame
+          topChildren={<SubredditBanner />}
+          leftChildren={<Article article={article} commentId={commentId} />}
+          rightChildren={
+            <>
+              <AboutSubreddit />
+              <SubredditRules />
+            </>
+          }
+        />
+      </NavFrame>
+    </SubredditProvider>
   );
 };
 

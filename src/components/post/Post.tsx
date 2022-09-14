@@ -29,11 +29,12 @@ import {
 import axios from "axios";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { ImArrowDown, ImArrowUp } from "react-icons/im";
 import { IoChatboxOutline } from "react-icons/io5";
 import Sentiment from "sentiment";
 
+import ContentCard from "../../ContentCard";
 import { PostsFilterContext } from "../../lib/context/PostsFilterProvider";
 import { RedditLink } from "../../lib/reddit/redditDataStructs";
 import {
@@ -41,17 +42,16 @@ import {
   isPostFiltered,
 } from "../../lib/utils/filterUtils";
 import { getElapsedString } from "../../lib/utils/getElapsedString";
-import Card from "../Card";
 import ArticleModal from "../modal/ArticleModal";
 import PostBody from "./PostBody";
 
 type Props = {
   post: RedditLink;
-  openModal?: boolean;
+  openWithModal?: boolean;
   disabledOverride?: boolean;
 };
 
-const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
+const Post: FC<Props> = ({ post, openWithModal = true, disabledOverride }) => {
   const router = useRouter();
   const browsePathname = useConst(router.asPath);
   const postPathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
@@ -75,6 +75,11 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
     disabled = disabledOverride;
   } else {
     disabled = isPostFiltered(postsFilter, post, textSentiment, aggSentiment);
+  }
+
+  const openWithModalOverride = useBreakpointValue({ base: false, lg: true });
+  if (openWithModal === true && openWithModalOverride === false) {
+    openWithModal = false;
   }
 
   const closeOnUrlMismatch = useCallback(() => {
@@ -108,12 +113,16 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
   }, []);
 
   const handleModalOpen = () => {
-    history.pushState(
-      null,
-      "",
-      `/r/${post.data.subreddit}/comments/${post.data.id}`
-    );
-    onModalOpen();
+    if (openWithModal) {
+      history.pushState(
+        null,
+        "",
+        `/r/${post.data.subreddit}/comments/${post.data.id}`
+      );
+      onModalOpen();
+    } else {
+      router.push(`/r/${post.data.subreddit}/comments/${post.data.id}`);
+    }
   };
 
   const handleModalClose = () => {
@@ -155,17 +164,13 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
     base: "column",
     sm: "row",
   });
+  const hideSpacer = useBreakpointValue({ base: true, sm: false });
 
   const result = useMemo(() => {
     return (
       <>
-        <Box
-          w="full"
-          filter={disabled ? "auto" : "none"}
-          brightness="50%"
-          cursor="pointer"
-        >
-          <Card boxProps={{ p: "0" }}>
+        <Box w="full" filter={disabled ? "auto" : "none"} brightness="50%">
+          <ContentCard boxProps={{ p: "0" }}>
             <Box>
               <Flex>
                 <ButtonGroup hidden={voteAtBottom} size="md" variant="ghost">
@@ -219,12 +224,7 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
                         </Heading>
                       </HStack>
                     </HStack>
-                    <Link
-                      size="sm"
-                      onClick={() => {
-                        if (openModal) handleModalOpen();
-                      }}
-                    >
+                    <Link size="sm" onClick={handleModalOpen}>
                       <Heading size="lg">{post.data.title}</Heading>
                     </Link>
                   </Box>
@@ -238,9 +238,7 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
                     rightIcon={
                       <Icon as={IoChatboxOutline} aria-label="comments" />
                     }
-                    onClick={() => {
-                      if (openModal) handleModalOpen();
-                    }}
+                    onClick={handleModalOpen}
                   >
                     <Text>{`${post.data.num_comments}`}</Text>
                   </Button>
@@ -273,34 +271,27 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
                     </HStack>
                   </ButtonGroup>
                 </HStack>
-                <Spacer />
+                <Spacer hidden={hideSpacer} />
                 <Popover>
                   <PopoverTrigger>
                     <Button variant="outline">
                       <HStack divider={<StackDivider />}>
-                        <Tooltip label="The ratio of upvotes to total votes on a post.">
-                          <Box>
-                            <Text>Upvote Ratio</Text>
-                            <Text>{`${(post.data.upvote_ratio * 100).toFixed(
-                              0
-                            )}%`}</Text>
-                          </Box>
-                        </Tooltip>
-                        <Tooltip label="How positive or negative is the text content of a post. A positive value means a positive sentiment. A negative value means a negative sentiment.">
-                          <Box>
-                            <Text>Text Sen.</Text>
-                            <Text>{`${textSentiment.comparative.toFixed(
-                              3
-                            )}`}</Text>
-                          </Box>
-                        </Tooltip>
-
-                        <Tooltip label="Combined score that determines the overall sentiment of a post.">
-                          <Box>
-                            <Text>Agg. Sen.</Text>
-                            <Text>{`${aggSentiment.toFixed(3)}`}</Text>
-                          </Box>
-                        </Tooltip>
+                        <Box>
+                          <Text>Upvote Ratio</Text>
+                          <Text>{`${(post.data.upvote_ratio * 100).toFixed(
+                            0
+                          )}%`}</Text>
+                        </Box>
+                        <Box>
+                          <Text>Text Sen.</Text>
+                          <Text>{`${textSentiment.comparative.toFixed(
+                            3
+                          )}`}</Text>
+                        </Box>
+                        <Box>
+                          <Text>Agg. Sen.</Text>
+                          <Text>{`${aggSentiment.toFixed(3)}`}</Text>
+                        </Box>
                       </HStack>
                     </Button>
                   </PopoverTrigger>
@@ -344,16 +335,24 @@ const Post: FC<Props> = ({ post, openModal = true, disabledOverride }) => {
                 </Popover>
               </Stack>
             </Box>
-          </Card>
+          </ContentCard>
         </Box>
         <ArticleModal
           post={post}
-          isOpen={isModalOpen}
+          isOpen={openWithModal ? isModalOpen : false}
           onClose={handleModalClose}
         />
       </>
     );
-  }, [post, disabled, isModalOpen, voteAtBottom, bottomStackDirection]);
+  }, [
+    post,
+    disabled,
+    openWithModal,
+    isModalOpen,
+    voteAtBottom,
+    bottomStackDirection,
+    hideSpacer,
+  ]);
 
   return result;
 };

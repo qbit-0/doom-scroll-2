@@ -1,15 +1,11 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  createContext,
-  useState,
-} from "react";
+import React, { FC, createContext } from "react";
+
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export type PostsFilter = {
   id: number | null;
-  minScore: number | null;
-  maxScore: number | null;
+  minScore: number;
+  maxScore: number;
   minUpvoteRatio: number;
   maxUpvoteRatio: number;
   minTextSentiment: number;
@@ -20,8 +16,8 @@ export type PostsFilter = {
 
 export const defaultPostsPreset: PostsFilter = {
   id: 0,
-  minScore: null,
-  maxScore: null,
+  minScore: -10000000000,
+  maxScore: 10000000000,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,
@@ -32,8 +28,8 @@ export const defaultPostsPreset: PostsFilter = {
 
 export const positivePostsPreset: PostsFilter = {
   id: 1,
-  minScore: null,
-  maxScore: null,
+  minScore: -10000000000,
+  maxScore: 10000000000,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,
@@ -44,8 +40,8 @@ export const positivePostsPreset: PostsFilter = {
 
 export const negativePostsPreset: PostsFilter = {
   id: 2,
-  minScore: null,
-  maxScore: null,
+  minScore: -10000000000,
+  maxScore: 10000000000,
   minUpvoteRatio: 0,
   maxUpvoteRatio: 1,
   minTextSentiment: -5,
@@ -56,7 +52,7 @@ export const negativePostsPreset: PostsFilter = {
 
 interface PostsFilterContextInterface {
   postsFilter: PostsFilter;
-  setPostsFilter: Dispatch<SetStateAction<PostsFilter>>;
+  setPostsFilter: (postsFilter: PostsFilter) => void;
 }
 
 export const PostsFilterContext = createContext(
@@ -69,10 +65,20 @@ type Props = {
 
 const PostsFilterProvider: FC<Props> = ({ children }) => {
   const [postsFilter, setPostsFilter] =
-    useState<PostsFilter>(defaultPostsPreset);
+    useLocalStorage<PostsFilter>("postsFilter");
+
+  console.log(postsFilter);
 
   return (
-    <PostsFilterContext.Provider value={{ postsFilter, setPostsFilter }}>
+    <PostsFilterContext.Provider
+      value={{
+        postsFilter:
+          postsFilter === undefined || postsFilter === null
+            ? defaultPostsPreset
+            : postsFilter,
+        setPostsFilter,
+      }}
+    >
       {children}
     </PostsFilterContext.Provider>
   );

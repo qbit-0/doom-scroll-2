@@ -3,6 +3,7 @@ import { FC } from "react";
 
 import { RedditLink } from "../../lib/reddit/redditDataStructs";
 import Carousel from "../Carousel";
+import CustomImage from "../CustomImage";
 import SanitizeHTML from "../SanitizeHTML";
 
 type Props = {
@@ -14,15 +15,9 @@ const PostBody: FC<Props> = ({ post }) => {
     return (
       <>
         <Flex maxH="xs" justify="center">
-          <Image
+          <CustomImage
             src={post.data.url_overridden_by_dest}
-            alt="post image"
-            objectFit="contain"
-            dropShadow="lg"
-            onClick={() =>
-              window.open(post.data.url_overridden_by_dest, "_blank")
-            }
-            cursor="pointer"
+            blur={post.data.spoiler}
           />
         </Flex>
         {post.data?.selftext_html && (

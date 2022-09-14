@@ -1,13 +1,12 @@
-import { useBoolean } from "@chakra-ui/react";
-import { FC, createContext } from "react";
+import { createContext, FC } from "react";
+
+import useLocalStorage from "../hooks/useLocalStorage";
 
 interface DisplaySettingsContextInterface {
-  hideFilteredContent: boolean;
-  setHideFilteredContent: {
-    on: () => void;
-    off: () => void;
-    toggle: () => void;
-  };
+  showFilteredContent: boolean;
+  setShowFilteredPosts: (value: boolean) => void;
+  showAdvancedSettings: boolean;
+  setShowAdvancedSettings: (value: boolean) => void;
 }
 
 export const DisplaySettingsContext = createContext(
@@ -19,11 +18,26 @@ type Props = {
 };
 
 const DisplaySettingsProvider: FC<Props> = ({ children }) => {
-  const [hideFilteredContent, setHideFilteredContent] = useBoolean(false);
+  const [showFilteredPosts, setShowFilteredPosts] = useLocalStorage<boolean>(
+    "showFilteredContent"
+  );
+  const [showAdvancedSettings, setShowAdvancedSettings] =
+    useLocalStorage<boolean>("showAdvancedSettings");
 
   return (
     <DisplaySettingsContext.Provider
-      value={{ hideFilteredContent, setHideFilteredContent }}
+      value={{
+        showFilteredContent:
+          showFilteredPosts === undefined || showFilteredPosts === null
+            ? true
+            : showFilteredPosts,
+        setShowFilteredPosts,
+        showAdvancedSettings:
+          showAdvancedSettings === undefined || showFilteredPosts === null
+            ? false
+            : showAdvancedSettings,
+        setShowAdvancedSettings,
+      }}
     >
       {children}
     </DisplaySettingsContext.Provider>

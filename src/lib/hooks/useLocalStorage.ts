@@ -1,7 +1,9 @@
 import useSWR, { mutate } from "swr";
 
-const useLocalStorage = (key: string) => {
-  const { data } = useSWR(key, (key: string) => {
+const useLocalStorage = <T>(
+  key: string
+): [T | undefined, (value: any) => void] => {
+  const { data } = useSWR<T>(key, (key: string) => {
     const value = localStorage.getItem(key);
     return !!value ? JSON.parse(value) : null;
   });

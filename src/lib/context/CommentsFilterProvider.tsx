@@ -1,15 +1,11 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  createContext,
-  useState,
-} from "react";
+import React, { FC, createContext, useState } from "react";
+
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export type CommentsFilter = {
   id: number | null;
-  minCommentScore: number;
-  maxCommentScore: number;
+  minScore: number;
+  maxScore: number;
   minTextSentiment: number;
   maxTextSentiment: number;
   minAggSentiment: number;
@@ -18,8 +14,8 @@ export type CommentsFilter = {
 
 export const defaultCommentsPreset: CommentsFilter = {
   id: 0,
-  minCommentScore: -1,
-  maxCommentScore: 1,
+  minScore: -10000000000,
+  maxScore: 10000000000,
   minTextSentiment: -5,
   maxTextSentiment: 5,
   minAggSentiment: -1,
@@ -28,8 +24,8 @@ export const defaultCommentsPreset: CommentsFilter = {
 
 export const positiveCommentsPreset: CommentsFilter = {
   id: 1,
-  minCommentScore: 0,
-  maxCommentScore: 1,
+  minScore: 10000000000,
+  maxScore: 10000000000,
   minTextSentiment: -5,
   maxTextSentiment: 5,
   minAggSentiment: 0,
@@ -38,8 +34,8 @@ export const positiveCommentsPreset: CommentsFilter = {
 
 export const negativeCommentsPreset: CommentsFilter = {
   id: 2,
-  minCommentScore: -1,
-  maxCommentScore: 0,
+  minScore: -10000000000,
+  maxScore: 10000000000,
   minTextSentiment: -5,
   maxTextSentiment: 5,
   minAggSentiment: -1,
@@ -48,7 +44,7 @@ export const negativeCommentsPreset: CommentsFilter = {
 
 interface CommentsFilterContextInterface {
   commentsFilter: CommentsFilter;
-  setCommentsFilter: Dispatch<SetStateAction<CommentsFilter>>;
+  setCommentsFilter: (commentsFilter: CommentsFilter) => void;
 }
 
 export const CommentsFilterContext = createContext(
@@ -60,13 +56,18 @@ type Props = {
 };
 
 const CommentsFilterProvider: FC<Props> = ({ children }) => {
-  const [commentsFilter, setCommentsFilter] = useState<CommentsFilter>(
-    defaultCommentsPreset
-  );
+  const [commentsFilter, setCommentsFilter] =
+    useLocalStorage<CommentsFilter>("commentsFilter");
 
   return (
     <CommentsFilterContext.Provider
-      value={{ commentsFilter, setCommentsFilter }}
+      value={{
+        commentsFilter:
+          commentsFilter === undefined || commentsFilter === null
+            ? defaultCommentsPreset
+            : commentsFilter,
+        setCommentsFilter,
+      }}
     >
       {children}
     </CommentsFilterContext.Provider>

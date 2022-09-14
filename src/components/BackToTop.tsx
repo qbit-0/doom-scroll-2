@@ -10,7 +10,7 @@ const BackToTop: FC<Props> = ({ topRef }) => {
   return (
     <IconButton
       zIndex={20}
-      colorScheme="red"
+      colorScheme="yellow"
       icon={<ChevronUpIcon />}
       aria-label="back to top"
       rounded="full"

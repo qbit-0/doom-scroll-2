@@ -36,6 +36,7 @@ import { IoHome, IoStatsChart, IoTrendingUp } from "react-icons/io5";
 
 import { SubredditContext } from "../../lib/context/SubredditProvider";
 import useLocalStorage from "../../lib/hooks/useLocalStorage";
+import { RedditAccount } from "../../lib/reddit/redditDataStructs";
 import { getAuthRequestUrl } from "../../lib/reddit/redditOAuth";
 import RedditAvatar from "../reddit_basic/RedditAvatar";
 
@@ -45,7 +46,7 @@ type Props = {
 
 const NavBar: FC<Props> = ({ additionalNav }) => {
   const router = useRouter();
-  const [me, setMe] = useLocalStorage("me");
+  const [me, setMe] = useLocalStorage<RedditAccount>("me");
   const { subreddit, subredditAbout } = useContext(SubredditContext);
 
   const [search, setSearch] = useState<string>(
@@ -72,7 +73,7 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
   const isCompact = useBreakpointValue({ base: true, md: false });
   const hideNavButtons = useBreakpointValue({ base: true, md: false });
 
-  const [usingSearch, setUsingSearch] = useBoolean(false);
+  const [focusingSearch, setFocusingSearch] = useBoolean(false);
 
   const {
     isOpen: isNavDrawerOpen,
@@ -81,6 +82,46 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
   } = useDisclosure();
 
   const bgColor = useColorModeValue("white", "gray.800");
+
+  let locationAvatar;
+  let locationText;
+  switch (router.pathname) {
+    // @ts-ignore
+    case "/[[...sort]]":
+    case "/r/[subreddit]/[[...sort]]":
+    case "/r/[subreddit]/comments/[article]/[[...title]]":
+    case "/r/[subreddit]/comment/[[...commentId]]":
+      switch (subreddit) {
+        case "":
+          locationAvatar = <IoHome />;
+          locationText = "Home";
+          break;
+        case "popular":
+          locationAvatar = <IoTrendingUp />;
+          locationText = "Popular";
+          break;
+        case "all":
+          locationAvatar = <IoStatsChart />;
+          locationText = "All";
+          break;
+        default:
+          locationAvatar = (
+            <Avatar
+              name="r /"
+              src={
+                subredditAbout?.data?.community_icon ||
+                subredditAbout?.data?.icon_img
+              }
+              size="sm"
+            />
+          );
+          locationText = subreddit;
+      }
+      break;
+    case "/search":
+      locationAvatar = null;
+      locationText = "Search";
+  }
 
   return (
     <>
@@ -94,7 +135,7 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
           <HStack>
             <ButtonGroup overflowX="clip" variant="solid" isAttached>
               <IconButton
-                hidden={usingSearch}
+                hidden={focusingSearch}
                 roundedLeft="full"
                 icon={
                   me ? <RedditAvatar username={me.name} /> : <HamburgerIcon />
@@ -103,7 +144,7 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
                 onClick={onNavDrawerOpen}
               />
               <Button
-                hidden={usingSearch}
+                hidden={focusingSearch}
                 variant="outline"
                 pl="1"
                 rounded="full"
@@ -111,35 +152,15 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
                 display="inline"
               >
                 <HStack w="full">
-                  {subreddit === "" && <IoHome />}
-                  {subreddit === "popular" && <IoTrendingUp />}
-                  {subreddit === "all" && <IoStatsChart />}
-                  {subreddit !== "" &&
-                    subreddit !== "popular" &&
-                    subreddit !== "all" && (
-                      <Avatar
-                        name="r /"
-                        src={
-                          subredditAbout?.data?.community_icon ||
-                          subredditAbout?.data?.icon_img
-                        }
-                        size="sm"
-                      />
-                    )}
+                  {locationAvatar}
                   <Text overflowX="clip" textOverflow="ellipsis">
-                    {subreddit === "" && "Home"}
-                    {subreddit === "popular" && "Popular"}
-                    {subreddit === "all" && "All"}
-                    {subreddit !== "" &&
-                      subreddit !== "popular" &&
-                      subreddit !== "all" &&
-                      subreddit}
+                    {locationText}
                   </Text>
                 </HStack>
               </Button>
             </ButtonGroup>
             <Button
-              hidden={subreddit === "" || hideNavButtons || usingSearch}
+              hidden={subreddit === "" || hideNavButtons || focusingSearch}
               rounded="full"
               variant="outline"
               onClick={() => {
@@ -150,7 +171,9 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
               Home
             </Button>
             <Button
-              hidden={subreddit === "popular" || hideNavButtons || usingSearch}
+              hidden={
+                subreddit === "popular" || hideNavButtons || focusingSearch
+              }
               rounded="full"
               variant="outline"
               onClick={() => {
@@ -161,7 +184,7 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
               Popular
             </Button>
             <Button
-              hidden={subreddit === "all" || hideNavButtons || usingSearch}
+              hidden={subreddit === "all" || hideNavButtons || focusingSearch}
               variant="outline"
               rounded="full"
               onClick={() => {
@@ -180,8 +203,8 @@ const NavBar: FC<Props> = ({ additionalNav }) => {
                   rounded="full"
                   value={search}
                   onChange={handleSearchChange}
-                  onFocus={setUsingSearch.on}
-                  onBlur={setUsingSearch.off}
+                  onFocus={setFocusingSearch.on}
+                  onBlur={setFocusingSearch.off}
                 />
                 <InputRightElement>
                   <IconButton

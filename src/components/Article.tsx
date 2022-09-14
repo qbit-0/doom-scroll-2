@@ -58,7 +58,7 @@ const Article: FC<Props> = ({
   return (
     <>
       {post ? (
-        <Post post={post} openModal={openModal} disabledOverride={false} />
+        <Post post={post} openWithModal={openModal} disabledOverride={false} />
       ) : (
         <PostSkeleton />
       )}

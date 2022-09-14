@@ -6,7 +6,7 @@ import AboutHome from "../components/AboutHome";
 import NavFrame from "../components/page/NavFrame";
 import PageFrame from "../components/page/PageFrame";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
-import { RedditMe } from "../lib/reddit/redditDataStructs";
+import { RedditAccount, RedditMe } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { requestReddit } from "../lib/reddit/redditServerApi";
 import { withSessionSsr } from "../lib/session/withSession";
@@ -46,12 +46,12 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
 );
 
 type Props = {
-  me: RedditMe;
+  me: RedditAccount;
   state: { rand: string; next: string };
 };
 
 const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
-  const [_, setMe] = useLocalStorage("me");
+  const [_, setMe] = useLocalStorage<RedditAccount>("me");
 
   const router = useRouter();
 

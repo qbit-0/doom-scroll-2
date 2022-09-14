@@ -1,25 +1,24 @@
 import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-type Props = {
-  children?: React.ReactNode;
-  boxProps?: BoxProps;
-};
+type Props = { children: React.ReactNode; boxProps?: BoxProps };
 
-const Card: FC<Props> = ({ boxProps, children }) => {
+const ContentCard: FC<Props> = ({ children, boxProps }) => {
   const bgColor = useColorModeValue("white", "gray.800");
-
   return (
     <Box
-      borderWidth={[0, 0, 1]}
       w="full"
+      borderTopWidth={1}
+      borderBottomWidth={1}
+      borderLeftWidth={[0, 0, 1]}
+      borderRightWidth={[0, 0, 1]}
       p="4"
       shadow="md"
-      rounded={["none", "none", "md"]}
       borderColor="gray.500"
       bgColor={bgColor}
       boxShadow="md"
       overflow="hidden"
+      rounded={["none", "none", "md"]}
       {...boxProps}
     >
       {children}
@@ -27,4 +26,4 @@ const Card: FC<Props> = ({ boxProps, children }) => {
   );
 };
 
-export default Card;
+export default ContentCard;

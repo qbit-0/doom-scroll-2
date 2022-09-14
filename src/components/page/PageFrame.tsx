@@ -19,10 +19,11 @@ import {
 } from "@chakra-ui/react";
 import React, { FC, useContext, useRef } from "react";
 
+import { PostsFilterContext } from "../../lib/context/PostsFilterProvider";
 import { SubredditContext } from "../../lib/context/SubredditProvider";
 import BackToTop from "../BackToTop";
 import DisplaySettings from "../DisplaySettings";
-import Explaination from "../Explaination";
+import Explanation from "../Explanation";
 import FilterComments from "../FilterComments";
 import FilterPosts from "../FilterPosts";
 
@@ -51,28 +52,32 @@ const PageFrame: FC<Props> = ({ topChildren, leftChildren, rightChildren }) => {
 
   return (
     <>
-      <Box ref={topRef} bgColor={bgColor}>
+      <Box position="absolute" top="0" ref={topRef} />
+      <Box bgColor={bgColor}>
         {topChildren}
         <Flex py="4" justify="center" columnGap={4}>
           <VStack w="full" maxW="2xl" h="full">
-            {subreddit === "" && <Explaination />}
+            {subreddit === "" && <Explanation />}
             {leftChildren}
           </VStack>
           <VStack hidden={!hideRightPanels} w="full" maxW="lg">
             {rightChildren}
+            <DisplaySettings />
+            <FilterPosts />
+            <FilterComments />
           </VStack>
         </Flex>
       </Box>
       <HStack position="fixed" bottom="4" right="4">
         <IconButton
-          colorScheme="red"
+          colorScheme="yellow"
           icon={<InfoOutlineIcon />}
           rounded="full"
           onClick={onInfoOpen}
           aria-label={"subreddit info"}
         />
         <IconButton
-          colorScheme="red"
+          colorScheme="yellow"
           icon={<SettingsIcon />}
           rounded="full"
           onClick={onSettingsOpen}
@@ -80,7 +85,7 @@ const PageFrame: FC<Props> = ({ topChildren, leftChildren, rightChildren }) => {
         />
         <BackToTop topRef={topRef} />
       </HStack>
-      <Drawer isOpen={isInfoOpen} onClose={onInfoClose} size="lg">
+      <Drawer isOpen={isInfoOpen} onClose={onInfoClose} size="xl">
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
@@ -91,7 +96,7 @@ const PageFrame: FC<Props> = ({ topChildren, leftChildren, rightChildren }) => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      <Drawer isOpen={isSettingsOpen} onClose={onSettingsClose} size="lg">
+      <Drawer isOpen={isSettingsOpen} onClose={onSettingsClose} size="xl">
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>

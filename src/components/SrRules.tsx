@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 
+import ContentCard from "../ContentCard";
 import { SubredditContext } from "../lib/context/SubredditProvider";
 import { RedditRules } from "../lib/reddit/redditDataStructs";
 import Card from "./Card";
@@ -35,7 +36,7 @@ const SubredditRules: FC<Props> = () => {
   }
 
   return (
-    <Card>
+    <ContentCard>
       <Heading size="lg">Rules</Heading>
       <Accordion allowMultiple>
         {subredditRules
@@ -58,7 +59,7 @@ const SubredditRules: FC<Props> = () => {
             )
           : rulesPlaceholder}
       </Accordion>
-    </Card>
+    </ContentCard>
   );
 };
 

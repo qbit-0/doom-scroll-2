@@ -99,6 +99,7 @@ export type RedditLink = {
     selftext?: string;
     selftext_html?: string;
     sr_detail?: RedditSubreddit["data"];
+    spoiler?: boolean;
     subreddit: string;
   };
 };
@@ -150,10 +151,6 @@ export type RedditRules = {
   }[];
   site_rules: [];
   site_rules_flow: [];
-};
-
-export type RedditMe = {
-  name: string;
 };
 
 export type RedditPostAndComments = [
