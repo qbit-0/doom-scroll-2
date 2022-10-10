@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Link } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, useColorModeValue } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { RedditLink } from "../../lib/reddit/redditDataStructs";
@@ -11,6 +11,8 @@ type Props = {
 };
 
 const PostBody: FC<Props> = ({ post }) => {
+  const postLinkBgColor = useColorModeValue("white", "gray.600");
+
   if (post.data?.post_hint === "image") {
     return (
       <>
@@ -40,7 +42,7 @@ const PostBody: FC<Props> = ({ post }) => {
   if (post.data?.post_hint === "link") {
     return (
       <Flex
-        bgColor="gray.600"
+        bgColor={postLinkBgColor}
         onClick={() => {
           window.open(post.data.url_overridden_by_dest, "_blank");
         }}
