@@ -1,4 +1,12 @@
-import { Box, Button, Heading, Text, Tooltip, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+  Tooltip,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { FC, useContext } from "react";
 
 import ContentCard from "../ContentCard";
@@ -22,6 +30,7 @@ const Explanation: FC<Props> = () => {
   const { commentsFilter, setCommentsFilter } = useContext(
     CommentsFilterContext
   );
+  const postLinkBgColor = useColorModeValue("white", "gray.700");
 
   return (
     <ContentCard>
