@@ -12,7 +12,6 @@ import { FC, useContext } from "react";
 import ContentCard from "../ContentCard";
 import { SubredditContext } from "../lib/context/SubredditProvider";
 import { RedditRules } from "../lib/reddit/redditDataStructs";
-import Card from "./Card";
 import SanitizeHTML from "./SanitizeHTML";
 
 type Props = {};

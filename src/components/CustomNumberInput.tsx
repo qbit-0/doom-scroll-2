@@ -44,7 +44,7 @@ const CustomNumberInput: FC<Props> = ({
       max,
       step,
       onChange: (value) => {
-        onChange(Number.parseFloat(value));
+        if (onChange) onChange(Number.parseFloat(value));
       },
     });
 
@@ -64,7 +64,7 @@ const CustomNumberInput: FC<Props> = ({
             roundedBottom="none"
             isDisabled={value === max}
             onClick={() => {
-              onChange(max);
+              if (onChange) onChange(max);
             }}
           >
             Max
@@ -82,7 +82,7 @@ const CustomNumberInput: FC<Props> = ({
             roundedTop="none"
             isDisabled={value === min}
             onClick={() => {
-              onChange(min);
+              if (onChange) onChange(min);
             }}
           >
             Min

@@ -67,8 +67,6 @@ const PostsFilterProvider: FC<Props> = ({ children }) => {
   const [postsFilter, setPostsFilter] =
     useLocalStorage<PostsFilter>("postsFilter");
 
-  console.log(postsFilter);
-
   return (
     <PostsFilterContext.Provider
       value={{

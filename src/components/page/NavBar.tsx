@@ -46,7 +46,7 @@ type Props = {
 
 const NavBar: FC<Props> = ({ additionalNav }) => {
   const router = useRouter();
-  const [me, setMe] = useLocalStorage<RedditAccount>("me");
+  const [me, setMe] = useLocalStorage<RedditAccount["data"]>("me");
   const { subreddit, subredditAbout } = useContext(SubredditContext);
 
   const [search, setSearch] = useState<string>(

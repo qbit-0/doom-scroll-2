@@ -2,11 +2,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 
-import AboutHome from "../components/AboutHome";
-import NavFrame from "../components/page/NavFrame";
-import PageFrame from "../components/page/PageFrame";
 import useLocalStorage from "../lib/hooks/useLocalStorage";
-import { RedditAccount, RedditMe } from "../lib/reddit/redditDataStructs";
+import { RedditAccount } from "../lib/reddit/redditDataStructs";
 import { getUserAccessToken } from "../lib/reddit/redditOAuth";
 import { requestReddit } from "../lib/reddit/redditServerApi";
 import { withSessionSsr } from "../lib/session/withSession";
@@ -51,7 +48,7 @@ type Props = {
 };
 
 const AuthorizeCallbackPage: FC<Props> = ({ me, state }) => {
-  const [_, setMe] = useLocalStorage<RedditAccount>("me");
+  const [_, setMe] = useLocalStorage<RedditAccount["data"]>("me");
 
   const router = useRouter();
 

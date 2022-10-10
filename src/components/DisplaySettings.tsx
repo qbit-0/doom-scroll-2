@@ -9,8 +9,8 @@ type Props = {};
 const DisplaySettings: FC<Props> = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const {
-    showFilteredContent,
-    setShowFilteredPosts: setShowFilteredContent,
+    showFilteredPosts: showFilteredContent,
+    setShowFilteredPosts,
     showAdvancedSettings,
     setShowAdvancedSettings,
   } = useContext(DisplaySettingsContext);
@@ -27,7 +27,7 @@ const DisplaySettings: FC<Props> = () => {
         <Switch
           isChecked={showFilteredContent}
           onChange={() => {
-            setShowFilteredContent(!showFilteredContent);
+            setShowFilteredPosts(!showFilteredContent);
           }}
         >
           Show Filtered Posts

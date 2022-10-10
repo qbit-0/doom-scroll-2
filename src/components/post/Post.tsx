@@ -35,6 +35,7 @@ import { IoChatboxOutline } from "react-icons/io5";
 import Sentiment from "sentiment";
 
 import ContentCard from "../../ContentCard";
+import { DisplaySettingsContext } from "../../lib/context/DisplaySettingsProvider";
 import { PostsFilterContext } from "../../lib/context/PostsFilterProvider";
 import { RedditLink } from "../../lib/reddit/redditDataStructs";
 import {
@@ -56,6 +57,7 @@ const Post: FC<Props> = ({ post, openWithModal = true, disabledOverride }) => {
   const browsePathname = useConst(router.asPath);
   const postPathname = `/r/${post.data.subreddit}/comments/${post.data.id}`;
 
+  const { showFilteredPosts } = useContext(DisplaySettingsContext);
   const { postsFilter } = useContext(PostsFilterContext);
 
   const sentiment = useConst(() => new Sentiment());
@@ -167,6 +169,7 @@ const Post: FC<Props> = ({ post, openWithModal = true, disabledOverride }) => {
   const hideSpacer = useBreakpointValue({ base: true, sm: false });
 
   const result = useMemo(() => {
+    if (disabled && !showFilteredPosts) return null;
     return (
       <>
         <Box w="full" filter={disabled ? "auto" : "none"} brightness="50%">
@@ -352,6 +355,7 @@ const Post: FC<Props> = ({ post, openWithModal = true, disabledOverride }) => {
     voteAtBottom,
     bottomStackDirection,
     hideSpacer,
+    showFilteredPosts,
   ]);
 
   return result;

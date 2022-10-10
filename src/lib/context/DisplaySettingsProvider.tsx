@@ -1,9 +1,9 @@
-import { createContext, FC } from "react";
+import { FC, createContext } from "react";
 
 import useLocalStorage from "../hooks/useLocalStorage";
 
 interface DisplaySettingsContextInterface {
-  showFilteredContent: boolean;
+  showFilteredPosts: boolean;
   setShowFilteredPosts: (value: boolean) => void;
   showAdvancedSettings: boolean;
   setShowAdvancedSettings: (value: boolean) => void;
@@ -27,7 +27,7 @@ const DisplaySettingsProvider: FC<Props> = ({ children }) => {
   return (
     <DisplaySettingsContext.Provider
       value={{
-        showFilteredContent:
+        showFilteredPosts:
           showFilteredPosts === undefined || showFilteredPosts === null
             ? true
             : showFilteredPosts,
