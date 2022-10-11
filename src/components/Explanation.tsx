@@ -30,7 +30,7 @@ const Explanation: FC<Props> = () => {
   const { commentsFilter, setCommentsFilter } = useContext(
     CommentsFilterContext
   );
-  const postLinkBgColor = useColorModeValue("white", "gray.700");
+  const quoteBgColor = useColorModeValue("white", "gray.700");
 
   return (
     <ContentCard>
@@ -84,7 +84,7 @@ const Explanation: FC<Props> = () => {
       </Heading>
       <Box
         p="4"
-        bgColor="gray.700"
+        bgColor={quoteBgColor}
         rounded="md"
         shadow="md"
         w="90%"
