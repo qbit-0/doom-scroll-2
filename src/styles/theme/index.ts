@@ -3,7 +3,7 @@ import { ThemeConfig, extendTheme } from "@chakra-ui/react";
 import { colors } from "./foundations/colors";
 
 export const config: ThemeConfig = {
-  initialColorMode: "dark",
+  initialColorMode: "light",
   useSystemColorMode: false,
 };
 

@@ -19,8 +19,8 @@ const DisplaySettings: FC<Props> = () => {
     <ContentCard>
       <Heading size="lg">DoomScroll Display Settings</Heading>
       <Box>
-        <Switch isChecked={colorMode === "light"} onChange={toggleColorMode}>
-          Flashbang
+        <Switch isChecked={colorMode === "dark"} onChange={toggleColorMode}>
+          Dark Mode
         </Switch>
       </Box>
       <Box>
