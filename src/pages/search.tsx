@@ -218,14 +218,14 @@ const SearchPage: FC<Props> = (props) => {
                   isActive={type === "sr"}
                   onClick={handleNavChange("type")}
                 >
-                  {TYPE_DISPLAY_NAMES["link"]}
+                  {TYPE_DISPLAY_NAMES["sr"]}
                 </Button>
                 <Button
                   value="user"
                   isActive={type === "user"}
                   onClick={handleNavChange("type")}
                 >
-                  {TYPE_DISPLAY_NAMES["link"]}
+                  {TYPE_DISPLAY_NAMES["user"]}
                 </Button>
               </Buttons>
               {searchContent}
