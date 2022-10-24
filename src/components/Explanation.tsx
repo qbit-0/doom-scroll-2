@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Heading,
+  Link,
   Text,
   Tooltip,
   VStack,
@@ -114,6 +115,17 @@ const Explanation: FC<Props> = () => {
           {`Overall, filtering by only positive posts will lead to more positive
         interactions, with more agreeable content. Fitlering by only negative posts will lead to more contoversial posts
         and comments, including more angry, edgy, or depressing content.`}
+        </Text>
+        <Text>
+          Source code{" "}
+          <Link
+            color="purple"
+            href="https://github.com/qbit-0/doom-scroll-v2"
+            target="_blank"
+          >
+            here
+          </Link>
+          .
         </Text>
       </VStack>
     </ContentCard>
